@@ -1,0 +1,368 @@
+function is_json(str){
+	try{
+		JSON.parse(str);
+	}catch(e){
+		return false;
+	}
+	return true;
+}
+
+function getParameterByName(name) {
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var base_url = $("base").attr("href");
+var style_url = $('meta[name="style_url"]').attr("content");
+
+function notify_closer(){
+
+	if($('.close-alert').length >= 1){
+		$('body .close-alert').parent().fadeOut("normal", function(){
+			$(this).remove();
+		});
+	}
+}
+
+function notify(title, message, type){
+	type = parseInt(type);
+	switch(type){
+		case 2: type = 'alert-error'; break;
+		case 3: type = 'alert-success'; break;
+		case 4: type = 'alert-info'; break;
+
+		default: type = ''; break;
+	}
+
+	$('html, body').animate({scrollTop:0}, 'normal');
+
+	$(".main-content").prepend('<div class="alert '+type+' ajx"><a href="#" class="close-alert">&times;</a><b>'+title+'</b> '+message+'</div>');
+
+	setTimeout("notify_closer()", 2500);
+
+	return true;
+}
+
+function send_ret_req(method, url, params){
+	var req = null;
+	try { req = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {
+		try { req = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {
+			try { req = new XMLHttpRequest(); } catch(e) {}
+		}
+	}
+	if (req == null) throw new Error('XMLHttpRequest not supported');
+
+	req.open(method, url, false);
+	req.send(params);
+
+	return req.responseText;
+}
+
+$.mcr_session = {
+	url: base_url+"?mode=ajax&do=session",
+
+	get: function(name){
+		var params = "&name="+name.toString();
+		return send_ret_req("GET", this.url+"&op=get"+params, null);
+	},
+
+	set: function(name, value){
+		var params = "&name="+name.toString()+"&value="+value.toString();
+		return send_ret_req("GET", this.url+"&op=set"+params, null);
+	},
+
+	remove: function(name){
+		var params = "&name="+name.toString();
+		return send_ret_req("GET", this.url+"&op=remove"+params, null);
+	},
+};
+
+$.mcr = {
+	mon_delay: 2000,
+
+	remote_url: function(url, method, accept){
+		var req = null;
+		try{
+			req = new ActiveXObject("Msxml2.XMLHTTP");
+		}catch(e){
+			try{
+				req = new ActiveXObject("Microsoft.XMLHTTP");
+			}catch(e){
+				try{
+					req = new XMLHttpRequest();
+				}catch(e){}
+			}
+		}
+
+		if (req == null) throw new Error('XMLHttpRequest not supported');
+
+		var type = (accept===undefined) ? "text/plain" : accept;
+
+		req.open(method, url, false);
+		req.setRequestHeader("Accept",type);
+		req.send(null);
+
+		return req.responseText;
+	},
+
+	load_monitoring: function(){
+		var data = $.mcr.remote_url(base_url+"?mode=ajax&do=monitor", 'GET');
+
+		if(!is_json(data)){
+			notify("Ошибка!", "Мониторинг временно недоступен", 1);
+			return false;
+		}
+
+		$('.js-monitor').empty();
+
+		$('.js-monitor').fadeIn('slow', function(){
+
+			var jd	= JSON.parse(data);
+
+			if(!jd._status){ $(this).html(jd._message); return false; }
+
+			var jdd = jd._data;
+
+			var i = 0;
+
+			var count_players = 0;
+
+			while(i<jdd.length){
+
+				//console.log(jdd);
+
+				var ar = jdd[i];
+
+				i++;
+				
+				var m_data = $.mcr.remote_url("http://api.minetools.eu/query/" + ar.ip + "/" + ar.port, "GET");
+
+				if(!is_json(m_data)){ continue; }
+
+				var md = JSON.parse(m_data);
+				
+				$('.js-monitor').append(ar.form);
+
+				if(md.error !== undefined){
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress').addClass('progress-danger');
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress > .bar').animate({width: "100%"}, 1000);
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress > .stats').html("Оффлайн");
+				}else{
+					var persent = md.Players / (md.MaxPlayers / 100);
+					persent = parseInt(persent);
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress').addClass('progress-success');
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress > .bar').animate({width: persent+"%"}, 1000);
+					$('.js-monitor > .monitor-id#'+ar.id+' > .progress > .stats').html(md.Players+" / "+md.MaxPlayers);
+					count_players = count_players+md.Players;
+				}
+
+			}
+
+			$('.js-monitor').append("Всего игроков: "+count_players);
+			
+			$("[rel='tooltip']").tooltip({container: 'body'});
+
+			//$(this).append(jdd.form);
+
+			return true;
+		});
+	},
+
+	get_release_git: function(stable){
+
+		var url = (stable===undefined || stable===true) ? "https://api.github.com/repos/qexyorg/WebMCR/releases" : "https://api.github.com/repos/qexyorg/WebMCR/tags";
+
+		var data = this.remote_url(url, "GET", "application/json");
+
+		if(!is_json(data)){
+			notify("Ошибка!", "Произошла ошибка получения информации", 1);
+			return "∞";
+		}
+
+		jsondata	= JSON.parse(data);
+
+		if($.isEmptyObject(jsondata)){ return "∞"; }
+
+		return '<a href="'+jsondata[0]['html_url']+'" target="_blank">'+jsondata[0]['tag_name']+'</a>';
+	},
+
+	get_version: function(){
+		var data = this.remote_url("https://api.webmcr.com/?do=latest_version", "GET", "application/json");
+
+		if(!is_json(data)){
+			notify("Ошибка!", "Произошла ошибка получения информации", 1);
+			return "∞";
+		}
+
+		var jsondata	= JSON.parse(data);
+		var message		= jsondata.message;
+		//var type		= jsondata.type; // unused variable
+
+		return message;
+	},
+};
+
+$(function(){
+
+	$("[rel='tooltip']").tooltip({container: 'body'});
+
+	$('.spl-body.closed').hide();
+
+	setTimeout($.mcr.load_monitoring, $.mcr.mon_delay);
+	
+	$('.spl-btn').on("click", function(){
+		var element = $(this).attr("data-click");
+		$(".spl-body#"+element).toggleClass("opened").toggleClass("closed").slideToggle("fast");
+		$('.spl-btn[data-click="'+element+'"]').toggleClass("opened").toggleClass("closed");
+
+		if($(this).hasClass("session")){
+			var session = $.mcr_session.get(element);
+
+			if(session!='true'){
+				$.mcr_session.set(element, true);
+			}else if(session=='true'){
+				$.mcr_session.set(element, false);
+			}
+		}
+
+		return false;
+	});
+
+
+	
+	$('.check-all').on("click", function(){
+		var element = $(this).attr("data-for");
+
+		var obj = $("."+element);
+
+		var length = obj.length;
+
+		var inc;
+
+		for(inc=0; inc < length; inc++){
+
+			if($(this)[0].checked==true){
+				obj[inc].checked=true;
+			}else{
+				obj[inc].checked=false;
+			}
+		}
+
+	});
+
+	$('.remove').click(function(){
+
+		if($(this).attr("data-checkbox")!='false'){
+			var element = $(this).attr("data-for");
+			var length = $('.'+element+':checked').length;
+
+			if(length<=0){
+				notify("Ошибка!", "Не выбрано ни одного пункта для удаления", 1);
+				return false;
+			}
+
+		}
+		
+		var text = $(this).attr("data-text");
+		if(!confirm(text)){ return false; }
+
+		return true;
+	});
+
+	$('body').on("click", '.close-alert', function(){
+		$(this).parent().fadeOut("normal", function(){
+			$(this).remove();
+		});
+		return false;
+	})
+
+	$(".mcr-debug .action").on("click", function(){
+		$(".mcr-debug").toggleClass("open");
+		return false;
+	});
+
+	$(".bb-panel .bb").on("click", function(){
+
+		var panel_id = $(this).parent().closest(".bb-panel").attr("id");
+
+		var pid = ".bb-panel#"+panel_id;
+
+		var panel_obj = $('textarea[data-for="'+panel_id+'"]')[0];
+
+		var leftcode = $(this).attr("data-left");
+		var rightcode = ($(this).attr("data-right")==undefined) ? leftcode : $(this).attr("data-right");
+
+		if(!$(this).hasClass("woborder")){
+			leftcode = '['+leftcode+']';
+			rightcode = (rightcode=='') ? '' : '[/'+rightcode+']';
+		}else{
+			rightcode = (rightcode=='') ? '' : rightcode;
+		}
+
+		if(document.selection){
+
+			var s = document.selection.createRange();
+			if(s.text){
+				s.text = leftcode + s.text + rightcode;
+			}
+
+		}else{ // Opera, FireFox, Chrome
+
+			var start = (panel_obj.selectionStart==undefined) ? 0 : panel_obj.selectionStart;
+
+			var end = (panel_obj.selectionEnd==undefined) ? 0 : panel_obj.selectionEnd;
+
+			s = panel_obj.value.substr(start,end-start);
+
+			panel_obj.value = panel_obj.value.substr(0, start) + leftcode + s + rightcode + panel_obj.value.substr(end);
+		}
+
+		return false;
+	});
+
+	$("#search-selector a").click(function(){
+
+		var search_val = $("#search-hidden").val();
+
+		$("#search-selector a#"+search_val).parent().removeClass("active");
+
+		var id = this.id;
+
+		$("#search-hidden").val(id);
+
+		$(this).parent().addClass("active");
+
+		return false;
+
+	});
+
+	$("#close-notify").click(function(){
+		$(".block-notify").fadeOut("normal", function(){
+			$(this).remove();
+		});
+		return false;
+	});
+
+	$(".edit").click(function(){
+		
+		var element = $(this).attr("data-for");
+		var length = $('.'+element+':checked').length;
+		var link = $(this).attr("data-link");
+
+		if(length<=0){
+			notify("Ошибка!", "Не выбрано ни одного пункта для удаления", 1);
+			return false;
+		}else if(length>1){
+			notify("Ошибка!", "Для редактирования необходимо выбрать только один пункт из списка", 1);
+			return false;
+		}
+
+		var id = $('.'+element+':checked').val();
+
+		window.location.href = link+id;
+		
+		return false;
+	});
+});

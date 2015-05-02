@@ -1,0 +1,33 @@
+<div class="form-block menu-group-change">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" class="span8" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="textareaText">Описание</label>
+			<div class="controls">
+				<textarea name="text" class="span8" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+		<legend>Привилегии</legend>
+		<?php echo $data['PERMISSIONS']; ?>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

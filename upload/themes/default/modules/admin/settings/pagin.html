@@ -1,0 +1,167 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Настройки сайта</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="adm-settings">
+		<form method="post"></form>
+		<ul class="nav nav-tabs" id="myTab">
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+		</ul>
+		 
+		<div class="tab-content">
+			<div class="tab-pane active">
+
+				<form class="form-horizontal" method="post">
+
+					<legend>Пользовательская часть</legend>
+
+					<div class="control-group">
+						<label class="control-label" for="input_arrows">Кол-во стрелок</label>
+						<div class="controls">
+							<input type="text" name="arrows" id="input_arrows" value="<?php echo $data['CFG']['arrows']; ?>" placeholder="Кол-во стрелок с каждой стороны">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_news">Новости</label>
+						<div class="controls">
+							<input type="text" name="news" value="<?php echo $data['CFG']['news']; ?>" id="input_news" placeholder="Кол-во новостей на одну страницу">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_comments">Комментарии</label>
+						<div class="controls">
+							<input type="text" name="comments" value="<?php echo $data['CFG']['comments']; ?>" id="input_comments" placeholder="Кол-во комментариев на одну страницу">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_search_news">Поиск по новостям</label>
+						<div class="controls">
+							<input type="text" name="search_news" value="<?php echo $data['CFG']['search_news']; ?>" id="input_search_news" placeholder="Кол-во новостей на одну страницу в поиске">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_search_comments">Поиск по комментариям</label>
+						<div class="controls">
+							<input type="text" name="search_comments" value="<?php echo $data['CFG']['search_comments']; ?>" id="input_search_comments" placeholder="Кол-во комментариев на одну страницу в поиске">
+						</div>
+					</div>
+
+					<legend>Панель управления</legend>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_news">Новости</label>
+						<div class="controls">
+							<input type="text" name="adm_news" id="input_adm_news" value="<?php echo $data['CFG']['adm_news']; ?>" placeholder="Кол-во новостей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_comments">Комментарии</label>
+						<div class="controls">
+							<input type="text" name="adm_comments" id="input_adm_comments" value="<?php echo $data['CFG']['adm_comments']; ?>" placeholder="Кол-во комментариев в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_news_cats">Категории новостей</label>
+						<div class="controls">
+							<input type="text" name="adm_news_cats" id="input_adm_news_cats" value="<?php echo $data['CFG']['adm_news_cats']; ?>" placeholder="Кол-во категорий новостей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_news_views">Просмотров новости</label>
+						<div class="controls">
+							<input type="text" name="adm_news_views" id="input_adm_news_views" value="<?php echo $data['CFG']['adm_news_views']; ?>" placeholder="Кол-во просмотров новостей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_news_votes">Голосов новости</label>
+						<div class="controls">
+							<input type="text" name="adm_news_votes" id="input_adm_news_votes" value="<?php echo $data['CFG']['adm_news_votes']; ?>" placeholder="Кол-во голосов новостей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_menu">Пунктов меню</label>
+						<div class="controls">
+							<input type="text" name="adm_menu" id="input_adm_menu" value="<?php echo $data['CFG']['adm_menu']; ?>" placeholder="Кол-во пунктов меню сайта в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_menu_adm">Пункты меню ПУ</label>
+						<div class="controls">
+							<input type="text" name="adm_menu_adm" id="input_adm_menu_adm" value="<?php echo $data['CFG']['adm_menu_adm']; ?>" placeholder="Кол-во пункты меню ПУ в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_menu_groups">Группы меню</label>
+						<div class="controls">
+							<input type="text" name="adm_menu_groups" id="input_adm_menu_groups" value="<?php echo $data['CFG']['adm_menu_groups']; ?>" placeholder="Кол-во групп меню в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_menu_icons">Иконки меню</label>
+						<div class="controls">
+							<input type="text" name="adm_menu_icons" id="input_adm_menu_icons" value="<?php echo $data['CFG']['adm_menu_icons']; ?>" placeholder="Кол-во иконок меню в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_users">Пользователи</label>
+						<div class="controls">
+							<input type="text" name="adm_users" id="input_adm_users" value="<?php echo $data['CFG']['adm_users']; ?>" placeholder="Кол-во пользователей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_groups">Группы пользователей</label>
+						<div class="controls">
+							<input type="text" name="adm_groups" id="input_adm_groups" value="<?php echo $data['CFG']['adm_groups']; ?>" placeholder="Кол-во групп пользователей в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_permissions">Привилегии</label>
+						<div class="controls">
+							<input type="text" name="adm_permissions" id="input_adm_permissions" value="<?php echo $data['CFG']['adm_permissions']; ?>" placeholder="Кол-во привилегий в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_statics">Статические страницы</label>
+						<div class="controls">
+							<input type="text" name="adm_statics" id="input_adm_statics" value="<?php echo $data['CFG']['adm_statics']; ?>" placeholder="Кол-во статических страниц в ПУ">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" name="submit" class="btn">Сохранить</button>
+						</div>
+					</div>
+
+				</form>
+			
+			</div>
+		</div>
+	</div>
+		
+</div>

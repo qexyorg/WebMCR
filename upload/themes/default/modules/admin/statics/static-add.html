@@ -1,0 +1,48 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputUniq">Идентификатор</label>
+			<div class="controls">
+				<input type="text" name="uniq" value="<?php echo $data['UNIQ']; ?>" id="inputUniq" placeholder="Уникальный идентификатор">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectPerm">Уровень доступа</label>
+			<div class="controls">
+				<select size="6" name="permissions" id="selectPerm">
+					<?php echo $data['PERMISSIONS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputText">Текст страницы</label>
+			<div class="controls">
+				<?php echo $data['BB_PANEL']; ?>
+				<textarea class="input-block-level" id="inputText" data-for="stc-field" placeholder="Текст страницы" name="text" rows="8"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

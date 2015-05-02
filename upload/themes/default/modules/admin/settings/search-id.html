@@ -1,0 +1,26 @@
+<legend><?php echo $data['TITLE']; ?></legend>
+<form class="form-horizontal" method="post">
+	<input type="hidden" name="key" value="<?php echo $data['KEY']; ?>">
+
+	<div class="control-group">
+		<label class="control-label" for="input_title">Название</label>
+		<div class="controls">
+			<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="input_title" placeholder="Название">
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="input_permissions">Уровень доступа</label>
+		<div class="controls">
+			<select name="permissions" size="5" id="input_permissions">
+				<?php echo $data['PERMISSIONS']; ?>
+			</select>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" name="submit" class="btn">Сохранить</button>
+		</div>
+	</div>
+</form>

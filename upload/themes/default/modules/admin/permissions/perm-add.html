@@ -1,0 +1,55 @@
+<div class="form-block menu-permissions-change">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" class="span8" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="textareaText">Описание</label>
+			<div class="controls">
+				<textarea name="text" class="span8" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputPerm">Значение</label>
+			<div class="controls">
+				<input type="text" class="span8" name="value" value="<?php echo $data['VALUE']; ?>" id="inputPerm" placeholder="Уникальное значение">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputPerm">Тип</label>
+			<div class="controls">
+				<select name="type" class="span8" id="perm-type">
+					<?php echo $data['TYPES']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputDefault">По умолчанию</label>
+			<div class="controls" id="perm-default">
+				<?php echo $data['DEFAULT']; ?>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

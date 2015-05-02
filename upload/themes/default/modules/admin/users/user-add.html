@@ -1,0 +1,92 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputLogin">Логин</label>
+			<div class="controls">
+				<input type="text" name="login" value="<?php echo $data['LOGIN']; ?>" id="inputLogin" placeholder="Логин">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputPassword">Password</label>
+			<div class="controls">
+				<input type="text" name="password" id="inputPassword" placeholder="Пароль">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputEmail">E-Mail</label>
+			<div class="controls">
+				<input type="text" name="email" value="<?php echo $data['EMAIL']; ?>" id="inputEmail" placeholder="E-Mail">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectGid">Группа</label>
+			<div class="controls">
+				<select name="gid" id="selectGid">
+					<?php echo $data['GROUPS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputFName">Имя</label>
+			<div class="controls">
+				<input type="text" name="firstname" pattern="^[а-яА-ЯёЁa-zA-Z]+$" value="<?php echo $data['FIRSTNAME']; ?>" id="inputFName" placeholder="Имя">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputLName">Фамилия</label>
+			<div class="controls">
+				<input type="text" name="lastname" pattern="^[а-яА-ЯёЁa-zA-Z]+$" value="<?php echo $data['LASTNAME']; ?>" id="inputLName" placeholder="Фамилия">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectGender">Пол</label>
+			<div class="controls">
+				<select name="gender" id="selectGender">
+					<option value="0">Мужской</option>
+					<option value="1" <?php echo $data['GENDER']; ?>>Женский</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputBirthday">Дата рождения</label>
+			<div class="controls">
+				<input type="text" name="birthday" maxlength="10" pattern="^\d{2}.\d{2}.\d{4}$" value="<?php echo $data['BIRTHDAY']; ?>" id="inputBirthday" placeholder="Дата рождения">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputMoney">Игровой баланс</label>
+			<div class="controls">
+				<input type="text" name="money" value="<?php echo $data['MONEY']; ?>" id="inputMoney" placeholder="Игровой баланс">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputRMoney">Реальный баланс</label>
+			<div class="controls">
+				<input type="text" name="realmoney" value="<?php echo $data['REALMONEY']; ?>" id="inputRMoney" placeholder="Реальный баланс">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

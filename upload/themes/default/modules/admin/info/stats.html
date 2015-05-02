@@ -1,0 +1,101 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Информация и статистика</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="adm-info-stats">
+		<form method="post"></form>
+		<ul class="nav nav-tabs" id="myTab">
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=main">Информация</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=extensions">Дополнения</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=stats">Статистика</a></li>
+		</ul>
+		 
+		<div class="tab-content">
+			<div class="tab-pane active">
+
+				<ul class="thumbnails">
+					<li class="span6">
+						<div class="thumbnail">
+							<h3>Статистика новостей</h3>
+							<p>
+								<table class="table table-hover">
+									<tr>
+										<td>Новостей</td>
+										<td class="text-right"><?php echo $data['COUNT_NEWS']; ?></td>
+									</tr>
+
+									<tr>
+										<td>Просмотров</td>
+										<td class="text-right"><?php echo $data['COUNT_VIEWS']; ?></td>
+									</tr>
+
+									<tr>
+										<td>Голосов</td>
+										<td class="text-right"><?php echo $data['COUNT_VOTES']; ?></td>
+									</tr>
+
+									<tr>
+										<td>Категорий</td>
+										<td class="text-right"><?php echo $data['COUNT_CATEGORIES']; ?></td>
+									</tr>
+
+									<tr>
+										<td>Комментариев</td>
+										<td class="text-right"><?php echo $data['COUNT_COMMENTS']; ?></td>
+									</tr>
+								</table>
+							</p>
+						</div>
+					</li>
+					
+					<li class="span6">
+						<div class="thumbnail">
+							<h3>Статистика пользователей</h3>
+							<p>
+								<table class="table table-hover">
+									<?php echo $data['USERS_STATS']; ?>
+									<tfoot>
+										<tr>
+											<td><b>Всего пользователей</b></td>
+											<td class="text-right"><?php echo $data['COUNT_USERS']; ?></td>
+										</tr>
+
+										<tr>
+											<td><b>Всего групп</b></td>
+											<td class="text-right"><?php echo $data['COUNT_GROUPS']; ?></td>
+										</tr>
+									</tfoot>
+								</table>
+							</p>
+						</div>
+					</li>
+
+					<li class="span12">
+						<div class="thumbnail">
+							<h3>Разное</h3>
+							<p>
+								<table class="table table-hover">
+									<tr>
+										<td>Статических страниц</td>
+										<td class="text-right"><?php echo $data['COUNT_STATICS']; ?></td>
+									</tr>
+
+									<tr>
+										<td>Привилегий</td>
+										<td class="text-right"><?php echo $data['COUNT_PERMISSIONS']; ?></td>
+									</tr>
+								</table>
+							</p>
+						</div>
+					</li>
+				</ul>
+			
+			</div>
+		</div>
+	</div>
+		
+</div>

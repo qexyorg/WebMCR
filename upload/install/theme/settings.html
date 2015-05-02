@@ -1,0 +1,99 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Настройки сайта</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div>
+		<form class="form-horizontal" method="POST">
+			<legend>Основные</legend>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSName">Название сайта</label>
+				<div class="controls">
+					<input type="text" name="s_name" class="span8" value="<?php echo $this->config->main['s_name']; ?>" id="inputSName" placeholder="Название сайта">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSDesc">Описание сайта</label>
+				<div class="controls">
+					<input type="text" name="s_about" class="span8" value="<?php echo $this->config->main['s_about']; ?>" id="inputSDesc" placeholder="Описание сайта">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSKeys">Ключевые слова</label>
+				<div class="controls">
+					<input type="text" name="s_keywords" class="span8" value="<?php echo $this->config->main['s_keywords']; ?>" id="inputSKeys" placeholder="Ключевые слова">
+				</div>
+			</div>
+
+			<legend>Почта</legend>
+
+			<div class="control-group">
+				<label class="control-label" for="inputFrom">От кого (E-Mail)</label>
+				<div class="controls">
+					<input type="text" name="from" class="span8" value="<?php echo $this->config->mail['from']; ?>" id="inputFrom" placeholder="С какого почтового ящика было отправлено сообщение">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputFromName">От кого (Имя)</label>
+				<div class="controls">
+					<input type="text" name="from_name" class="span8" value="<?php echo $this->config->mail['from_name']; ?>" id="inputFromName" placeholder="От чьего имени было отправлено сообщение">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputReply">E-Mail ответа</label>
+				<div class="controls">
+					<input type="text" name="reply" class="span8" value="<?php echo $this->config->mail['reply']; ?>" id="inputReply" placeholder="E-Mail ответа">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputReplyName">E-Mail ответа</label>
+				<div class="controls">
+					<input type="text" name="reply_name" class="span8" value="<?php echo $this->config->mail['reply_name']; ?>" id="inputReplyName" placeholder="Имя ответа">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSMTP">Использовать SMTP</label>
+				<div class="controls">
+					<select id="inputSMTP" name="smtp">
+						<option value="0">Нет</option>
+						<option value="1">Да</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSTMPHost">Адрес SMTP сервера</label>
+				<div class="controls">
+					<input type="text" name="smtp_host" class="span8" value="<?php echo $this->config->mail['smtp_host']; ?>" id="inputSTMPHost" placeholder="Адрес SMTP сервера">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSTMPUser">SMTP пользователь</label>
+				<div class="controls">
+					<input type="text" name="smtp_user" class="span8" value="<?php echo $this->config->mail['smtp_user']; ?>" id="inputSTMPUser" placeholder="Пользователь SMTP сервера">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSTMPPass">SMTP пароль</label>
+				<div class="controls">
+					<input type="text" name="smtp_pass" class="span8" value="<?php echo $this->config->mail['smtp_pass']; ?>" id="inputSTMPPass" placeholder="Пароль пользователя SMTP">
+				</div>
+			</div>
+
+			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+		</form>
+	</div>
+
+</div>

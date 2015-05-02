@@ -1,0 +1,45 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputText">Описание</label>
+			<div class="controls">
+				<textarea id="inputText" placeholder="Описание" name="text" maxlength="255" rows="5"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">IP адрес</label>
+			<div class="controls">
+				<input type="text" name="ip" value="<?php echo $data['IP']; ?>" id="inputTitle" placeholder="IP адрес сервера">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Порт</label>
+			<div class="controls">
+				<input type="text" name="port" value="<?php echo $data['PORT']; ?>" id="inputTitle" placeholder="Порт">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

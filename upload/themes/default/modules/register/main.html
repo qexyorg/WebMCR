@@ -1,0 +1,64 @@
+<div class="form-block">
+	<div class="block-header"><?php echo $this->lng['b_reg']; ?></div>
+	<div class="block-line"></div>
+
+	<div class="mcr-register">
+		<form class="form-horizontal" method="post">
+
+			<div class="control-group">
+				<label class="control-label" for="inputLogin"><?php echo $this->lng['reg_login']; ?></label>
+				<div class="controls">
+					<input type="text" name="login" class="span9" id="inputLogin" pattern="^[a-zA-Z0-9-_]{3,}$" maxlength="32" placeholder="<?php echo $this->lng['ph_login']; ?>" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputEmail"><?php echo $this->lng['reg_email']; ?></label>
+				<div class="controls">
+					<input type="email" name="email" class="span9" id="inputEmail" placeholder="<?php echo $this->lng['ph_email']; ?>" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputPassword"><?php echo $this->lng['reg_pass']; ?></label>
+				<div class="controls">
+					<input type="password" name="password" class="span9" id="inputPassword" pattern="^[^']{6,}$" placeholder="<?php echo $this->lng['ph_password']; ?>" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputRePassword"><?php echo $this->lng['reg_repass']; ?></label>
+				<div class="controls">
+					<input type="password" name="repassword" class="span9" id="inputRePassword" pattern="^[^']{6,}$" placeholder="<?php echo $this->lng['ph_repassword']; ?>" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputGender"><?php echo $this->lng['gender']; ?></label>
+				<div class="controls">
+					<select name="gender" id="inputGender">
+						<option value="0"><?php echo $this->lng['gender_m']; ?></option>
+						<option value="1"><?php echo $this->lng['gender_w']; ?></option>
+					</select>
+				</div>
+			</div>
+
+			<?php echo $this->captcha(); ?>
+
+			<div class="control-group">
+				<div class="controls">
+					<textarea rows="5" class="span9" readonly><?php echo $this->sp("rules.txt"); ?></textarea>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox" name="accept" value="1" required> <?php echo $this->lng['reg_accept']; ?>
+					</label>
+					<button type="submit" id="postbut" name="submit" class="btn"><?php echo $this->lng['reg_btn']; ?></button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

@@ -1,0 +1,68 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Установка</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div>
+		<form class="form-horizontal" method="POST">
+
+			<div class="control-group">
+				<label class="control-label" for="inputLogin">Логин администратора</label>
+				<div class="controls">
+					<input type="text" name="login" value="admin" id="inputLogin" placeholder="Логин" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Пароль администратора</label>
+				<div class="controls">
+					<input type="password" name="password" id="inputPassword" placeholder="Пароль администратора" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputRePassword">Повторите пароль</label>
+				<div class="controls">
+					<input type="password" name="repassword" id="inputRePassword" placeholder="Повторите пароль" required>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputType">Метод шифрования паролей</label>
+				<div class="controls">
+					<select name="method" id="inputType">
+						<option value="0">MD5</option>
+						<option value="1">SHA1</option>
+						<option value="2">SHA256</option>
+						<option value="3">SHA512</option>
+						<option value="4">Double MD5 [ md5(md5(PASS)) ]</option>
+						<option value="5">Salted MD5 [ md5(PASS+SALT) ]</option>
+						<option value="6">Salted MD5 [ md5(SALT+PASS) ]</option>
+						<option value="7">Salted Double MD5 [ md5(md5(SALT)+PASS) ]</option>
+						<option value="8">Salted Double MD5 [ md5(md5(PASS)+SALT) ]</option>
+						<option value="9">Salted Double MD5 [ md5(PASS+md5(SALT)) ]</option>
+						<option value="10">Salted Double MD5 [ md5(SALT+md5(PASS)) ]</option>
+						<option value="11">Salted SHA1 [ sha1(PASS+SALT) ]</option>
+						<option value="12">Salted SHA1 [ sha1(SALT+PASS) ]</option>
+						<option value="13">Triple salted MD5 [ md5(md5(SALT)+md5(PASS)) ]</option>
+						<option value="14">Salted SHA256 [ sha256(PASS+SALT) ]</option>
+						<option value="15">Salted SHA512 [ sha512(PASS+SALT) ]</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">E-Mail</label>
+				<div class="controls">
+					<input type="text" name="email" id="inputEmail" placeholder="E-Mail" required>
+				</div>
+			</div>
+
+			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+		</form>
+	</div>
+
+</div>

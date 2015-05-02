@@ -1,0 +1,98 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Настройки сайта</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="adm-settings">
+		<form method="post"></form>
+		<ul class="nav nav-tabs" id="myTab">
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+		</ul>
+		 
+		<div class="tab-content">
+			<div class="tab-pane active">
+
+				<form class="form-horizontal" method="post">
+
+					<div class="control-group">
+						<label class="control-label" for="input_from">От кого</label>
+						<div class="controls">
+							<input type="text" name="from" id="input_from" value="<?php echo $data['CFG']['from']; ?>" placeholder="От кого было отправлено сообщение">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_from_name">Имя отправителя</label>
+						<div class="controls">
+							<input type="text" name="from_name" value="<?php echo $data['CFG']['from_name']; ?>" id="input_from_name" placeholder="Имя отправителя">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_reply">E-Mail ответа</label>
+						<div class="controls">
+							<input type="text" name="reply" value="<?php echo $data['CFG']['reply']; ?>" id="input_reply" placeholder="E-Mail отправителя">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_reply_name">Имя отправителя ответа</label>
+						<div class="controls">
+							<input type="text" name="reply_name" value="<?php echo $data['CFG']['reply_name']; ?>" id="input_reply_name" placeholder="Имя отправителя ответа">
+						</div>
+					</div>
+
+					<legend>Настройки SMTP</legend>
+
+					<div class="control-group">
+						<label class="control-label" for="input_smtp">Использовать SMTP</label>
+						<div class="controls">
+							<select name="smtp" id="input_smtp">
+								<option value="0">Нет</option>
+								<option value="1" <?php echo $data['SMTP']; ?>>Да</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_smtp_host">SMTP сервер</label>
+						<div class="controls">
+							<input type="text" name="smtp_host" value="<?php echo $data['CFG']['smtp_host']; ?>" id="input_smtp_host" placeholder="Имя отправителя ответа">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_smtp_user">Имя пользователя</label>
+						<div class="controls">
+							<input type="text" name="smtp_user" value="<?php echo $data['CFG']['smtp_user']; ?>" id="input_smtp_user" placeholder="Имя пользователя">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_smtp_pass">Пароль</label>
+						<div class="controls">
+							<input type="password" name="smtp_pass" value="<?php echo $data['CFG']['smtp_pass']; ?>" id="input_smtp_pass" placeholder="Пароль">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" name="submit" class="btn">Сохранить</button>
+						</div>
+					</div>
+
+				</form>
+			
+			</div>
+		</div>
+	</div>
+		
+</div>

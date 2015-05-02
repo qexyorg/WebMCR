@@ -1,0 +1,18 @@
+<div class="form-block comment-id" id="<?php echo $data['ID']; ?>">
+
+	<div class="comment-id-content">
+		<?php echo $data['TEXT']; ?>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="block-footer">
+		<div class="date" rel="tooltip" title="Дата создания"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
+		<div class="time" rel="tooltip" title="Время создания"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
+		<div class="login"><a href="#" rel="tooltip" title="Отправлено пользователем"><?php echo $data['LOGIN']; ?></a></div>
+		<?php echo $data['ACTION_DELETE']; ?>
+		<?php echo $data['ACTION_EDIT']; ?>
+		<?php echo $data['ACTION_QUOTE']; ?>
+	</div>
+
+</div>

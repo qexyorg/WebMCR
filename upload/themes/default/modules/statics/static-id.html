@@ -1,0 +1,21 @@
+<div class="form-block static-page">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['TITLE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="static-content">
+		<?php echo $data['TEXT']; ?>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="block-footer">
+		<div class="date" rel="tooltip" title="Дата создания"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
+		<div class="time" rel="tooltip" title="Время создания"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
+		<div class="readmore"><a href="<?php echo BASE_URL; ?>">На главную</a></div>
+	</div>
+
+</div>

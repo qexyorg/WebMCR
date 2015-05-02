@@ -1,0 +1,6 @@
+<tr>
+	<td><?php echo $data['ID']; ?></td>
+	<td><a href="<?php echo BASE_URL; ?>?mode=news&id=<?php echo $data['ID']; ?>" target="_blank"><i class="icon-share-alt"></i></a> <?php echo $data['TITLE']; ?></td>
+	<td><a href="<?php echo BASE_URL; ?>?mode=news&id=<?php echo $data['CID']; ?>" target="_blank"><i class="icon-share-alt"></i></a> <?php echo $data['CATEGORY']; ?></td>
+	<td class="action"><input type="checkbox"  name="id[]" class="check-input" value="<?php echo $data['ID']; ?>"></td>
+</tr>

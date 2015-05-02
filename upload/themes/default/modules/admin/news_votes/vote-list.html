@@ -1,0 +1,38 @@
+<form method="post" class="panel-votes" action="<?php echo ADMIN_URL; ?>&do=news_votes&op=delete">
+	<div class="form-block">
+
+		<div class="block-header">
+			<div class="block-name">Просмотры</div>
+		</div>
+
+		<div class="block-line"></div>
+
+		<table class="table table-striped table table-hover">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Новость</th>
+					<th>Значение</th>
+					<th>Пользователь</th>
+					<th>Дата</th>
+					<th class="action">Действие <input type="checkbox" class="check-all" data-for="check-input"></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<?php echo $data['VOTES']; ?>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="form-block actions">
+		<?php echo $data['PAGINATION']; ?>
+		<div class="right-act">
+			Действие с просмотрами: 
+			<div class="btn-group">
+				<button class="btn remove" data-for="check-input" data-text="Вы уверены, что хотите удалить выбранные элементы?" type="submit" name="delete"><i class="icon-remove"></i></button>
+			</div>
+		</div>
+		
+	</div>
+</form>

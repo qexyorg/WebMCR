@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title><?php echo $data['CFG']['s_name']; ?> — <?php echo $data['TITLE']; ?></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<meta name="description" content="<?php echo $data['CFG']['s_about'] ?>">
+	<meta name="description" content="<?php echo $data['CFG']['s_keywords'] ?>">
+	<meta name="author" content="NC22 &amp; Qexy.org">
+	<meta name="style_url" content="<?php echo STYLE_URL; ?>">
+	<base href="<?php echo BASE_URL ?>">
+	<?php echo $data['DEF_HEADER']; ?>
+	<?php echo $data['HEADER']; ?>
+	<script type="text/javascript">
+		$(function(){
+			$('form[method="post"]').prepend('<input type="hidden" name="mcr_secure" value="<?php echo MCR_SECURE_KEY; ?>">');
+		});
+	</script>
+</head>
+
+<body>
+<!-- <?php echo $this->config->main['rc_public']; ?> -->
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+
+			<a class="brand" href="<?php echo BASE_URL; ?>"><?php echo $data['CFG']['s_name']; ?></a>
+
+			<div class="nav-collapse collapse">
+
+				<ul class="nav">
+					<?php echo $data['MENU']; ?>
+				</ul>
+
+				<?php echo $data['SEARCH']; ?>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<header class="jumbotron subhead">
+	<div class="container">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span9">
+					<h1><?php echo $data['CFG']['s_name']; ?></h1>
+					<p class="lead"><?php echo $data['CFG']['s_about'] ?></p>
+				</div>
+
+				<div class="span3" style="margin-top: 30px;">
+					<p class="lead" ><a href="index.php?mode=start"><?php echo $this->lng['load_client']; ?></a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+<?php echo $data['ADVICE']; ?>
+
+<div class="container">
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<!-- Левый контейнер -->
+			<div class="span4 main-content">
+
+				<?php echo $data['L_BLOCKS']; ?>
+
+			</div>
+			<!-- /.Левый контейнер -->
+
+			<!-- Правый контейнер -->
+			<div class="span8">
+				<?php echo $data['BREADCRUMBS']; ?>
+
+				<?php echo $data['CONTENT']; ?>
+
+			</div>
+			<!-- /.Правый контейнер	-->
+		</div>
+	</div>
+</div>
+
+<div class="navbar navbar-fixed-bottom">
+	<div class="navbar-inner">
+		<div class="footer-block">
+			<div class="left-side"><?php echo $this->lng['copy_pre']; ?> <?php echo $data['CFG']['s_name']; ?> <?php echo $this->lng['copy_app']; ?></div>
+			<div class="right-side"><?php echo FEEDBACK; ?> | <?php echo VERSION; ?></div>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputCategory">Категория</label>
+			<div class="controls">
+				<select name="cid" id="inputCategory"><?php echo $data['CATEGORIES']; ?></select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputShortText">Краткое описание</label>
+			<div class="controls">
+				<?php echo $data['BB_PANEL_SHORT']; ?>
+				<textarea id="inputShortText" class="input-block-level" data-for="bb-short" placeholder="Краткое описание" name="text_short" rows="4"><?php echo $data['TEXT_SHORT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputText">Полное описание</label>
+			<div class="controls">
+				<?php echo $data['BB_PANEL_FULL']; ?>
+				<textarea id="inputText" class="input-block-level" data-for="bb-full" placeholder="Полное описание" name="text" rows="8"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox" name="vote" value="1" <?php echo $data['VOTE']; ?>> Включить голосования
+				</label>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox" name="discus" value="1" <?php echo $data['DISCUS']; ?>> Включить комметарии
+				</label>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox">
+					<input type="checkbox" name="attach" value="1" <?php echo $data['ATTACH']; ?>> Закрепить
+				</label>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

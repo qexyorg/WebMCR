@@ -1,0 +1,9 @@
+	<div class="navbar navbar-inverse" id="spl_adm_grp_<?php echo $data['ID']; ?>">
+		<div class="navbar-inner">
+			<a class="brand spl-btn <?php echo $data['STATUS']; ?> session" data-click="spl_adm_grp_<?php echo $data['ID']; ?>" title="<?php echo $data['TEXT'];; ?>" href="#"><?php echo $data['TITLE']; ?></a>
+		</div>
+	</div>
+
+	<ul class="spl-body <?php echo $data['STATUS']; ?>" id="spl_adm_grp_<?php echo $data['ID']; ?>">
+		<?php echo $data['ITEMS']; ?>
+	</ul>

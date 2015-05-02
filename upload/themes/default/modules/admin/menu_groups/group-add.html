@@ -1,0 +1,47 @@
+<div class="form-block menu-group-change">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="textareaText">Описание</label>
+			<div class="controls">
+				<textarea name="text" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectPerm">Уровень доступа</label>
+			<div class="controls">
+				<select size="6" name="permissions" id="selectPerm">
+					<?php echo $data['PERMISSIONS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputPriority">Приоритет</label>
+			<div class="controls">
+				<input type="text" name="priority" value="<?php echo $data['PRIORITY']; ?>" pattern="^\d+$" id="inputPriority" placeholder="Приоритет позиции меню (По умолчанию 1)">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

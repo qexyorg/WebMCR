@@ -1,0 +1,29 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Настройки сайта</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="adm-settings">
+		<form method="post"></form>
+		<ul class="nav nav-tabs" id="myTab">
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+		</ul>
+		 
+		<div class="tab-content">
+			<div class="tab-pane active">
+
+				<?php echo $data['ITEMS']; ?>
+			
+			</div>
+		</div>
+	</div>
+		
+</div>

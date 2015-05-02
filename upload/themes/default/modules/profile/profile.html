@@ -1,0 +1,128 @@
+<div class="form-block profile">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $this->lng['t_profile']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="profile-content">
+		<div class="navbar">
+			<div class="navbar-inner">
+				<b class="brand" href="#"><?php echo $this->user->login; ?></b>
+				<ul class="nav">
+					 <li class="active"><a href="#tab1" data-toggle="tab">Информация</a></li>
+					 <li><a href="#tab2" data-toggle="tab">Образ</a></li>
+					 <li><a href="#tab3" data-toggle="tab">Настройки</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="tabbable">
+			<div class="tab-content">
+
+				<div class="tab-pane active" id="tab1">
+
+					<div class="profile-info">
+						<div class="info-line"><b>Логин:</b> <span><?php echo $this->user->login; ?></span></div>
+						<div class="info-line"><b>E-Mail:</b> <span><?php echo $this->user->email; ?></span></div>
+						<div class="info-line"><b>Группа:</b> <span><?php echo $this->user->group; ?></span></div>
+						<div class="info-line"><b>Дата регистрации:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_create); ?></span></div>
+						<div class="info-line"><b>Последнее действие:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_last); ?></span></div>
+
+						<div class="info-line"><b>Имя:</b> <span><?php echo $this->user->data->firstname; ?></span></div>
+						<div class="info-line"><b>Фамилия:</b> <span><?php echo $this->user->data->lastname; ?></span></div>
+						<div class="info-line"><b>Пол:</b> <span><?php echo $this->user->gender; ?></span></div>
+						<div class="info-line"><b>Дата рождения:</b> <span><?php echo date("d.m.Y", $this->user->data->birthday); ?></span></div>
+						<div class="info-line"><b>Игровой баланс:</b> <span><?php echo $this->user->money; ?> майн.</span></div>
+						<div class="info-line"><b>Реальный баланс:</b> <span><?php echo $this->user->realmoney; ?> руб.</span></div>
+						<!--<div class="info-line"><b>Игровой баланс:</b> <span><?php echo $this->user->money; ?></span></div>-->
+					</div>
+					
+				</div>
+
+				<div class="tab-pane" id="tab2">
+
+					<div class="skin-block">
+						<div class="profile-skin" style="background-image: url('<?php echo BASE_URL; ?>uploads/skins/interface/<?php echo $this->user->skin; ?>.png');"></div>
+					</div>
+
+					<div class="uploader-forms">
+						<form class="skin-uploader" enctype="multipart/form-data" method="POST">
+							<input type="file" name="skin" class="file-inputs" title="Перенесите сюда новый скин персонажа">
+							<button class="btn" name="del-skin" value="1">Удалить скин</button>
+						</form>
+
+						<form class="cloak-uploader" enctype="multipart/form-data" method="POST">
+							<input type="file" name="cloak" class="file-inputs" title="Перенесите сюда новый плащ персонажа">
+							<button class="btn" name="del-cloak" value="1">Удалить плащ</button>
+						</form>
+					</div>
+				
+				</div>
+
+				<div class="tab-pane" id="tab3">
+					<form class="form-horizontal settings" method="post">
+						<div class="control-group">
+							<label class="control-label" for="inputFName">Имя</label>
+							<div class="controls">
+								<input type="text" name="firstname" id="inputFName" value="<?php echo $this->user->data->firstname; ?>" maxlength="24" placeholder="Имя" pattern="^[а-яА-ЯёЁa-zA-Z]+$">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="inputLName">Фамилия</label>
+							<div class="controls">
+								<input type="text" name="lastname" id="inputLName" value="<?php echo $this->user->data->lastname; ?>" maxlength="24" pattern="^[а-яА-ЯёЁa-zA-Z]+$" placeholder="Фамилия">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="inputLBirthday">Дата рождения</label>
+							<div class="controls">
+								<input type="text" name="birthday" id="inputBirthday" maxlength="10" pattern="^\d{2}.\d{2}.\d{4}$" placeholder="Дата рождения">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="inputOldpass">Старый пароль</label>
+							<div class="controls">
+								<input type="password" name="oldpass" id="inputOldpass" placeholder="Старый пароль">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="inputNewpass"><?php echo $this->lng['int_newpass']; ?></label>
+							<div class="controls">
+								<input type="password" name="newpass" id="inputNewpass" placeholder="<?php echo $this->lng['int_newpass']; ?>">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="inputRepass">Повторите пароль</label>
+							<div class="controls">
+								<input type="password" name="repass" id="inputRepass" placeholder="Повторите пароль">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<div class="controls">
+								<button type="submit" name="settings" class="btn">Сохранить</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+</div>
+<script>
+	$('#inputBirthday').datetimepicker({
+		lang:'ru',
+		timepicker:false,
+		value:'<?php echo date("d-m-Y", $this->user->data->birthday); ?>',
+		format:'d-m-Y'
+	});
+</script>

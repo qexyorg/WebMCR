@@ -1,0 +1,33 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+
+		<div class="control-group">
+			<label class="control-label" for="inputCategory">Новость</label>
+			<div class="controls">
+				<select name="nid" id="inputCategory"><?php echo $data['NEWS']; ?></select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputText">Комментарий</label>
+			<div class="controls">
+				<?php echo $data['BB_PANEL']; ?>
+				<textarea id="inputText" placeholder="Текст комментария" data-for="bb-comment" class="input-block-level" name="text" rows="6"><?php echo $data['TEXT']; ?></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

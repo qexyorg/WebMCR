@@ -1,0 +1,16 @@
+<div class="form-block comment-list">
+
+	<div class="block-header">
+		<div class="block-name">Комментарии (<span id="comment-count"><?php echo $data['COUNT']; ?></span>)</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="comment-list-content">
+		<?php echo $data['COMMENTS']; ?>
+	</div>
+
+	<?php echo $data['PAGINATION']; ?>
+	
+	<?php echo $data['COMMENTS_FORM']; ?>
+</div>

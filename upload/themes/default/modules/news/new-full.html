@@ -1,0 +1,27 @@
+<div class="form-block new-full">
+
+	<div class="block-header">
+		
+		<div class="block-name"><?php echo $data['TITLE']; ?></div>
+
+		<?php echo $data['LIKES']; ?>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="new-full-content">
+		<?php echo $data['TEXT']; ?>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="block-footer">
+		<div class="date" rel="tooltip" title="Дата создания"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
+		<div class="time" rel="tooltip" title="Время создания"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
+		<div class="category"><a href="<?php echo BASE_URL; ?>?mode=news&amp;cid=<?php echo $data['CID']; ?>" rel="tooltip" title="Категория"><?php echo $data['CATEGORY']; ?></a></div>
+		<div class="readmore"><a href="<?php echo BASE_URL; ?>">На главную</a></div>
+		<div class="views" rel="tooltip" title="Просмотров"><i class="icon-eye-open"></i><?php echo $data['VIEWS']; ?></div>
+	</div>
+
+</div>
+<?php echo $data['COMMENTS']; ?>

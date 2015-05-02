@@ -1,0 +1,59 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<div class="control-group">
+			<label class="control-label" for="inputTitle">Название</label>
+			<div class="controls">
+				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputUrl">Ссылка</label>
+			<div class="controls">
+				<input type="text" name="url" value="<?php echo $data['URL']; ?>" id="inputUrl" placeholder="URL">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectParent">Позиция</label>
+			<div class="controls">
+				<select size="6" name="parent" id="selectParent">
+					<?php echo $data['PARENTS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectTarget">Открытие</label>
+			<div class="controls">
+				<select id="selectTarget" name="target">
+					<option value="_self">В текущей вкладке</option>
+					<option value="_blank" <?php echo $data['TARGET']; ?>>В новой вкладке</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="selectPerm">Уровень доступа</label>
+			<div class="controls">
+				<select size="6" name="permissions" id="selectPerm">
+					<?php echo $data['PERMISSIONS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

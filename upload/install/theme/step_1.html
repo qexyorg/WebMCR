@@ -1,0 +1,133 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name">Подготовка к установке</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div>
+		<p>Вас приветствует мастер установки системы WebMCR</p>
+		<p>Для продолжения вам необходимо сверить результаты проверки. Если результаты проверки помечены красным, вам необходимо настроить сервер так, чтобы значение соответствовало системным требованиям</p>
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>Системные требования</th>
+					<th>Результат проверки</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>PHP >= 5.1</td>
+					<td><?php echo $data["PHP"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Register Globals</td>
+					<td><?php echo $data['REG_GLOB']; ?></td>
+				</tr>
+
+				<tr>
+					<td>allow_url_fopen</td>
+					<td><?php echo $data['URL_FOPEN']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Наличие библиотеки GD</td>
+					<td><?php echo $data['GD']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Поддержка MySQL</td>
+					<td><?php echo $data['MYSQL']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Буферизация вывода</td>
+					<td><?php echo $data['BUFER']; ?></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>Доступ к файлам и папкам</th>
+					<th>Результат проверки</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>Чтение и запись | configs/</td>
+					<td><?php echo $data["FOLDER_CONFIGS"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/db.php</td>
+					<td><?php echo $data['FILE_DB']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/functions.php</td>
+					<td><?php echo $data['FILE_FUNCTIONS']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/mail.php</td>
+					<td><?php echo $data['FILE_MAIL']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/main.php</td>
+					<td><?php echo $data['FILE_MAIN']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/pagin.php</td>
+					<td><?php echo $data['FILE_PAGIN']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | configs/search.php</td>
+					<td><?php echo $data['FILE_SEARCH']; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/</td>
+					<td><?php echo $data["FOLDER_UPLOADS"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/cloaks/</td>
+					<td><?php echo $data["FOLDER_CLOAKS"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/panel-icons/</td>
+					<td><?php echo $data["FOLDER_ICONS"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/skins/</td>
+					<td><?php echo $data["FOLDER_SKINS"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/skins/interface/</td>
+					<td><?php echo $data["FOLDER_INTERF"]; ?></td>
+				</tr>
+
+				<tr>
+					<td>Чтение и запись | uploads/smiles/</td>
+					<td><?php echo $data["FOLDER_SMILES"]; ?></td>
+				</tr>
+			</tbody>
+		</table>
+		<form method="post">
+			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+		</form>
+	</div>
+
+</div>
