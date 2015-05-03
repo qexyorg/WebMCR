@@ -67,12 +67,12 @@ class menu{
 	private function create_tree($categories){
 		$tree = array();
 
-		$this->new_tree_element(&$categories, &$tree, null);
+		$this->new_tree_element($categories, $tree, null);
 
 		return $tree;
 	}
 
-	private function new_tree_element($categories, &$tree, $parent){
+	private function new_tree_element(&$categories, &$tree, $parent){
 
 		foreach($categories as $key => $ar){
 
