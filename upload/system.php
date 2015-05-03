@@ -32,7 +32,7 @@ $core = new core();
 
 // Debug
 ini_set("display_errors", $core->config->main['debug']);
-$warn_type = ($core->config->main['debug'] && $core->user->permissions->sys_debug) ? E_ALL : 0;
+$warn_type = ($core->config->main['debug']) ? E_ALL : 0;
 error_reporting($warn_type);
 
 $base_url = ($core->config->main['install']) ? $core->base_url() : $core->config->main['s_root'];
