@@ -2,8 +2,6 @@
 
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
-if(!session_start()){ session_start(); }
-
 ini_set("upload_max_filesize", "50M");
 ini_set("post_max_size", "50M");
 
@@ -19,6 +17,9 @@ define('MCR_LANG_PATH', MCR_ROOT.'language/');
 define('MCR_UPL_PATH', MCR_ROOT.'uploads/');
 define('MCR_SKIN_PATH', MCR_UPL_PATH.'skins/');
 define('MCR_CLOAK_PATH', MCR_UPL_PATH.'cloaks/');
+
+session_save_path(MCR_UPL_PATH.'tmp');
+if(!session_start()){ session_start(); }
 
 // Set default charset
 header('Content-Type: text/html; charset=UTF-8');
