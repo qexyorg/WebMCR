@@ -79,7 +79,7 @@ class menu{
 			if(intval($ar['parent']) == $parent){
 				$tree[$key] = $categories[$key];
 				$tree[$key]['sons'] = array();
-				$this->new_tree_element($categories, &$tree[$key]['sons'], $key);
+				$this->new_tree_element($categories, $tree[$key]['sons'], $key);
 			}
 			if(empty($tree['sons'])){ unset ($tree['sons']); }
 
