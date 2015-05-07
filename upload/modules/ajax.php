@@ -128,7 +128,9 @@ class module{
 			if($json->status=='online'){
 				$status = 'progress-info';
 				$stats = $json->players.' / '.$json->slots;
-				$progress = ceil($json->slots / 100 * $json->players);
+
+				$progress = ($json->players<=0) ? 0 : ceil(100 / ($json->slots / $json->players));
+				
 			}else{
 				$status = 'progress-danger';
 				$stats = 'Сервер оффлайн';
