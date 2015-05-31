@@ -1,7 +1,7 @@
 function load_last_version(){
 
 	$.ajax({
-		url: "http://api.webmcr.loc/?do=versions&limit=1",
+		url: "http://api.webmcr.com/?do=versions&limit=1",
 		beforeSend: function(){ $("#api-engine-version").html($.mcr.loader); },
 		dataType: "json",
 		success: function(json){
