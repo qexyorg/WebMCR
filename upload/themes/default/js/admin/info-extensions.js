@@ -1,7 +1,7 @@
 function load_extensions(){
 
 	$.ajax({
-		url: "http://api.webmcr.loc/?do=extensions&limit=12",
+		url: "http://api.webmcr.com/?do=extensions&limit=12",
 		beforeSend: function(){ $(".adm-info-modules .thumbnails").html($.mcr.loader); },
 		dataType: "json",
 		success: function(json){
