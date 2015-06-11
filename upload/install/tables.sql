@@ -14,14 +14,14 @@ CREATE TABLE IF NOT EXISTS `mcr_groups` (
   `description` varchar(255) NOT NULL,
   `permissions` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
 CREATE TABLE IF NOT EXISTS `mcr_iconomy` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `login` varchar(32) CHARACTER SET latin1 NOT NULL,
-  `money` float NOT NULL DEFAULT '0',
-  `realmoney` float NOT NULL DEFAULT '0',
-  `bank` float NOT NULL DEFAULT '0',
+  `money` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `realmoney` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `bank` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line

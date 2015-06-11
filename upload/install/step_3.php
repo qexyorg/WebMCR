@@ -274,6 +274,8 @@ class module{
 
 			$_SESSION['step_3'] = true;
 
+			file_get_contents("http://api.webmcr.com/?do=install&domain=".$_SERVER['SERVER_NAME']);
+
 			$this->core->notify('Завершение установки', 'Настройки', 4, 'install/?mode=settings');
 
 		}

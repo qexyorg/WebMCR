@@ -6,7 +6,7 @@
 
 	<div class="block-content">
 		<form class="block-profile" method="post" action="<?php echo BASE_URL; ?>?mode=logout">
-			<div class="avatar"><img src="<?php echo BASE_URL; ?>uploads/skins/interface/<?php echo $this->user->skin; ?>_mini.png" class="img-polaroid"></div>
+			<div class="avatar"><img src="<?php echo BASE_URL; ?>uploads/skins/interface/<?php echo $this->user->skin; ?>_mini.png?<?php echo mt_rand(1000,9999); ?>" class="img-polaroid"></div>
 			<ul class="info">
 				<li><i class="icon-user"></i> <b><?php echo $this->lng['m-p_login']; ?>:</b> <?php echo $this->user->login; ?></li>
 				<li><i class="icon-list-alt"></i> <b><?php echo $this->lng['m-p_group']; ?>:</b> <?php echo $this->user->group; ?></li>
