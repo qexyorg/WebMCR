@@ -109,14 +109,15 @@ class module{
 	}
 
 	private function settings(){
+
+		if(!empty($_POST['firstname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['firstname'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=profile'); }
+		if(!empty($_POST['lastname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['lastname'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=profile'); }
+		if(!empty($_POST['birthday']) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $_POST['birthday'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=profile'); }
+
 		$firstname = @$_POST['firstname'];
 		$lastname = @$_POST['lastname'];
 		$birthday = @$_POST['birthday'];
-
-		if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=profile'); }
-		if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=profile'); }
-		if(!preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=profile'); }
-
+		
 		$birthday = intval(strtotime($birthday));
 		$newpass = $this->user->password;
 		$newsalt = $this->user->salt;
