@@ -161,7 +161,7 @@ class cloak{
 	public function is_cloak_valid($size){
 		$formats = $this->core->get_array_formats();
 
-		$max_ratio = $this->user->permissions->max_ratio;
+		$max_ratio = $this->user->permissions->sys_max_ratio;
 
 		if($max_ratio<=0){ return false; }
 
