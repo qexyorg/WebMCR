@@ -149,7 +149,7 @@ class skin{
 	public function is_skin_valid($size){
 		$formats = $this->core->get_array_formats();
 
-		$max_ratio = $this->user->permissions->max_ratio;
+		$max_ratio = $this->user->permissions->sys_max_ratio;
 
 		if($max_ratio<=0){ return false; }
 
