@@ -151,7 +151,15 @@ class core{
 	 * @return String - адрес сайта
 	 */
 	public function base_url(){
-		return "http://".$_SERVER['HTTP_HOST']."/";
+
+		$pos = strripos($_SERVER['PHP_SELF'], 'install/index.php');
+
+		if($pos===false){
+			$pos = strripos($_SERVER['PHP_SELF'], 'index.php');
+		}
+
+
+		return mb_substr($_SERVER['PHP_SELF'], 0, $pos, 'UTF-8');
 	}
 
 	/**
@@ -166,9 +174,9 @@ class core{
 	 *
 	*/
 	public function pagination($res=10, $page='', $count=0, $theme=''){
-		ob_start();
+		
 
-		if($this->db===false){ return ob_get_clean(); }
+		if($this->db===false){ return; }
 
 		$pid = (isset($_GET['pid'])) ? intval($_GET['pid']) : 1;
 
@@ -176,7 +184,7 @@ class core{
 
 		$max	= intval(ceil($count / $res));
 
-		if($pid<=0 || $pid>$max){ return ob_get_clean(); }
+		if($pid<=0 || $pid>$max){ return; }
 
 		if($max>1){
 
@@ -249,9 +257,10 @@ class core{
 				"PAGE_LAST" => $page_last
 			);
 
-			echo $this->sp($path."object.html", $data);
+			return $this->sp($path."object.html", $data);
 		}
-		return ob_get_clean();
+
+		return;
 	}
 
 	/**
@@ -292,6 +301,7 @@ class core{
 	 * Генератор случайной строки
 	 * @param $length - длина строки (integer)
 	 * @param $safe - По умолчанию строка будет состоять только из латинских букв и цифр (boolean)
+	 * @return String
 	 */
 	public function random($length=10, $safe = true) {
 		$chars	= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRQSTUVWXYZ0123456789";
@@ -307,6 +317,11 @@ class core{
 		return $string;
 	}
 
+	/**
+	 * Генератор списка хлебных крошек
+	 * @param Array $array - массив элементов списка
+	 * @return Buffer string
+	 */
 	private function gen_bc_list($array=array()){
 
 		if(empty($array)){ return; }
@@ -331,18 +346,24 @@ class core{
 		return ob_get_clean();
 	}
 
+	/**
+	 * Генератор хлебных крошек
+	 * @param Array $array - массив элементов списка
+	 * @return Buffer string
+	 */
 	public function gen_bc($array=array()){
 		if(!$this->config->func['breadcrumbs']){ return false; }
 
 		$data['LIST'] = $this->gen_bc_list($array);
 
-		ob_start();
-
-		echo $this->sp(MCR_THEME_PATH."breadcrumbs/list.html", $data);
-
-		return ob_get_clean();
+		return $this->sp(MCR_THEME_PATH."breadcrumbs/list.html", $data);
 	}
 
+	/**
+	 * Подгрузчик модулей
+	 * @param String $mode - название модуля
+	 * @return Object
+	 */
 	public function load_mode($mode){
 		if(!file_exists(MCR_MODE_PATH.$mode.".php")){ $this->title = $this->lng['e_mode_found']; return $this->sp(MCR_THEME_PATH."default_sp/404.html"); }
 		
@@ -357,10 +378,16 @@ class core{
 		return $module->content();
 	}
 
+	/**
+	 * Системный генератор хэшей паролей пользователей
+	 * @param String $string - исходный пароль
+	 * @param String $salt - соль
+	 * @param Integer $crypt - метод шифрования (По умолчанию md5)
+	 * @return String
+	 */
 	public function gen_password($string='', $salt='', $crypt=false){
-		if($crypt===false){
-			$crypt = $this->config->main['crypt'];
-		}
+		if($crypt===false){ $crypt = $this->config->main['crypt']; }
+
 		switch($crypt) {
 			case 1: return sha1($string); break;
 
@@ -396,6 +423,10 @@ class core{
 		}
 	}
 
+	/**
+	 * Подгрузчик модулей по умолчанию (прямой загрузчик без лишних проверок)
+	 * @param String $mode - название модуля
+	 */
 	public function load_def_mode($mode){
 		
 		include_once(MCR_MODE_PATH.$mode.".php");
@@ -405,6 +436,10 @@ class core{
 		return $module->content();
 	}
 
+	/**
+	 * Загрузчик блоков боковой панели
+	 * @return Buffer string or false
+	 */
 	public function load_def_blocks(){
 		$list = scandir(MCR_SIDE_PATH);
 
@@ -422,6 +457,12 @@ class core{
 		return ob_get_clean();
 	}
 
+	/**
+	 * Загрузка статической страницы
+	 * @param String $path - путь к файлу
+	 * @param Array $data - параметры, передаваемые через массив
+	 * @return Buffer string
+	 */
 	public function sp($path, $data=array()){
 		ob_start();
 		
@@ -430,6 +471,10 @@ class core{
 		return ob_get_clean();
 	}
 
+	/**
+	 * Загрузка советов
+	 * @return string
+	 */
 	public function advice(){
 
 		if(!$this->config->func['advice']){ return ''; }
@@ -438,18 +483,14 @@ class core{
 		$size = count($data);
 		$sp_data["ADVICE"] = ($size<=0) ? $this->lng['e_advice_found'] : $data[rand(0, $size-1)];
 
-		ob_start();
-
-		echo $this->sp(MCR_THEME_PATH."default_sp/advice.html", $sp_data);
-
-		return ob_get_clean(); 
+		return $this->sp(MCR_THEME_PATH."default_sp/advice.html", $sp_data);
 	}
 
 	/**
 	  * Поиск размеров скина или плаща по форматам
 	  * @param $width - width of skin
 	  * @param $height - height of skin
-	  * @return key of format (integer)
+	  * @return key of format (integer) or false (boolean)
 	  *
 	  */
 	public function find_in_formats($width, $height){
@@ -460,6 +501,9 @@ class core{
 		return false;
 	}
 
+	/**
+	 * Поворот изображения по заданым параметрам из исходного изображения
+	 */
 	public function imageflip(&$result, &$img, $rx = 0, $ry = 0, $x = 0, $y = 0, $size_x = null, $size_y = null){
 		if($size_x < 1){
 			$size_x = imagesx($img);
@@ -474,7 +518,7 @@ class core{
 
 	/**
 	  * Получить массив доступных форматов скинов и плащей
-	  * @return formats (array)
+	  * @param formats (array)
 	  *
 	  */
 	public function get_array_formats(){
@@ -515,6 +559,16 @@ class core{
 		return $array;
 	}
 
+	/**
+	  * Отправка почты через PHPMailer
+	  * @param String $to - кому
+	  * @param String $subject - тема письма
+	  * @param String $message - текст сообщения
+	  * @param String $altmessage - альтернативное сообщение
+	  * @param Boolean $smtp - отправка почты через SMTP
+	  * @param Boolean $cc - отправлять копию письма
+	  * @return Boolean
+	  */
 	public function send_mail($to, $subject='[WebMCR]', $message='', $altmassage='', $smtp=false, $cc=false){
 		require(MCR_TOOL_PATH.'smtp/PHPMailerAutoload.php');
 
@@ -602,11 +656,7 @@ class core{
 			default: return; break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 
 	public function safestr($string=''){
@@ -660,13 +710,9 @@ class core{
 
 		$type = (isset($_GET['type'])) ? $_GET['type'] : 'news';
 
-		ob_start();
-
 		$data['SEARCH_ELEMENTS'] = $this->search_array($type);
 
-		echo $this->sp(MCR_THEME_MOD."search/form.html", $data);
-
-		return ob_get_clean();
+		return $this->sp(MCR_THEME_MOD."search/form.html", $data);
 	}
 
 	public function perm_list($selected=''){
