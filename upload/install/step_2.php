@@ -28,15 +28,15 @@ class module{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
-			$this->config->db['host'] = $this->db->HSC(@$_POST['host']);
+			$this->config->db['host'] = @$_POST['host'];
 
-			$this->config->db['port'] = intval(@$_POST['port']);
+			$this->config->db['port'] = intval(@$_POST['port'];
 
-			$this->config->db['base'] = $this->db->HSC(@$_POST['base']);
+			$this->config->db['base'] = @$_POST['base'];
 
-			$this->config->db['user'] = $this->db->HSC(@$_POST['user']);
+			$this->config->db['user'] = @$_POST['user'];
 
-			$this->config->db['pass'] = $this->db->HSC(@$_POST['pass']);
+			$this->config->db['pass'] = @$_POST['pass'];
 
 			$this->config->db['backend'] = (@$_POST['type']=='mysqli') ? 'mysqli' : 'mysql';
 
