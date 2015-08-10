@@ -30,7 +30,7 @@ class module{
 
 			$this->config->db['host'] = @$_POST['host'];
 
-			$this->config->db['port'] = intval(@$_POST['port'];
+			$this->config->db['port'] = intval(@$_POST['port']);
 
 			$this->config->db['base'] = @$_POST['base'];
 
