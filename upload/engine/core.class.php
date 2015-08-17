@@ -365,7 +365,7 @@ class core{
 	 * @return Object
 	 */
 	public function load_mode($mode){
-		if(!file_exists(MCR_MODE_PATH.$mode.".php")){ $this->title = $this->lng['e_mode_found']; return $this->sp(MCR_THEME_PATH."default_sp/404.html"); }
+		if(!preg_match("/^\w+$/i", $mode) || !file_exists(MCR_MODE_PATH.$mode.".php")){ $this->title = $this->lng['e_mode_found']; return $this->sp(MCR_THEME_PATH."default_sp/404.html"); }
 		
 		include_once(MCR_MODE_PATH.$mode.".php");
 
