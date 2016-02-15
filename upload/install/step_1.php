@@ -34,7 +34,7 @@ class module{
 
 			if(!function_exists('ImageCreateFromJpeg')){ $this->core->notify('Ошибка!', 'Библиотека GD не найдена', 2, 'install/?mode=step_1'); }
 
-			if(!function_exists('mysql_query')){ $this->core->notify('Ошибка!', 'MySQL не найдена', 2, 'install/?mode=step_1'); }
+			if(!function_exists('mysql_query') && !function_exists('mysqli_query')){ $this->core->notify('Ошибка!', 'MySQL не найдена', 2, 'install/?mode=step_1'); }
 
 			if(!function_exists('ob_start')){ $this->core->notify('Ошибка!', 'Функции буферизации данных недоступны', 2, 'install/?mode=step_1'); }
 
@@ -75,7 +75,7 @@ class module{
 			"REG_GLOB" => (@ini_get('register_globals')=='on') ? '<b class="text-error">Вкл.</b>' : '<b class="text-success">Выкл.</b>',
 			"URL_FOPEN" => (@ini_get('allow_url_fopen')=='1' || @ini_get('allow_url_fopen')=='true') ? '<b class="text-success">Вкл.</b>' : '<b class="text-error">Выкл.</b>',
 			"GD" => (function_exists('ImageCreateFromJpeg')) ? '<b class="text-success">Да</b>' : '<b class="text-error">Нет</b>',
-			"MYSQL" => (function_exists("mysql_query")) ? '<b class="text-success">Да</b>' : '<b class="text-error">Нет</b>',
+			"MYSQL" => (function_exists("mysql_query") || function_exists("mysqli_query")) ? '<b class="text-success">Да</b>' : '<b class="text-error">Нет</b>',
 			"BUFER" => (function_exists("ob_start")) ? '<b class="text-success">Да</b>' : '<b class="text-error">Нет</b>',
 
 			"FOLDER_CONFIGS" => (is_writable(MCR_ROOT.'configs') && is_readable(MCR_ROOT.'configs')) ? '<b class="text-success">Да</b>' : '<b class="text-error">Нет</b>',
