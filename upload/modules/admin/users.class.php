@@ -178,8 +178,8 @@ class submodule{
 
 			$gender = (intval(@$_POST['gender'])==1) ? 1 : 0;
 
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=add'); }
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=add'); }
+			if(!preg_match("/^[а-яА-ЯёЁa-zA-Z]+$/ui", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=add'); }
+			if(!preg_match("/^[а-яА-ЯёЁa-zA-Z]+$/ui", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=add'); }
 			if(!preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=admin&do=users&op=add'); }
 
 			$birthday = intval(strtotime($birthday));
@@ -292,8 +292,8 @@ class submodule{
 
 			$gender = (intval(@$_POST['gender'])==1) ? 1 : 0;
 
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/i", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/i", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!preg_match("/^[а-яА-ЯёЁa-zA-Z]+$/ui", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!preg_match("/^[а-яА-ЯёЁa-zA-Z]+$/ui", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 			if(!preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 
 			$birthday = intval(strtotime($birthday));
