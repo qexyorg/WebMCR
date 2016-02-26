@@ -43,7 +43,7 @@ class core{
 		require_once(MCR_TOOL_PATH.'db/'.$this->config->db['backend'].'.class.php');
 
 		// Create & set new object of database
-		$this->db = new db($this->config, $lng);
+		$this->db = new db($this->config);
 
 		// Load user class
 		require_once(MCR_TOOL_PATH.'user.class.php');
