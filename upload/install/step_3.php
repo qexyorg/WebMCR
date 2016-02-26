@@ -131,7 +131,7 @@ class module{
 
 			$_SESSION['step_3'] = true;
 
-			file_get_contents("http://api.webmcr.com/?do=install&domain=".$_SERVER['SERVER_NAME']);
+			@file_get_contents("http://api.webmcr.com/?do=install&domain=".$_SERVER['SERVER_NAME']);
 
 			$this->core->notify($this->lng_m['finish'], $this->lng_m['mod_name'], 4, 'install/?mode=settings');
 
