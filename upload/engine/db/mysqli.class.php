@@ -8,7 +8,7 @@ class db{
 	private $config;
 
 	public $count_queries = 0;
-	public $count_queries_real = 0;
+	public $count_queries_real = 2;
 
 	public function __construct($config){
 
@@ -16,13 +16,14 @@ class db{
 
 		$this->obj = @new mysqli($config->db['host'], $config->db['user'], $config->db['pass'], $config->db['base'], $config->db['port']);
 
-		if(mysqli_connect_errno($this->obj)){ return; }
+		if($this->obj->connect_errno){ return; }
 
 		if(!$this->obj->set_charset("utf8")){ return; }
 	}
 
 	public function query($string){
 		$this->count_queries += 1;
+		$this->count_queries_real +=1;
 
 		$this->result = @$this->obj->query($string);
 

@@ -8,7 +8,7 @@ class db{
 	private $config;
 
 	public $count_queries = 0;
-	public $count_queries_real = 0;
+	public $count_queries_real = 2;
 
 	public function __construct($config){
 
@@ -21,6 +21,7 @@ class db{
 
 	public function query($string){
 		$this->count_queries += 1;
+		$this->count_queries_real +=1;
 
 		return @mysql_query($string, $this->obj);
 	}
