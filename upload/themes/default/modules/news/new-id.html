@@ -2,8 +2,11 @@
 
 	<div class="block-header">
 		
-		<div class="block-name"><a href="<?php echo BASE_URL; ?>?mode=news&amp;id=<?php echo $data['ID']; ?>"><?php echo $data['TITLE']; ?></a></div>
-		<?php echo $data['LIKES']; ?>
+		<div class="block-name"><a href="<?php echo BASE_URL; ?>?mode=news&amp;id=<?php echo $data['ID']; ?>"><?php echo $data['TITLE']; ?></a></div><!--
+		--><div class="block-right">
+			<?php echo $data['ADMIN']; ?>
+			<?php echo $data['LIKES']; ?>
+		</div>
 	</div>
 
 	<div class="block-line"></div>
@@ -15,11 +18,11 @@
 	<div class="block-line"></div>
 
 	<div class="block-footer">
-		<div class="date" rel="tooltip" title="Дата создания"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
-		<div class="time" rel="tooltip" title="Время создания"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
-		<div class="category"><a href="<?php echo BASE_URL; ?>?mode=news&amp;cid=<?php echo $data['CID']; ?>" rel="tooltip" title="Категория"><?php echo $data['CATEGORY']; ?></a></div>
-		<div class="readmore"><a href="<?php echo BASE_URL; ?>?mode=news&amp;id=<?php echo $data['ID']; ?>">Читать далее...</a></div>
+		<div class="date" rel="tooltip" title="<?php echo $this->lng_m['date_create']; ?>"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
+		<div class="time" rel="tooltip" title="<?php echo $this->lng_m['time_create']; ?>"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
+		<div class="category"><a href="<?php echo BASE_URL; ?>?mode=news&amp;cid=<?php echo $data['CID']; ?>" rel="tooltip" title="<?php echo $this->lng_m['category']; ?>"><?php echo $data['CATEGORY']; ?></a></div>
+		<div class="readmore"><a href="<?php echo BASE_URL; ?>?mode=news&amp;id=<?php echo $data['ID']; ?>"><?php echo $this->lng_m['readmore']; ?></a></div>
 		<?php echo $data['COMMENTS']; ?>
-		<div class="views" rel="tooltip" title="Просмотров"><i class="icon-eye-open"></i><?php echo $data['VIEWS']; ?></div>
+		<div class="views" rel="tooltip" title="<?php echo $this->lng_m['views']; ?>"><i class="icon-eye-open"></i><?php echo $data['VIEWS']; ?></div>
 	</div>
 </div>

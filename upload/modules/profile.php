@@ -4,25 +4,24 @@ if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
 	private $core, $db, $config, $user, $lng;
+	public $cfg = array();
 
 	public function __construct($core){
 		$this->core = $core;
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
-
-		$this->core->title = $this->lng['t_profile'];
+		$this->lng	= $core->lng_m;
 
 		$bc = array(
-			$this->lng['t_profile'] => BASE_URL."?mode=profile"
+			$this->lng['mod_name'] => BASE_URL."?mode=profile"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
 	}
 
 	private function delete_skin(){
-		if(!$this->user->is_skin){ $this->core->notify("", "Скин не установлен", 1, '?mode=profile'); }
+		if(!$this->user->is_skin){ $this->core->notify("", $this->lng['skin_not_set'], 1, '?mode=profile'); }
 
 			unlink(MCR_SKIN_PATH.$this->user->skin.'.png');
 			unlink(MCR_SKIN_PATH.'interface/'.$this->user->skin.'.png');
@@ -40,15 +39,18 @@ class module{
 		}
 		
 		$update = $this->db->query("UPDATE `mcr_users` SET is_skin='0' WHERE id='{$this->user->id}'");
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical']); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
-		$this->core->notify($this->lng['e_success'], "Ваш скин успешно удален", 3, '?mode=profile');
+		// Лог действия
+		$this->db->actlog($this->lng['log_delete'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['skin_success_del'], 3, '?mode=profile');
 
 	}
 
 	private function delete_cloak(){
 
-		if(!$this->user->is_cloak){ $this->core->notify("", "Плащ не установлен", 1, '?mode=profile'); }
+		if(!$this->user->is_cloak){ $this->core->notify("", $this->lng['cloak_not_set'], 1, '?mode=profile'); }
 
 		unlink(MCR_CLOAK_PATH.$this->user->login.'.png');
 
@@ -69,9 +71,12 @@ class module{
 		}
 		
 		$update = $this->db->query("UPDATE `mcr_users` SET is_cloak='0' WHERE id='{$this->user->id}'");
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical']); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
-		$this->core->notify($this->lng['e_success'], "Ваш плащ успешно удален", 3, '?mode=profile');
+		// Лог действия
+		$this->db->actlog($this->lng['log_delete_cl'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['cloak_success_del'], 3, '?mode=profile');
 
 	}
 
@@ -92,9 +97,12 @@ class module{
 
 		$update = $this->db->query("UPDATE `mcr_users` SET is_skin='1' WHERE id='{$this->user->id}'");
 
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical']); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
-		$this->core->notify($this->lng['e_success'], "Ваш скин успешно изменен", 3, '?mode=profile');
+		// Лог действия
+		$this->db->actlog($this->lng['log_edit_sk'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['skin_success_edit'], 3, '?mode=profile');
 	}
 
 	private function upload_cloak(){
@@ -103,16 +111,19 @@ class module{
 
 		$update = $this->db->query("UPDATE `mcr_users` SET is_cloak='1' WHERE id='{$this->user->id}'");
 
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical']); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
-		$this->core->notify($this->lng['e_success'], "Ваш плащ успешно изменен", 3, '?mode=profile');
+		// Лог действия
+		$this->db->actlog($this->lng['log_edit_cl'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['cloak_success_edit'], 3, '?mode=profile');
 	}
 
 	private function settings(){
 
-		if(!empty($_POST['firstname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['firstname'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=profile'); }
-		if(!empty($_POST['lastname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['lastname'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=profile'); }
-		if(!empty($_POST['birthday']) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $_POST['birthday'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=profile'); }
+		if(!empty($_POST['firstname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['firstname'])){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=profile'); }
+		if(!empty($_POST['lastname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['lastname'])){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=profile'); }
+		if(!empty($_POST['birthday']) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $_POST['birthday'])){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=profile'); }
 
 		$firstname = @$_POST['firstname'];
 		$lastname = @$_POST['lastname'];
@@ -126,9 +137,9 @@ class module{
 			$old_pass = @$_POST['oldpass'];
 			$old_pass = $this->core->gen_password($old_pass, $this->user->salt);
 
-			if($old_pass !== $this->user->password){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_oldpass'], 2, '?mode=profile'); }
+			if($old_pass !== $this->user->password){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_oldpass'], 2, '?mode=profile'); }
 
-			if($_POST['newpass'] !== @$_POST['repass']){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_repass'], 2, '?mode=profile'); }
+			if($_POST['newpass'] !== @$_POST['repass']){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_repass'], 2, '?mode=profile'); }
 			
 			$newsalt = $this->db->safesql($this->core->random());
 			$newpass = $this->db->safesql($this->core->gen_password($_POST['newpass'], $salt));
@@ -149,44 +160,48 @@ class module{
 									SET `password`='$newpass', `salt`='$newsalt', ip_last='{$this->user->ip}', `data`='$newdata'
 									WHERE id='{$this->user->id}'");
 
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical'], 2, '?mode=profile'); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 2, '?mode=profile'); }
 
-		$this->core->notify($this->lng['e_success'], "Настройки успешно сохранены", 3, '?mode=profile');
+		// Лог действия
+		$this->db->actlog($this->lng['log_settings'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['set_success_save'], 3, '?mode=profile');
 	}
 
 	public function content(){
 
-		if(!$this->user->is_auth){ $this->core->notify("Доступ запрещен!", "Для доступа к профилю необходима авторизация", 1, "?mode=403"); }
+		if(!$this->user->is_auth){ $this->core->notify($this->core->lng['e_403'], $this->lng['auth_required'], 1, "?mode=403"); }
 
-		if(!$this->core->is_access('sys_profile')){ $this->core->notify("Доступ запрещен!", "Доступ к профилю ограничен администрацией", 1, "?mode=403"); }
+		if(!$this->core->is_access('sys_profile')){ $this->core->notify($this->core->lng['e_403'], $this->lng['access_by_admin'], 1, "?mode=403"); }
 
 		$this->core->header = $this->core->sp(MCR_THEME_MOD."profile/header.html");
-		ob_start();
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+			
 			if(isset($_POST['del-skin'])){
-				if(!$this->core->is_access('sys_profile_del_skin')){ $this->core->notify("Доступ запрещен!", "Удаление скина ограничено администрацией", 1, "?mode=403"); }
+				if(!$this->core->is_access('sys_profile_del_skin')){ $this->core->notify($this->core->lng['e_403'], $this->lng['skin_access_by_admin'], 1, "?mode=403"); }
 				$this->delete_skin();
 			}elseif(isset($_POST['del-cloak'])){
-				if(!$this->core->is_access('sys_profile_del_cloak')){ $this->core->notify("Доступ запрещен!", "Удаление плаща ограничено администрацией", 1, "?mode=403"); }
+				if(!$this->core->is_access('sys_profile_del_cloak')){ $this->core->notify($this->core->lng['e_403'], $this->lng['cloak_access_by_admin'], 1, "?mode=403"); }
 				$this->delete_cloak();
 			}elseif(isset($_FILES['skin'])){
-				if(!$this->core->is_access('sys_profile_skin')){ $this->core->notify("Доступ запрещен!", "Изменение скина ограничено администрацией", 1, "?mode=403"); }
+				if(!$this->core->is_access('sys_profile_skin')){ $this->core->notify($this->core->lng['e_403'], $this->lng['skin_edit_by_admin'], 1, "?mode=403"); }
 				$this->upload_skin();
 			}elseif(isset($_FILES['cloak'])){
-				if(!$this->core->is_access('sys_profile_cloak')){ $this->core->notify("Доступ запрещен!", "Изменение плаща ограничено администрацией", 1, "?mode=403"); }
+				if(!$this->core->is_access('sys_profile_cloak')){ $this->core->notify($this->core->lng['e_403'], $this->lng['cloak_edit_by_admin'], 1, "?mode=403"); }
 				$this->upload_cloak();
 			}elseif(isset($_POST['settings'])){
-				if(!$this->core->is_access('sys_profile_settings')){ $this->core->notify("Доступ запрещен!", "Настройки профиля ограничены администрацией", 1, "?mode=403"); }
+				if(!$this->core->is_access('sys_profile_settings')){ $this->core->notify($this->core->lng['e_403'], $this->lng['set_save_by_admin'], 1, "?mode=403"); }
 				$this->settings();
 			}else{
 				$this->core->notify('', '', 3, '?mode=profile');
 			}
 		}
 
-		echo $this->core->sp(MCR_THEME_MOD."profile/profile.html");
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."profile/profile.html");
 	}
 }
 

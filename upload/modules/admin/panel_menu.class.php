@@ -10,13 +10,10 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
-
-		$this->core->title = $this->lng['t_admin'];
+		$this->lng	= $core->lng_m;
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Главная' => BASE_URL."?mode=admin&do=main"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -89,11 +86,7 @@ class submodule{
 			"ITEMS" => $this->item_array($items),
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-items/item-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-items/item-list.html", $data);
 	}
 
 	private function group_array(){
@@ -104,12 +97,11 @@ class submodule{
 									FROM `mcr_menu_adm_groups`
 									ORDER BY `priority` ASC");
 
-		ob_start();
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-groups/group-none.html");
-			return ob_get_clean();
-		}
+		
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-groups/group-none.html"); }
 
+		ob_start();
+		
 		while($ar = $this->db->fetch_assoc($query)){
 			$id = intval($ar['id']);
 
@@ -117,16 +109,16 @@ class submodule{
 
 			$list = (isset($items[$id])) ? $items[$id] : array();
 
-			$sid = 'ajx_spl_adm_grp_'.$id;
+			//$sid = 'ajx_spl_adm_grp_'.$id;
 
-			$status = (isset($_SESSION[$sid]) && $_SESSION[$sid]==='true') ? "closed" : "opened";
+			//$status = (isset($_SESSION[$sid]) && $_SESSION[$sid]) ? "closed" : "opened";
 
 			$data = array(
 				"ID"		=> $id,
 				"TITLE"		=> $this->db->HSC($ar['title']),
 				"TEXT"		=> $this->db->HSC($ar['text']),
 				"ITEMS"		=> $this->item_list($list),
-				"STATUS"	=> $status
+				//"STATUS"	=> $status,
 			);
 
 			echo $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-groups/group-id.html", $data);
@@ -143,20 +135,12 @@ class submodule{
 			"GROUPS" => $this->group_array()
 		);
 
-		ob_start();
-
-			echo $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-groups/group-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/panel_menu/menu-groups/group-list.html", $data);
 	}
 
 	public function content(){
 
-		ob_start();
-
-		echo $this->group_list();
-
-		return ob_get_clean();
+		return $this->group_list();
 	}
 }
 

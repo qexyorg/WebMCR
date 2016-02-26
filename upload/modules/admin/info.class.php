@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Информация';
+		if(!$this->core->is_access('sys_adm_info')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Информация' => BASE_URL."?mode=admin&do=statics"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['info'] => BASE_URL."?mode=admin&do=statics"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,6 +24,7 @@ class submodule{
 
 	private function main(){
 
+		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-main.js"></script>';
 		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/info-main.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/main.html");
@@ -92,15 +93,11 @@ class submodule{
 			"USERS_STATS"			=> $this->users_stats()
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/info/stats.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/info/stats.html", $data);
 	}
 
 	private function extensions(){
-
+		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-extensions.js"></script>';
 		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/info-extensions.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/extensions.html");
@@ -117,11 +114,7 @@ class submodule{
 			default:			$content = $this->main(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

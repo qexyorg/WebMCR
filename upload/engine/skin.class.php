@@ -13,8 +13,8 @@ class skin{
 		$this->db	= $core->db;
 		$this->lng	= $core->lng;
 
-		if(!is_writable(MCR_SKIN_PATH)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_skin_folder'], 2, '?mode=profile'); }
-		if(!is_writable(MCR_SKIN_PATH.'interface/')){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_intf'], 2, '?mode=profile'); }
+		if(!is_writable(MCR_SKIN_PATH)){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_folder_perm'], 2, '?mode=profile'); }
+		if(!is_writable(MCR_SKIN_PATH.'interface/')){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_intf_perm'], 2, '?mode=profile'); }
 
 		$size = intval($obj['size']);
 		$tmp = $obj['tmp_name'];
@@ -23,39 +23,39 @@ class skin{
 			case 0: break;
 
 			case 1:
-			case 2: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_size'], 2, '?mode=profile'); break;
+			case 2: $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_size'], 2, '?mode=profile'); break;
 
 			case 3:
-			case 4: $this->core->notify("", $this->lng['e_load_skin'], 2, '?mode=profile'); break;
+			case 4: $this->core->notify("", $this->lng['skin_e'], 2, '?mode=profile'); break;
 
-			case 6: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_temp'], 2, '?mode=profile'); break;
+			case 6: $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_temp'], 2, '?mode=profile'); break;
 
-			case 7: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_perm'], 2, '?mode=profile'); break;
+			case 7: $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_perm'], 2, '?mode=profile'); break;
 
-			default: $this->core->notify("", $this->lng['e_load_undefined'], 2, '?mode=profile'); break;
+			default: $this->core->notify("", $this->lng['skin_e_undefined'], 2, '?mode=profile'); break;
 		}
 
-		if(($size/1024)>$this->user->permissions->sys_max_file_size){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_size'], 2, '?mode=profile'); }
+		if(($size/1024)>$this->user->permissions->sys_max_file_size){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_size'], 2, '?mode=profile'); }
 		
-		if(!file_exists($tmp)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_tempfile'], 2, '?mode=profile'); }
+		if(!file_exists($tmp)){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_tempfile'], 2, '?mode=profile'); }
 
-		if(substr($obj['name'], -4)!='.png'){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if(substr($obj['name'], -4)!='.png'){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_png'], 2, '?mode=profile'); }
 
 		$get_size = @getimagesize($tmp);
 
-		if(!$get_size){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if(!$get_size){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_png'], 2, '?mode=profile'); }
 
 		$width = $get_size[0];
 		$height = $get_size[1];
 
-		if(!$this->is_skin_valid($get_size)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_format'], 2, '?mode=profile'); }
+		if(!$this->is_skin_valid($get_size)){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_format'], 2, '?mode=profile'); }
 
 		$multiple = $get_size[0] / $this->mp;
 
 		// Create and save head of skin +
 		$new_head = $this->create_head($tmp, $multiple);
 
-		if($new_head===false){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if($new_head===false){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_png'], 2, '?mode=profile'); }
 
 		imagepng($new_head, MCR_SKIN_PATH.'interface/'.$this->user->login.'_mini.png');
 		// Create and save head of skin -
@@ -63,14 +63,14 @@ class skin{
 		// Create and save preview of skin +
 		$new_preview = $this->create_preview($tmp, $multiple);
 
-		if($new_preview===false){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if($new_preview===false){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_png'], 2, '?mode=profile'); }
 
 		imagepng($new_preview, MCR_SKIN_PATH.'interface/'.$this->user->login.'.png');
 		// Create and save preview of skin -
 
 		// Save new skin +
 		if(!file_exists(MCR_SKIN_PATH.$this->user->login.'.png')){
-			if(!copy($tmp, MCR_SKIN_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['e_load_save'], 2, '?mode=profile'); }
+			if(!copy($tmp, MCR_SKIN_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['skin_e_save'], 2, '?mode=profile'); }
 		}
 		// Save new skin -
 	}

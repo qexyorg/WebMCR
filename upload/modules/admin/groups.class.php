@@ -6,17 +6,17 @@ class submodule{
 	private $core, $db, $config, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->config	= $core->config;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Группы пользователей';
+		if(!$this->core->is_access('sys_adm_groups')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы пользователей' => BASE_URL."?mode=admin&do=groups"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -32,12 +32,9 @@ class submodule{
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/groups/group-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/groups/group-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -66,19 +63,17 @@ class submodule{
 			"GROUPS" => $this->group_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/groups/group-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/groups/group-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=groups'); }
+		if(!$this->core->is_access('sys_adm_groups_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=groups'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=groups'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=groups'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['grp_not_selected'], 2, '?mode=admin&do=groups'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -86,19 +81,21 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_groups` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+		if(!$this->db->remove_fast("mcr_groups", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
 
 		$count = $this->db->affected_rows();
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_users` WHERE gid IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+		if(!$this->db->remove_fast("mcr_users", "gid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: групп - $count, пользователей - $count1", 3, '?mode=admin&do=groups');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_grp']." $list ".$this->lng['log_grp'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['grp_del_msg1']." $count, ".$this->lng['grp_del_msg2']." $count1", 3, '?mode=admin&do=groups');
 
 	}
 
@@ -106,17 +103,17 @@ class submodule{
 		switch($type){
 			case 'integer':
 				$value = intval($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
 			break;
 
 			case 'float':
 				$value = floatval($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
 			break;
 
 			case 'string':
 				$value = $this->db->HSC($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
 			break;
 
 			default:
@@ -141,7 +138,7 @@ class submodule{
 			$data["TITLE"] = $this->db->HSC($ar['title']);
 			$data["VALUE"] = $this->db->HSC($ar['value']);
 
-			$data['DEFAULT'] = $this->get_default_value($ar['value'], $json[$ar['value']], $ar['type']);
+			$data['DEFAULT'] = @$this->get_default_value($ar['value'], $json[$ar['value']], $ar['type']);
 
 			echo $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id.html", $data);
 		}
@@ -164,13 +161,12 @@ class submodule{
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_groups_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=groups'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы пользователей' => BASE_URL."?mode=admin&do=groups",
-			'Добавление' => BASE_URL."?mode=admin&do=groups&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups",
+			$this->lng['grp_add'] => BASE_URL."?mode=admin&do=groups&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -191,27 +187,32 @@ class submodule{
 										VALUES
 											('$title', '$text', '$new_permissions')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_grp']." #$id ".$this->lng['log_grp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Группа пользователей успешно добавлена", 3, '?mode=admin&do=groups');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['grp_del_success'], 3, '?mode=admin&do=groups');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление группы",
+			"PAGE" => $this->lng['grp_add_page_name'],
 			"TITLE" => '',
 			"TEXT" => '',
 			"PERMISSIONS" => $this->perm_list(),
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['grp_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/groups/group-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/groups/group-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_groups_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=groups'); }
 
 		$id = intval($_GET['id']);
 
@@ -219,16 +220,14 @@ class submodule{
 									FROM `mcr_groups`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы пользователей' => BASE_URL."?mode=admin&do=groups",
-			'Редактирование' => BASE_URL."?mode=admin&do=groups&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups",
+			$this->lng['grp_edit'] => BASE_URL."?mode=admin&do=groups&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -248,24 +247,26 @@ class submodule{
 										SET title='$title', description='$text', `permissions`='$new_permissions'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=groups&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_grp']." #$id ".$this->lng['log_grp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Группа пользователей успешно изменена", 3, '?mode=admin&do=groups&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['grp_edit_success'], 3, '?mode=admin&do=groups&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE"			=> "Редактирование группы",
+			"PAGE"			=> $this->lng['grp_edit_page_name'],
 			"TITLE"			=> $this->db->HSC($ar['title']),
 			"TEXT"			=> $this->db->HSC($ar['description']),
 			"PERMISSIONS"	=> $this->perm_list($ar['permissions']),
-			"BUTTON"		=> "Сохранить"
+			"BUTTON"		=> $this->lng['grp_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/groups/group-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/groups/group-add.html", $data);
 	}
 
 	public function content(){
@@ -280,11 +281,7 @@ class submodule{
 			default:		$content = $this->group_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

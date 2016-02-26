@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки базы</div>
+		<div class="block-name"><?php echo $this->lng_m['db_settings']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -10,51 +10,51 @@
 		<form class="form-horizontal" method="POST">
 
 			<div class="control-group">
-				<label class="control-label" for="inputType">Тип</label>
+				<label class="control-label" for="inputType"><?php echo $this->lng_m['type']; ?></label>
 				<div class="controls">
 					<select name="type" id="inputType">
-						<option value="mysqli">MySQLi (Рекомендуется)</option>
-						<option value="mysql">MySQL</option>
+						<option value="mysqli">MySQLi (<?php echo $this->lng_m['recommended']; ?>)</option>
+						<option value="mysql" <?php echo $_SESSION['f_backend']; ?>>MySQL</option>
 					</select>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputHost">Адрес хоста</label>
+				<label class="control-label" for="inputHost"><?php echo $this->lng_m['db_host']; ?></label>
 				<div class="controls">
-					<input type="text" name="host" value="localhost" id="inputHost" placeholder="Хост" required>
+					<input type="text" name="host" id="inputHost" value="<?php echo $_SESSION['f_host']; ?>" placeholder="<?php echo $this->lng_m['db_host']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputPort">Порт</label>
+				<label class="control-label" for="inputPort"><?php echo $this->lng_m['db_port']; ?></label>
 				<div class="controls">
-					<input type="text" name="port" value="3306" id="inputPort" placeholder="Порт" required>
+					<input type="text" name="port" id="inputPort" value="<?php echo $_SESSION['f_port']; ?>" placeholder="<?php echo $this->lng_m['db_port']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputBase">Имя базы данных</label>
+				<label class="control-label" for="inputBase"><?php echo $this->lng_m['db_name']; ?></label>
 				<div class="controls">
-					<input type="text" name="base" value="" id="inputBase" placeholder="Имя базы данных" required>
+					<input type="text" name="base" id="inputBase" value="<?php echo $_SESSION['f_base']; ?>" placeholder="<?php echo $this->lng_m['db_name']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputUser">Имя пользователя</label>
+				<label class="control-label" for="inputUser"><?php echo $this->lng_m['db_user']; ?></label>
 				<div class="controls">
-					<input type="text" name="user" value="root" id="inputUser" placeholder="Имя пользователя баз данных" required>
+					<input type="text" name="user" id="inputUser" value="<?php echo $_SESSION['f_user']; ?>" placeholder="<?php echo $this->lng_m['db_user']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputPassword">Пароль пользователя</label>
+				<label class="control-label" for="inputPassword"><?php echo $this->lng_m['db_pass']; ?></label>
 				<div class="controls">
-					<input type="password" name="pass" id="inputPassword" placeholder="Пароль пользователя">
+					<input type="password" name="pass" id="inputPassword" placeholder="<?php echo $this->lng_m['db_pass']; ?>">
 				</div>
 			</div>
 
-			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
 		</form>
 	</div>
 

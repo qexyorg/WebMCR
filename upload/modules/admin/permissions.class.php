@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Привилегии';
+		if(!$this->core->is_access('sys_adm_permissions')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Привилегии' => BASE_URL."?mode=admin&do=permissions"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -32,12 +32,11 @@ class submodule{
 									ORDER BY `value` ASC
 									LIMIT $start, $end");
 
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-none.html");
-			return ob_get_clean();
-		}
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-none.html"); }
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -71,19 +70,17 @@ class submodule{
 			"PERMISSIONS" => $this->permissions_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=permissions'); }
+		if(!$this->core->is_access('sys_adm_permissions_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=permissions'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=permissions'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=permissions'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['perm_not_selected'], 2, '?mode=admin&do=permissions'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -91,13 +88,19 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_permissions` WHERE id IN ($list) AND `system`='0'");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
+		if(!$this->db->remove_fast("mcr_permissions", "id IN ($list) AND `system`='0'")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
 
 		$count = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: привилегий - $count", 3, '?mode=admin&do=permissions');
+		@$this->user->update_default_permissions();
+
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_perm']." $list ".$this->lng['log_perm'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['perm_del_elements']." $count", 3, '?mode=admin&do=permissions');
 
 	}
 
@@ -134,7 +137,7 @@ class submodule{
 
 		$query = $this->db->query("SELECT id, `permissions` FROM `mcr_groups`");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"]); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"]); }
 
 		$array = array();
 
@@ -160,13 +163,16 @@ class submodule{
 			if(!$update){ $return = false; }
 		}
 
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
 		return $return;
 	}
 
 	private function get_permissions(){
 		$query = $this->db->query("SELECT `value`, `type`, `default` FROM `mcr_permissions`");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"]); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"]); }
 		
 		$array = array();
 
@@ -185,13 +191,12 @@ class submodule{
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_permissions_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=permissions'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Привилегии' => BASE_URL."?mode=admin&do=permissions",
-			'Добавление' => BASE_URL."?mode=admin&do=permissions&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions",
+			$this->lng['perm_add'] => BASE_URL."?mode=admin&do=permissions&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -220,31 +225,35 @@ class submodule{
 										VALUES
 											('$title', '$text', '$value', '$default', '$type', '$new_data')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
-			
-			if(!$this->update_groups()){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"].' #2', 2, '?mode=admin&do=permissions'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
 
-			$this->core->notify($this->lng["e_success"], "Привилегия успешно добавлена", 3, '?mode=admin&do=permissions');
+			$id = $this->db->insert_id();
+			
+			if(!$this->update_groups()){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"].' #2', 2, '?mode=admin&do=permissions'); }
+
+			@$this->user->update_default_permissions();
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_perm']." #$id ".$this->lng['log_perm'], $this->user->id);
+
+			$this->core->notify($this->core->lng["e_success"], $this->lng['perm_add_success'], 3, '?mode=admin&do=permissions');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление привилегий",
+			"PAGE" => $this->lng['perm_add_page_name'],
 			"TITLE" => '',
 			"TEXT" => '',
 			"VALUE" => '',
 			"DEFAULT" => $this->get_default_value(),
 			"TYPES" => $this->get_types(),
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['perm_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_permissions_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=permissions'); }
 
 		$id = intval($_GET['id']);
 
@@ -252,16 +261,14 @@ class submodule{
 									FROM `mcr_permissions`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=permissions'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Привилегии' => BASE_URL."?mode=admin&do=permissions",
-			'Редактирование' => BASE_URL."?mode=admin&do=permissions&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions",
+			$this->lng['perm_edit'] => BASE_URL."?mode=admin&do=permissions&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -278,7 +285,7 @@ class submodule{
 			$type			= $filter_type['type'];
 
 			if(intval($ar['system'])===1 && ($type!=$ar['type'] || $value!=$ar['value'])){
-				$this->core->notify($this->lng["e_msg"], "Запрещено менять тип и значение системных привилегий", 2, '?mode=admin&do=permissions&op=edit&id='.$id);
+				$this->core->notify($this->core->lng["e_msg"], $this->lng['perm_change_system'], 2, '?mode=admin&do=permissions&op=edit&id='.$id);
 			}
 
 			$new_data		= array(
@@ -295,28 +302,29 @@ class submodule{
 											`default`='$default', `type`='$type', `data`='$new_data'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=permissions&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=permissions&op=edit&id='.$id); }
 			
-			if(!$this->update_groups()){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"].' #2', 2, '?mode=admin&do=permissions&op=edit&id='.$id); }
+			if(!$this->update_groups()){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"].' #2', 2, '?mode=admin&do=permissions&op=edit&id='.$id); }
 
-			$this->core->notify($this->lng["e_success"], "Привилегия успешно изменена", 3, '?mode=admin&do=permissions&op=edit&id='.$id);
+			@$this->user->update_default_permissions();
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_perm']." #$id ".$this->lng['log_perm'], $this->user->id);
+
+			$this->core->notify($this->core->lng["e_success"], $this->lng['perm_edit_success'], 3, '?mode=admin&do=permissions&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE"			=> "Редактирование привилегии",
+			"PAGE"			=> $this->lng['perm_edit_page_name'],
 			"TITLE"			=> $this->db->HSC($ar['title']),
 			"TEXT"			=> $this->db->HSC($ar['description']),
 			"VALUE"			=> $this->db->HSC($ar['value']),
 			"DEFAULT"		=> $this->get_default_value($ar['default'], $ar['type']),
 			"TYPES"			=> $this->get_types($ar['type']),
-			"BUTTON"		=> "Сохранить"
+			"BUTTON"		=> $this->lng['perm_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-add.html", $data);
 	}
 
 	private function filter_type($type='boolean', $default='false'){
@@ -347,17 +355,17 @@ class submodule{
 		switch($type){
 			case 'integer':
 				$value = intval($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
 			break;
 
 			case 'float':
 				$value = floatval($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
 			break;
 
 			case 'string':
 				$value = $this->db->HSC($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="Значение по умолчанию">';
+				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
 			break;
 
 			default:
@@ -371,10 +379,10 @@ class submodule{
 
 	private function get_types($selected='boolean', $check=false){
 		$array = array(
-			"boolean" => "Булевое значение",
-			"integer" => "Целое число",
-			"float" => "Число с плавающей точкой",
-			"string" => "Строка",
+			"boolean" => $this->lng['perm_boolean'],
+			"integer" => $this->lng['perm_integer'],
+			"float" => $this->lng['perm_float'],
+			"string" => $this->lng['perm_string'],
 		);
 
 		if($check){ return (isset($array[$selected])) ? true : false; }
@@ -394,6 +402,7 @@ class submodule{
 
 		$op = (isset($_GET['op'])) ? $_GET['op'] : 'list';
 
+		$this->core->header .= '<script src="'.LANG_URL.'js/modules/permissions.js"></script>';
 		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/permissions.js"></script>';
 
 		switch($op){
@@ -404,11 +413,7 @@ class submodule{
 			default:		$content = $this->permissions_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

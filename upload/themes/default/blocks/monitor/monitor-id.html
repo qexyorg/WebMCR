@@ -1,4 +1,4 @@
 <div class="monitor-id" id="<?php echo $data['ID']; ?>">
 	<div class="title"><?php echo $data['TITLE']; ?> <i class="icon-info-sign" data-placement="right" rel="tooltip" title="<?php echo $data['TEXT']; ?>"></i></div>
-	<div class="progress <?php echo $data['STATUS'] ?> progress-striped active"><div class="bar"></div><div class="stats"><?php echo $data['STATS']; ?></div></div>
+	<div class="progress <?php echo $data['STATUS'] ?> progress-striped active"><div class="bar" style="width: <?php echo $data['PROGRESS']; ?>%;"></div><div class="stats"><?php echo $data['STATS']; ?></div></div>
 </div>

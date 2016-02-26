@@ -1,14 +1,14 @@
 <div class="mcr-debug">
 	<a class="action" href="#">></a>
-	<h4>Отладка</h4>
-	<div class="php-version">Версия PHP: <span><?php echo phpversion(); ?></span></div>
-	<div class="php-error">Ошибки PHP: <span><?php var_dump($data['PHP_ERROR']); ?></span></div>
-	<div class="plt">Время загрузки страницы: <span><?php echo $data['PLT']; ?> сек.</span></div>
-	<div class="queries">Запросов к базе: <span><?php echo $data['QUERIES']; ?></span></div>
-	<div class="base-error">Ошибки базы: <span><?php echo $data['BASE_ERROR']; ?></span></div>
-	<div class="memory">Использовано памяти: <span><?php echo $data['MEMORY_USAGE']; ?> / <?php echo $data['MEMORY_PEAK']; ?> кб</span></div>
-	<div>Адрес скрипта: <span><?php echo $_SERVER['PHP_SELF']; ?></span></div>
-	<div>Протокол: <span><?php echo $_SERVER['SERVER_PROTOCOL']; ?></span></div>
-	<div>Метод: <span><?php echo $_SERVER['REQUEST_METHOD']; ?></span></div>
-	<div>OS: <span><?php echo php_uname(); ?></span></div>
+	<h4><?php echo $this->lng['deb_name']; ?></h4>
+	<div class="php-version"><?php echo $this->lng['deb_php_ver']; ?>: <span><?php echo phpversion(); ?></span></div>
+	<div class="php-error"><?php echo $this->lng['deb_php_err']; ?>: <span><?php var_dump($data['PHP_ERROR']); ?></span></div>
+	<div class="plt"><?php echo $this->lng['deb_plt']; ?>: <span><?php echo $data['PLT']; ?> <?php echo $this->lng['deb_sec']; ?></span></div>
+	<div class="queries"><?php echo $this->lng['deb_num_q']; ?>: <span><?php echo $data['QUERIES']; ?></span></div>
+	<div class="base-error"><?php echo $this->lng['deb_db_err']; ?>: <span><?php echo $data['BASE_ERROR']; ?></span></div>
+	<div class="memory"><?php echo $this->lng['deb_memory']; ?>: <span><?php echo $data['MEMORY_USAGE']; ?> / <?php echo $data['MEMORY_PEAK']; ?> <?php echo $this->lng['deb_kb']; ?></span></div>
+	<div><?php echo $this->lng['deb_script']; ?>: <span><?php echo $_SERVER['PHP_SELF']; ?></span></div>
+	<div><?php echo $this->lng['deb_protocol']; ?>: <span><?php echo $_SERVER['SERVER_PROTOCOL']; ?></span></div>
+	<div><?php echo $this->lng['deb_method']; ?>: <span><?php echo $_SERVER['REQUEST_METHOD']; ?></span></div>
+	<div><?php echo $this->lng['deb_os']; ?>: <span><?php echo php_uname(); ?></span></div>
 </div>

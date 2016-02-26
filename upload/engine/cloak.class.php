@@ -13,7 +13,7 @@ class cloak{
 		$this->db	= $core->db;
 		$this->lng	= $core->lng;
 
-		if(!is_writable(MCR_CLOAK_PATH)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_cloak_folder'], 2, '?mode=profile'); }
+		if(!is_writable(MCR_CLOAK_PATH)){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_folder_perm'], 2, '?mode=profile'); }
 
 		$size = intval($obj['size']);
 		$tmp = $obj['tmp_name'];
@@ -22,52 +22,52 @@ class cloak{
 			case 0: break;
 
 			case 1:
-			case 2: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_size'], 2, '?mode=profile'); break;
+			case 2: $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_size'], 2, '?mode=profile'); break;
 
 			case 3:
-			case 4: $this->core->notify("", $this->lng['e_load_cloak'], 2, '?mode=profile'); break;
+			case 4: $this->core->notify("", $this->lng['cloak_e'], 2, '?mode=profile'); break;
 
-			case 6: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_temp'], 2, '?mode=profile'); break;
+			case 6: $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_temp'], 2, '?mode=profile'); break;
 
-			case 7: $this->core->notify($this->lng['e_msg'], $this->lng['e_load_perm'], 2, '?mode=profile'); break;
+			case 7: $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_perm'], 2, '?mode=profile'); break;
 
-			default: $this->core->notify("", $this->lng['e_load_undefined'], 2, '?mode=profile'); break;
+			default: $this->core->notify("", $this->lng['cloak_e_undefined'], 2, '?mode=profile'); break;
 		}
 
-		if(($size/1024)>$this->user->permissions->sys_max_file_size){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_size'], 2, '?mode=profile'); }
+		if(($size/1024)>$this->user->permissions->sys_max_file_size){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_size'], 2, '?mode=profile'); }
 		
 		if(!file_exists($tmp)){
-			$this->core->notify($this->lng['e_msg'], $this->lng['e_load_tempfile'], 2, '?mode=profile');
+			$this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_tempfile'], 2, '?mode=profile');
 		}
 
-		if(substr($obj['name'], -4)!='.png'){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if(substr($obj['name'], -4)!='.png'){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_png'], 2, '?mode=profile'); }
 
 		$get_size = @getimagesize($tmp);
 
-		if(!$get_size){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if(!$get_size){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_png'], 2, '?mode=profile'); }
 
 		$width = $get_size[0];
 		$height = $get_size[1];
 
-		if(!$this->is_cloak_valid($get_size)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_format'], 2, '?mode=profile'); }
+		if(!$this->is_cloak_valid($get_size)){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_format'], 2, '?mode=profile'); }
 
 		// Resave head of skin +
 		if(!file_exists(MCR_SKIN_PATH.'interface/'.$this->user->login.'_mini.png')){
-			if(!copy(MCR_SKIN_PATH.'interface/.default_mini.png', MCR_SKIN_PATH.'interface/'.$this->user->login.'_mini.png')){ $this->core->notify("", $this->lng['e_load_save'], 2, '?mode=profile'); }
+			if(!copy(MCR_SKIN_PATH.'interface/default_mini.png', MCR_SKIN_PATH.'interface/'.$this->user->login.'_mini.png')){ $this->core->notify("", $this->lng['cloak_e_save'], 2, '?mode=profile'); }
 		}
 		// Resave head of skin -
 
 		// Create and save preview of cloak +
 		$new_preview = $this->create_preview($tmp);
 
-		if($new_preview===false){ $this->core->notify($this->lng['e_msg'], $this->lng['e_load_png'], 2, '?mode=profile'); }
+		if($new_preview===false){ $this->core->notify($this->lng['e_msg'], $this->lng['cloak_e_png'], 2, '?mode=profile'); }
 
 		imagepng($new_preview, MCR_SKIN_PATH.'interface/'.$this->user->login.'.png');
 		// Create and save preview of cloak -
 
 		// Save new cloak +
 		if(!file_exists(MCR_CLOAK_PATH.$this->user->login.'.png')){
-			if(!copy($tmp, MCR_CLOAK_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['e_load_save'], 2, '?mode=profile'); }
+			if(!copy($tmp, MCR_CLOAK_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['cloak_e_save'], 2, '?mode=profile'); }
 		}
 		// Save new cloak -
 	}
@@ -90,8 +90,8 @@ class cloak{
 			$skin_path_int = MCR_SKIN_PATH.'interface/'.$this->user->skin.'.png';
 			$skin_path = MCR_SKIN_PATH.$this->user->skin.'.png';
 		}else{
-			$skin_path_int = MCR_SKIN_PATH.'interface/.default.png';
-			$skin_path = MCR_SKIN_PATH.'.default.png';
+			$skin_path_int = MCR_SKIN_PATH.'interface/default.png';
+			$skin_path = MCR_SKIN_PATH.'default.png';
 		}
 
 		$skin_string = file_get_contents($skin_path_int);

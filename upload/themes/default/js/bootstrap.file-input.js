@@ -45,44 +45,6 @@ $.fn.bootstrapFileInput = function() {
   // This is important because the in order to give the illusion that this is a button in FF we actually need to move the button from the file input under the cursor. Ugh.
   .promise().done( function(){
 
-    // As the cursor moves over our new Bootstrap button we need to adjust the position of the invisible file input Browse button to be under the cursor.
-    // This gives us the pointer cursor that FF denies us
-    $('.file-input-wrapper').mousemove(function(cursor) {
-
-      var input, wrapper,
-        wrapperX, wrapperY,
-        inputWidth, inputHeight,
-        cursorX, cursorY;
-
-      // This wrapper element (the button surround this file input)
-      wrapper = $(this);
-      // The invisible file input element
-      input = wrapper.find("input");
-      // The left-most position of the wrapper
-      wrapperX = wrapper.offset().left;
-      // The top-most position of the wrapper
-      wrapperY = wrapper.offset().top;
-      // The with of the browsers input field
-      inputWidth= input.width();
-      // The height of the browsers input field
-      inputHeight= input.height();
-      //The position of the cursor in the wrapper
-      cursorX = cursor.pageX;
-      cursorY = cursor.pageY;
-
-      //The positions we are to move the invisible file input
-      // The 20 at the end is an arbitrary number of pixels that we can shift the input such that cursor is not pointing at the end of the Browse button but somewhere nearer the middle
-      moveInputX = cursorX - wrapperX - inputWidth + 20;
-      // Slides the invisible input Browse button to be positioned middle under the cursor
-      moveInputY = cursorY- wrapperY - (inputHeight/2);
-
-      // Apply the positioning styles to actually move the invisible file input
-      input.css({
-        left:moveInputX,
-        top:moveInputY
-      });
-    });
-
     $('body').on('change', '.file-input-wrapper input[type=file]', function(){
 
       var fileName;
@@ -91,7 +53,19 @@ $.fn.bootstrapFileInput = function() {
       // Remove any previous file names
       $(this).parent().next('.file-input-name').remove();
       if (!!$(this).prop('files') && $(this).prop('files').length > 1) {
-        fileName = $(this)[0].files.length+' files';
+        switch($(this)[0].files.length % 10){
+          case 1: files_name = 'Файл'; break;
+          case 2:
+          case 3:
+          case 4:
+            files_name = 'Файла';
+          break;
+          default: files_name = 'Файлов'; break;
+        }
+        if($(this)[0].files.length>10 && $(this)[0].files.length < 20){
+          files_name = 'Файлов';
+        }
+        fileName = $(this)[0].files.length+' '+files_name;
       }
       else {
         fileName = fileName.substring(fileName.lastIndexOf('\\') + 1, fileName.length);

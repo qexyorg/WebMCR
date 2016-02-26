@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки сайта</div>
+		<div class="block-name"><?php echo $this->lng_m['set_pagin']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -9,12 +9,12 @@
 	<div class="adm-settings">
 		<form method="post"></form>
 		<ul class="nav nav-tabs" id="myTab">
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
-			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main"><?php echo $this->lng_m['set_main']; ?></a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin"><?php echo $this->lng_m['set_pagin']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail"><?php echo $this->lng_m['set_mail']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search"><?php echo $this->lng_m['set_search']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions"><?php echo $this->lng_m['set_func']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base"><?php echo $this->lng_m['set_base']; ?></a></li>
 		</ul>
 		 
 		<div class="tab-content">
@@ -22,139 +22,146 @@
 
 				<form class="form-horizontal" method="post">
 
-					<legend>Пользовательская часть</legend>
+					<legend><?php echo $this->lng_m['set_pagin_user_sect']; ?></legend>
 
 					<div class="control-group">
-						<label class="control-label" for="input_arrows">Кол-во стрелок</label>
+						<label class="control-label" for="input_arrows"><?php echo $this->lng_m['set_pagin_arrows']; ?></label>
 						<div class="controls">
-							<input type="text" name="arrows" id="input_arrows" value="<?php echo $data['CFG']['arrows']; ?>" placeholder="Кол-во стрелок с каждой стороны">
+							<input type="text" class="span10" name="arrows" id="input_arrows" value="<?php echo $data['CFG']['arrows']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_arrows_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_news">Новости</label>
+						<label class="control-label" for="input_news"><?php echo $this->lng_m['set_pagin_news']; ?></label>
 						<div class="controls">
-							<input type="text" name="news" value="<?php echo $data['CFG']['news']; ?>" id="input_news" placeholder="Кол-во новостей на одну страницу">
+							<input type="text" class="span10" name="news" value="<?php echo $data['CFG']['news']; ?>" id="input_news" placeholder="<?php echo $this->lng_m['set_pagin_news_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_comments">Комментарии</label>
+						<label class="control-label" for="input_comments"><?php echo $this->lng_m['set_pagin_comments']; ?></label>
 						<div class="controls">
-							<input type="text" name="comments" value="<?php echo $data['CFG']['comments']; ?>" id="input_comments" placeholder="Кол-во комментариев на одну страницу">
+							<input type="text" class="span10" name="comments" value="<?php echo $data['CFG']['comments']; ?>" id="input_comments" placeholder="<?php echo $this->lng_m['set_pagin_comments_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_search_news">Поиск по новостям</label>
+						<label class="control-label" for="input_search_news"><?php echo $this->lng_m['set_pagin_search_n']; ?></label>
 						<div class="controls">
-							<input type="text" name="search_news" value="<?php echo $data['CFG']['search_news']; ?>" id="input_search_news" placeholder="Кол-во новостей на одну страницу в поиске">
+							<input type="text" class="span10" name="search_news" value="<?php echo $data['CFG']['search_news']; ?>" id="input_search_news" placeholder="<?php echo $this->lng_m['set_pagin_search_n_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_search_comments">Поиск по комментариям</label>
+						<label class="control-label" for="input_search_comments"><?php echo $this->lng_m['set_pagin_search_c']; ?></label>
 						<div class="controls">
-							<input type="text" name="search_comments" value="<?php echo $data['CFG']['search_comments']; ?>" id="input_search_comments" placeholder="Кол-во комментариев на одну страницу в поиске">
+							<input type="text" class="span10" name="search_comments" value="<?php echo $data['CFG']['search_comments']; ?>" id="input_search_comments" placeholder="<?php echo $this->lng_m['set_pagin_search_c_ph']; ?>">
 						</div>
 					</div>
 
-					<legend>Панель управления</legend>
+					<legend><?php echo $this->lng_m['set_pagin_cp_sect']; ?></legend>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_news">Новости</label>
+						<label class="control-label" for="input_adm_news"><?php echo $this->lng_m['set_pagin_cp_news']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_news" id="input_adm_news" value="<?php echo $data['CFG']['adm_news']; ?>" placeholder="Кол-во новостей в ПУ">
-						</div>
-					</div>
-
-					<div class="control-group">
-						<label class="control-label" for="input_adm_comments">Комментарии</label>
-						<div class="controls">
-							<input type="text" name="adm_comments" id="input_adm_comments" value="<?php echo $data['CFG']['adm_comments']; ?>" placeholder="Кол-во комментариев в ПУ">
+							<input type="text" class="span10" name="adm_news" id="input_adm_news" value="<?php echo $data['CFG']['adm_news']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_news_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_news_cats">Категории новостей</label>
+						<label class="control-label" for="input_adm_comments"><?php echo $this->lng_m['set_pagin_cp_coms']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_news_cats" id="input_adm_news_cats" value="<?php echo $data['CFG']['adm_news_cats']; ?>" placeholder="Кол-во категорий новостей в ПУ">
+							<input type="text" class="span10" name="adm_comments" id="input_adm_comments" value="<?php echo $data['CFG']['adm_comments']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_coms_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_news_views">Просмотров новости</label>
+						<label class="control-label" for="input_adm_news_cats"><?php echo $this->lng_m['set_pagin_cp_cats']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_news_views" id="input_adm_news_views" value="<?php echo $data['CFG']['adm_news_views']; ?>" placeholder="Кол-во просмотров новостей в ПУ">
+							<input type="text" class="span10" name="adm_news_cats" id="input_adm_news_cats" value="<?php echo $data['CFG']['adm_news_cats']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_cats_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_news_votes">Голосов новости</label>
+						<label class="control-label" for="input_adm_news_views"><?php echo $this->lng_m['set_pagin_cp_views']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_news_votes" id="input_adm_news_votes" value="<?php echo $data['CFG']['adm_news_votes']; ?>" placeholder="Кол-во голосов новостей в ПУ">
+							<input type="text" class="span10" name="adm_news_views" id="input_adm_news_views" value="<?php echo $data['CFG']['adm_news_views']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_views_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_menu">Пунктов меню</label>
+						<label class="control-label" for="input_adm_news_votes"><?php echo $this->lng_m['set_pagin_cp_votes']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_menu" id="input_adm_menu" value="<?php echo $data['CFG']['adm_menu']; ?>" placeholder="Кол-во пунктов меню сайта в ПУ">
+							<input type="text" class="span10" name="adm_news_votes" id="input_adm_news_votes" value="<?php echo $data['CFG']['adm_news_votes']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_votes_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_menu_adm">Пункты меню ПУ</label>
+						<label class="control-label" for="input_adm_menu"><?php echo $this->lng_m['set_pagin_cp_menu']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_menu_adm" id="input_adm_menu_adm" value="<?php echo $data['CFG']['adm_menu_adm']; ?>" placeholder="Кол-во пункты меню ПУ в ПУ">
+							<input type="text" class="span10" name="adm_menu" id="input_adm_menu" value="<?php echo $data['CFG']['adm_menu']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_menu_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_menu_groups">Группы меню</label>
+						<label class="control-label" for="input_adm_menu_adm"><?php echo $this->lng_m['set_pagin_cp_menu_cp']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_menu_groups" id="input_adm_menu_groups" value="<?php echo $data['CFG']['adm_menu_groups']; ?>" placeholder="Кол-во групп меню в ПУ">
+							<input type="text" class="span10" name="adm_menu_adm" id="input_adm_menu_adm" value="<?php echo $data['CFG']['adm_menu_adm']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_menu_cp_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_menu_icons">Иконки меню</label>
+						<label class="control-label" for="input_adm_menu_groups"><?php echo $this->lng_m['set_pagin_cp_mgroups']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_menu_icons" id="input_adm_menu_icons" value="<?php echo $data['CFG']['adm_menu_icons']; ?>" placeholder="Кол-во иконок меню в ПУ">
+							<input type="text" class="span10" name="adm_menu_groups" id="input_adm_menu_groups" value="<?php echo $data['CFG']['adm_menu_groups']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_mgroups_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_users">Пользователи</label>
+						<label class="control-label" for="input_adm_menu_icons"><?php echo $this->lng_m['set_pagin_cp_icons']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_users" id="input_adm_users" value="<?php echo $data['CFG']['adm_users']; ?>" placeholder="Кол-во пользователей в ПУ">
+							<input type="text" class="span10" name="adm_menu_icons" id="input_adm_menu_icons" value="<?php echo $data['CFG']['adm_menu_icons']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_icons_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_groups">Группы пользователей</label>
+						<label class="control-label" for="input_adm_users"><?php echo $this->lng_m['set_pagin_cp_users']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_groups" id="input_adm_groups" value="<?php echo $data['CFG']['adm_groups']; ?>" placeholder="Кол-во групп пользователей в ПУ">
+							<input type="text" class="span10" name="adm_users" id="input_adm_users" value="<?php echo $data['CFG']['adm_users']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_users_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_permissions">Привилегии</label>
+						<label class="control-label" for="input_adm_groups"><?php echo $this->lng_m['set_pagin_cp_groups']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_permissions" id="input_adm_permissions" value="<?php echo $data['CFG']['adm_permissions']; ?>" placeholder="Кол-во привилегий в ПУ">
+							<input type="text" class="span10" name="adm_groups" id="input_adm_groups" value="<?php echo $data['CFG']['adm_groups']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_groups_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_adm_statics">Статические страницы</label>
+						<label class="control-label" for="input_adm_permissions"><?php echo $this->lng_m['set_pagin_cp_prems']; ?></label>
 						<div class="controls">
-							<input type="text" name="adm_statics" id="input_adm_statics" value="<?php echo $data['CFG']['adm_statics']; ?>" placeholder="Кол-во статических страниц в ПУ">
+							<input type="text" class="span10" name="adm_permissions" id="input_adm_permissions" value="<?php echo $data['CFG']['adm_permissions']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_prems_ph']; ?>">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_statics"><?php echo $this->lng_m['set_pagin_cp_stc']; ?></label>
+						<div class="controls">
+							<input type="text" class="span10" name="adm_statics" id="input_adm_statics" value="<?php echo $data['CFG']['adm_statics']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_stc_ph']; ?>">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_adm_logs"><?php echo $this->lng_m['set_pagin_cp_logs']; ?></label>
+						<div class="controls">
+							<input type="text" class="span10" name="adm_logs" id="input_adm_logs" value="<?php echo $data['CFG']['adm_logs']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_logs_ph']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
 						<div class="controls">
-							<button type="submit" name="submit" class="btn">Сохранить</button>
+							<button type="submit" name="submit" class="btn"><?php echo $this->lng['save']; ?></button>
 						</div>
 					</div>
 

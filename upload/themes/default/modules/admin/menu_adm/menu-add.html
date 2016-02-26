@@ -8,63 +8,63 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['mcp_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['mcp_field_name']; ?>" required>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="selectGid">Группа</label>
+			<label class="control-label" for="selectGid"><?php echo $this->lng_m['mcp_field_group']; ?></label>
 			<div class="controls">
-				<select name="gid" id="selectGid">
+				<select name="gid" class="span10" id="selectGid">
 					<?php echo $data['GROUPS']; ?>
 				</select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="textareaText">Описание</label>
+			<label class="control-label" for="textareaText"><?php echo $this->lng_m['mcp_field_desc']; ?></label>
 			<div class="controls">
-				<textarea name="text" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+				<textarea name="text" class="span10" placeholder="<?php echo $this->lng_m['mcp_field_desc']; ?>" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputUrl">Ссылка</label>
+			<label class="control-label" for="inputUrl"><?php echo $this->lng_m['mcp_field_link']; ?></label>
 			<div class="controls">
-				<input type="text" name="url" value="<?php echo $data['URL']; ?>" id="inputUrl" placeholder="URL" required>
+				<input type="text" class="span10" name="url" value="<?php echo $data['URL']; ?>" id="inputUrl" placeholder="<?php echo $this->lng_m['mcp_field_link']; ?>" required>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="selectTarget">Открытие</label>
+			<label class="control-label" for="selectTarget"><?php echo $this->lng_m['mcp_field_target']; ?></label>
 			<div class="controls">
-				<select id="selectTarget" name="target">
-					<option value="_self">В текущей вкладке</option>
-					<option value="_blank" <?php echo $data['TARGET']; ?>>В новой вкладке</option>
+				<select id="selectTarget" class="span10" name="target">
+					<option value="_self"><?php echo $this->lng_m['mcp_target_self']; ?></option>
+					<option value="_blank" <?php echo $data['TARGET']; ?>><?php echo $this->lng_m['mcp_target_blank']; ?></option>
 				</select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="selectPerm">Уровень доступа</label>
+			<label class="control-label" for="selectPerm"><?php echo $this->lng_m['mcp_field_access']; ?></label>
 			<div class="controls">
-				<select size="6" name="permissions" id="selectPerm">
+				<select size="6" class="span10" name="permissions" id="selectPerm">
 					<?php echo $data['PERMISSIONS']; ?>
 				</select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputPriority">Приоритет</label>
+			<label class="control-label" for="inputPriority"><?php echo $this->lng_m['mcp_field_priority']; ?></label>
 			<div class="controls">
-				<input type="text" name="priority" value="<?php echo $data['PRIORITY']; ?>" pattern="^\d+$" id="inputPriority" placeholder="Приоритет позиции меню (По умолчанию 1)">
+				<input type="text" class="span10" name="priority" value="<?php echo $data['PRIORITY']; ?>" pattern="^\d+$" id="inputPriority" placeholder="<?php echo $this->lng_m['mcp_field_priority']; ?>">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="selectIcon">Иконка</label>
+			<label class="control-label" for="selectIcon"><?php echo $this->lng_m['mcp_field_icon']; ?></label>
 			<div class="controls">
 				<?php echo $data['ICONS']; ?>
 			</div>

@@ -8,17 +8,20 @@ $core->def_header = $core->sp(MCR_THEME_PATH."header.html");
 
 $mode = (isset($_GET['mode'])) ? $_GET['mode'] : $core->config->main['s_dpage'];
 
-if($core->config->main['install']){ $core->notify('Внимание!', 'Необходима установка', 4, 'install/'); }
+if($core->config->main['install']){ $core->notify($core->lng['e_attention'], $core->lng['e_install'], 4, 'install/'); }
 
 switch($mode){
-	case 'news':		$content = $core->load_def_mode($mode); break;
-	case 'search':		$content = $core->load_def_mode($mode); break;
-	case 'auth':		$content = $core->load_def_mode($mode); break;
-	case 'register':	$content = $core->load_def_mode($mode); break;
-	case 'profile':		$content = $core->load_def_mode($mode); break;
-	case 'restore':		$content = $core->load_def_mode($mode); break;
-	case 'ajax':		$content = $core->load_def_mode($mode); break;
-	case 'statics':		$content = $core->load_def_mode($mode); break;
+	case 'news':
+	case 'search':
+	case 'auth':
+	case 'register':
+	case 'profile':
+	case 'file':
+	case 'restore':
+	case 'ajax':
+	case 'statics':	
+		$content = $core->load_def_mode($mode);
+	break;
 
 	case '403':
 		$core->title = $core->lng['t_403'];

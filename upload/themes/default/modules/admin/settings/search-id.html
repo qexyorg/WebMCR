@@ -3,16 +3,16 @@
 	<input type="hidden" name="key" value="<?php echo $data['KEY']; ?>">
 
 	<div class="control-group">
-		<label class="control-label" for="input_title">Название</label>
+		<label class="control-label" for="input_title"><?php echo $this->lng_m['set_srch_name']; ?></label>
 		<div class="controls">
-			<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="input_title" placeholder="Название">
+			<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="input_title" placeholder="<?php echo $this->lng_m['set_srch_name']; ?>">
 		</div>
 	</div>
 
 	<div class="control-group">
-		<label class="control-label" for="input_permissions">Уровень доступа</label>
+		<label class="control-label" for="input_permissions"><?php echo $this->lng_m['set_srch_lvl']; ?></label>
 		<div class="controls">
-			<select name="permissions" size="5" id="input_permissions">
+			<select name="permissions" class="span10" size="5" id="input_permissions">
 				<?php echo $data['PERMISSIONS']; ?>
 			</select>
 		</div>
@@ -20,7 +20,7 @@
 
 	<div class="control-group">
 		<div class="controls">
-			<button type="submit" name="submit" class="btn">Сохранить</button>
+			<button type="submit" name="submit" class="btn"><?php echo $this->lng['save']; ?></button>
 		</div>
 	</div>
 </form>

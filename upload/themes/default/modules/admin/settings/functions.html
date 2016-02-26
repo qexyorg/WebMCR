@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки сайта</div>
+		<div class="block-name"><?php echo $this->lng_m['set_func']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -9,12 +9,12 @@
 	<div class="adm-settings">
 		<form method="post"></form>
 		<ul class="nav nav-tabs" id="myTab">
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
-			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main"><?php echo $this->lng_m['set_main']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin"><?php echo $this->lng_m['set_pagin']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail"><?php echo $this->lng_m['set_mail']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search"><?php echo $this->lng_m['set_search']; ?></a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions"><?php echo $this->lng_m['set_func']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base"><?php echo $this->lng_m['set_base']; ?></a></li>
 		</ul>
 		 
 		<div class="tab-content">
@@ -23,11 +23,11 @@
 				<form class="form-horizontal" method="post">
 
 					<div class="control-group">
-						<label class="control-label" for="input_advice">Выводить советы</label>
+						<label class="control-label" for="input_advice"><?php echo $this->lng_m['set_func_advice']; ?></label>
 						<div class="controls">
-							<select name="advice" id="input_advice">
-								<option value="0">Нет</option>
-								<option value="1" <?php echo $data['ADVICE']; ?>>Да</option>
+							<select name="advice" class="span10" id="input_advice">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['ADVICE']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
 						</div>
 					</div>
@@ -35,16 +35,16 @@
 					<div class="control-group">
 						<label class="control-label" for="input_breadcrumbs">Выводить хлебные крошки</label>
 						<div class="controls">
-							<select name="breadcrumbs" id="input_breadcrumbs">
-								<option value="0">Нет</option>
-								<option value="1" <?php echo $data['BREADCRUMBS']; ?>>Да</option>
+							<select name="breadcrumbs" class="span10" id="input_breadcrumbs">
+								<option value="0">php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['BREADCRUMBS']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
 						</div>
 					</div>
 
 					<div class="control-group">
 						<div class="controls">
-							<button type="submit" name="submit" class="btn">Сохранить</button>
+							<button type="submit" name="submit" class="btn"><?php echo $this->lng['save']; ?></button>
 						</div>
 					</div>
 

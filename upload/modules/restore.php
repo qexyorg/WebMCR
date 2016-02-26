@@ -8,12 +8,12 @@ class module{
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->user		= $core->user;
 		$this->config	= $core->config;
-		$this->lng		= $core->lng;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			$this->lng['t_restore'] => BASE_URL."?mode=restore"
+			$this->lng['mod_name'] => BASE_URL."?mode=restore"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -40,15 +40,15 @@ class module{
 
 			$_SESSION['m_send_id'] = (isset($_SESSION['m_send_id'])) ? $_SESSION['m_send_id']+1 : 1;
 
-			if($_SESSION['m_send_id']>5){ $this->core->notify($this->lng['e_msg'], $this->lng['e_rest_limit'], 1, "?mode=restore"); }
+			if($_SESSION['m_send_id']>5){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_limit'], 1, "?mode=restore"); }
 
 			$email = $this->db->safesql(@$_POST['email']);
 
-			if(empty($email)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_rest_eamil'], 1, "?mode=restore"); }
+			if(empty($email)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['invalid_email'], 1, "?mode=restore"); }
 
 			$query = $this->db->query("SELECT `id`, `tmp` FROM `mcr_users` WHERE email='$email'");
 
-			if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng['e_msg'], $this->lng['e_rest_email'], 1, "?mode=restore"); }
+			if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_msg'], $this->lng['email_not_found'], 1, "?mode=restore"); }
 
 			$ar = $this->db->fetch_assoc($query);
 
@@ -63,26 +63,25 @@ class module{
 
 			$message = $this->core->sp(MCR_THEME_PATH."modules/restore/body.mail.html", $data);
 
-			if(!$this->core->send_mail($email, $this->lng['rest_title'], $message)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_critical'], 1, "?mode=restore"); }
+			if(!$this->core->send_mail($email, $this->lng['email_title'], $message)){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_critical'], 1, "?mode=restore"); }
 
-			$this->core->notify('', $this->lng['e_rest_success'], 3);
+			// Лог действия
+			$this->db->actlog("Отправка запроса на сброс пароля", $id);
+
+			$this->core->notify('', $this->lng['e_success'], 3);
 		}
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_PATH."modules/restore/main.html");
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_PATH."modules/restore/main.html");
 	}
 
 	private function accept(){
-		if(!isset($_GET['key'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_403'], 2, '?mode=403'); }
+		if(!isset($_GET['key'])){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 
 		$key_string = $_GET['key'];
 
 		$array = explode("_", $key_string);
 
-		if(count($array)!==2){ $this->core->notify($this->lng['e_msg'], $this->lng['e_403'], 2, '?mode=403'); }
+		if(count($array)!==2){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 
 		$uid = intval($array[0]);
 
@@ -90,16 +89,16 @@ class module{
 
 		$query = $this->db->query("SELECT `tmp`, `data` FROM `mcr_users` WHERE id='$uid'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical'], 1, "?mode=restore"); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		if($key!==md5($ar['tmp'])){ $this->core->notify($this->lng['e_msg'], $this->lng['e_403'], 2, '?mode=403'); }
+		if($key!==md5($ar['tmp'])){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$newpass = @$_POST['newpass'];
 
-			if(mb_strlen($newpass, "UTF-8")<6){ $this->core->notify($this->lng['e_msg'], $this->lng['e_reg_pass_length'], 2, '?mode=restore&op=accept&key='.$key_string); }
+			if(mb_strlen($newpass, "UTF-8")<6){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_pass_length'], 2, '?mode=restore&op=accept&key='.$key_string); }
 
 			$tmp = $this->db->safesql($this->core->random(16));
 
@@ -124,25 +123,22 @@ class module{
 										SET password='$password', `salt`='$salt', `tmp`='$tmp', ip_last='{$this->user->ip}', `data`='$newdata'
 										WHERE id='$uid'");
 
-			if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical'], 1, "?mode=restore"); }
+			if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }
 
-			$this->core->notify($this->lng['e_success'], $this->lng['e_rest_success2'], 3);
+			// Лог действия
+			$this->db->actlog("Сброс пароля", $uid);
+
+			$this->core->notify($this->core->lng['e_success'], $this->lng['e_success2'], 3);
 		}
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_PATH."modules/restore/newpass.html");
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_PATH."modules/restore/newpass.html");
 	}
 
 	public function content(){
 		
-		if($this->user->is_auth){ $this->core->notify($this->lng['e_msg'], $this->lng['e_403'], 2, '?mode=403'); }
+		if($this->user->is_auth){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 		
-		if(!$this->core->is_access('sys_restore')){ $this->core->notify($this->lng['e_msg'], $this->lng['e_rest_perm'], 1, "?mode=403"); }
-
-		$this->core->title = $this->lng['t_restore'];
+		if(!$this->core->is_access('sys_restore')){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_perm'], 1, "?mode=403"); }
 
 		$op = (isset($_GET['op'])) ? $_GET['op'] : false;
 
@@ -152,11 +148,7 @@ class module{
 			default: $content = $this->send(); break;
 		}
 
-		ob_start();
-
-			echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 
 }

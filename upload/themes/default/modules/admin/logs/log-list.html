@@ -1,0 +1,32 @@
+<form method="post" class="panel-logs" action="<?php echo ADMIN_URL; ?>&do=logs&op=delete">
+	<div class="form-block">
+
+		<div class="block-header">
+			<div class="block-name"><?php echo $this->lng_m['logs_views']; ?></div>
+		</div>
+
+		<div class="block-line"></div>
+
+		<table class="table table-striped table table-hover">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th><?php echo $this->lng_m['logs_user']; ?></th>
+					<th><?php echo $this->lng_m['logs_action']; ?></th>
+					<th><?php echo $this->lng_m['logs_date']; ?></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<?php echo $data['LOGS']; ?>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="form-block actions">
+		<?php echo $data['PAGINATION']; ?>
+		<div class="right-act">
+		</div>
+		
+	</div>
+</form>

@@ -2,22 +2,32 @@
 
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
-if(isset($_SESSION['mcr_notify'])){
+class block_notify{
+	private $core, $db;
 
-	$new_data = array(
-		"TYPE" => $this->db->HSC($_SESSION['notify_type']),
-		"TITLE" => $this->db->HSC($_SESSION['notify_title']),
-		"MESSAGE" => $this->db->HSC($_SESSION['notify_msg'])
-	);
+	public function __construct($core){
+		$this->core = $core;
+		$this->db = $core->db;
+	}
 
-	echo $this->sp(MCR_THEME_PATH."blocks/notify/alert.html", $new_data);
+	public function content(){
+		if(!isset($_SESSION['mcr_notify'])){ return ''; }
+
+		$new_data = array(
+			"TYPE" => $this->db->HSC($_SESSION['notify_type']),
+			"TITLE" => $this->db->HSC($_SESSION['notify_title']),
+			"MESSAGE" => $this->db->HSC($_SESSION['notify_msg'])
+		);
+
+		$result = $this->core->sp(MCR_THEME_PATH."blocks/notify/alert.html", $new_data);
 	
-	unset($_SESSION['mcr_notify']);
-	unset($_SESSION['notify_type']);
-	unset($_SESSION['notify_title']);
-	unset($_SESSION['notify_msg']);
+		unset($_SESSION['mcr_notify']);
+		unset($_SESSION['notify_type']);
+		unset($_SESSION['notify_title']);
+		unset($_SESSION['notify_msg']);
+
+		return $result;
+	}
 }
-
-
 
 ?>

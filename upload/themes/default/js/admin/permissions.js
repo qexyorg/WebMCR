@@ -7,15 +7,15 @@ $(function(){
 			break;
 
 			case 'integer':
-				$('#perm-default').html('<input type="text" class="span8" name="default" value="1" id="inputDefault" placeholder="Значение по умолчанию">');
+				$('#perm-default').html('<input type="text" class="span8" name="default" value="1" id="inputDefault" placeholder="'+lng_per.default_val+'">');
 			break;
 
 			case 'float':
-				$('#perm-default').html('<input type="text" class="span8" name="default" value="1.5" id="inputDefault" placeholder="Значение по умолчанию">');
+				$('#perm-default').html('<input type="text" class="span8" name="default" value="1.5" id="inputDefault" placeholder="'+lng_per.default_val+'">');
 			break;
 
 			case 'string':
-				$('#perm-default').html('<input type="text" class="span8" name="default" value="string" id="inputDefault" placeholder="Значение по умолчанию">');
+				$('#perm-default').html('<input type="text" class="span8" name="default" value="string" id="inputDefault" placeholder="'+lng_per.default_val+'">');
 			break;
 
 			default: return false; break;

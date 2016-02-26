@@ -24,6 +24,23 @@ class config{
 		$this->pagin	= $pagin;
 		$this->search	= $search;
 	}
+	
+	public function savecfg($cfg=array(), $file='main.php', $var='main'){
+
+		if(!is_array($cfg) || empty($cfg)){ return false; }
+
+		$filename = MCR_ROOT."configs/".$file;
+
+		$txt  = '<?php'.PHP_EOL;
+		$txt .= '$'.$var.' = '.var_export($cfg, true).';'.PHP_EOL;
+		$txt .= '?>';
+
+		$result = file_put_contents($filename, $txt);
+
+		if($result === false){ return false; }
+
+		return true;
+	}
 }
 
 

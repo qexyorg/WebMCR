@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Новости';
+		if(!$this->core->is_access('sys_adm_news')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Новости' => BASE_URL."?mode=admin&do=news"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['news'] => BASE_URL."?mode=admin&do=news"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -34,12 +34,11 @@ class submodule{
 									ORDER BY `n`.id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/news/new-none.html");
-			return ob_get_clean();
-		}
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/news/new-none.html"); }
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -60,28 +59,24 @@ class submodule{
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_news`");
 
-		if(!$query){ exit("SQL Error"); }
-
-		$ar = $this->db->fetch_array($query);
+		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
 			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news'], "?mode=admin&do=news&pid=", $ar[0]),
 			"NEWS" => $this->news_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news/new-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news/new-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=news'); }
+		if(!$this->core->is_access('sys_adm_news_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=news'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=news'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_not_selected'], 2, '?mode=admin&do=news'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -89,25 +84,25 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_news` WHERE id IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
+		if(!$this->db->remove_fast("mcr_news", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$delete2 = $this->db->query("DELETE FROM `mcr_news_views` WHERE nid IN ($list)");
-
-		if(!$delete2){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
+		if(!$this->db->remove_fast("mcr_news_views", "nid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
 
 		$count2 = $this->db->affected_rows();
 
-		$delete3 = $this->db->query("DELETE FROM `mcr_news_votes` WHERE nid IN ($list)");
-
-		if(!$delete3){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
+		if(!$this->db->remove_fast("mcr_news_votes", "nid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
 
 		$count3 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: новостей - $count1, просмотров - $count2, голосов - $count3", 3, '?mode=admin&do=news');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_news']." $list ".$this->lng['log_news'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['news_del_elements']." $count1, ".$this->lng['news_del_elements2']." $count2, ".$this->lng['news_del_elements3']." $count3", 3, '?mode=admin&do=news');
 
 	}
 
@@ -115,25 +110,24 @@ class submodule{
 		$selected = intval($selected);
 		$query = $this->db->query("SELECT id, title FROM `mcr_news_cats` ORDER BY title ASC");
 
-		ob_start();
-
 		if(!$query || $this->db->num_rows($query)<=0){
 
 			$data = array(
 				"ID" => 1,
-				"TITLE" => 'Без категории',
-				"SELECTED" => 'selected disabled'
+				"TITLE" => $this->lng['news_wo_cats'],
+				"SELECTED" => 'selected disabled',
 			);
 
-			echo $this->core->sp(MCR_THEME_MOD."admin/news/cid-list-id.html", $data);
-			return ob_get_clean();
+			return $this->core->sp(MCR_THEME_MOD."admin/news/cid-list-id.html", $data);
 		}
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 			$data = array(
 				"ID" => intval($ar['id']),
 				"TITLE" => $this->db->HSC($ar['title']),
-				"SELECTED" => ($selected==intval($ar['id'])) ? 'selected' : ''
+				"SELECTED" => ($selected==intval($ar['id'])) ? 'selected' : '',
 			);
 
 			echo $this->core->sp(MCR_THEME_MOD."admin/news/cid-list-id.html", $data);
@@ -142,24 +136,47 @@ class submodule{
 		return ob_get_clean();
 	}
 
-	private function add(){
+	private function get_preview($title='', $text='', $category='', $cid=0, $vote=0){
+		$data = array(
+			"TITLE" => $this->db->HSC($title),
+			"TEXT" => $text,
+			"CATEGORY" => $this->db->HSC($category),
+			"CID" => intval($cid),
+			"LIKES" => ($vote!==1) ? '' : $this->core->sp(MCR_THEME_MOD."admin/news/new-preview-likes.html", $data),
+		);
 
-		$this->core->title .= ' — Добавление';
+		return $this->core->sp(MCR_THEME_MOD."admin/news/new-preview.html", $data);
+	}
+
+	private function add(){
+		if(!$this->core->is_access('sys_adm_news_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Новости' => BASE_URL."?mode=admin&do=news",
-			'Добавление' => BASE_URL."?mode=admin&do=news&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['news'] => BASE_URL."?mode=admin&do=news",
+			$this->lng['news_add'] => BASE_URL."?mode=admin&do=news&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
 
 		$bb = $this->core->load_bb_class(); // Загрузка класса BB-кодов
 
+		$categories		= $this->categories();
+		$title			= '';
+		$text			= '';
+		$text_short		= '';
+		$votes			= '';
+		$discuses		= '';
+		$attached		= '';
+		$preview		= '';
+
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title = $this->db->safesql(@$_POST['title']);
 
 			$cid = intval(@$_POST['cid']);
+			
+			$check_cid = $this->db->query("SELECT title FROM `mcr_news_cats` WHERE id='$cid'");
+			if(!$check_cid || $this->db->num_rows($check_cid)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_cat_not_exist'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
 
 			$vote	= (intval(@$_POST['vote'])===1) ? 1 : 0;
 			$discus	= (intval(@$_POST['discus'])===1) ? 1 : 0;
@@ -172,88 +189,109 @@ class submodule{
 			$text_bb_trim = trim($text_bb);
 			$text_bb_short_trim = trim($text_bb_short);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Полное описание\"", 2, '?mode=admin&do=news&op=add'); }
-			if(empty($text_bb_short_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Краткое описание\"", 2, '?mode=admin&do=news&op=add'); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=add'); }
+			if(empty($text_bb_short_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=add'); }
 
-			$text_bb				= $this->db->HSC($text_bb);
-			$text_bb_short			= $this->db->HSC($text_bb_short);
-
-			$text_html				= $bb->decode($text_bb);
-			$text_html_short		= $bb->decode($text_bb_short);
+			$text_html				= $bb->parse($text_bb);
+			$text_html_short		= $bb->parse($text_bb_short);
 
 			$safe_text_html			= $this->db->safesql($text_html);
 			$safe_text_html_short	= $this->db->safesql($text_html_short);
 
-			$text_bb				= $this->db->safesql($text_bb);
-			$text_bb_short			= $this->db->safesql($text_bb_short);
+			$safe_text_bb			= $this->db->safesql($text_bb);
+			$safe_text_bb_short		= $this->db->safesql($text_bb_short);
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Полное описание\"", 2, '?mode=admin&do=news&op=add'); }
-			if(empty($text_html_short_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Краткое описание\"", 2, '?mode=admin&do=news&op=add'); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=add'); }
+			if(empty($text_html_short_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=add'); }
 			// Обработка описания -
 
-			$new_data = array(
-				"time_create" => time(),
-				"time_last" => time(),
-				"uid_create" => $this->user->id,
-				"uid_last" => $this->user->id
-			);
+			if(isset($_POST['preview'])){
+				$cid_ar			= $this->db->fetch_assoc($check_cid);
+				$preview		= $this->get_preview($title, $text_html, $cid_ar['title'], $cid, $vote);
+				$text			= $text_bb;
+				$text_short		= $text_bb_short;
+				$categories		= $this->categories($cid);
+				$votes			= ($vote===1) ? 'checked' : '';
+				$discuses		= ($discus===1) ? 'checked' : '';
+				$attached		= ($attach===1) ? 'checked' : '';
+			}else{
+				$new_data = array(
+					"time_create" => time(),
+					"time_last" => time(),
+					"uid_create" => $this->user->id,
+					"uid_last" => $this->user->id
+				);
 
-			$new_data = $this->db->safesql(json_encode($new_data));
+				$new_data = $this->db->safesql(json_encode($new_data));
 
-			$insert = $this->db->query("INSERT INTO `mcr_news`
-											(cid, title, text_bb, text_html, text_bb_short, text_html_short, vote, discus, attach, uid, `data`)
-										VALUES
-											('$cid', '$title', '$text_bb', '$safe_text_html', '$text_bb_short', '$safe_text_html_short', '$vote', '$discus', '$attach', '{$this->user->id}', '$new_data')");
+				$insert = $this->db->query("INSERT INTO `mcr_news`
+												(cid, title, text_bb, text_html, text_bb_short, text_html_short, vote, discus, attach, uid, `data`)
+											VALUES
+												('$cid', '$title', '$safe_text_bb', '$safe_text_html', '$safe_text_bb_short', '$safe_text_html_short', '$vote', '$discus', '$attach', '{$this->user->id}', '$new_data')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news&op=add'); }
-			
-			$this->core->notify($this->lng["e_success"], "Новость успешно добавлена", 3, '?mode=admin&do=news');
+				if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news&op=add'); }
+
+				$id = $this->db->insert_id();
+
+				// Последнее обновление пользователя
+				$this->db->update_user($this->user);
+
+				// Лог действия
+				$this->db->actlog($this->lng['log_add_news']." #$id ".$this->lng['log_news'], $this->user->id);
+				
+				$this->core->notify($this->core->lng["e_success"], $this->lng['news_add_success'], 3, '?mode=admin&do=news');
+			}
 		}
 
-		$data = array(
-			"PAGE" => "Добавление новости",
-			"CATEGORIES" => $this->categories(),
+		$result = array(
+			"PAGE" => $this->lng['news_add_page_name'],
+			"CATEGORIES" => $categories,
+			"TITLE" => $this->db->HSC($title),
+			"TEXT_SHORT" => $text_short,
+			"TEXT" => $text,
+			"VOTE" => $votes,
+			"DISCUS" => $discuses,
+			"ATTACH" => $attached,
 			"BB_PANEL_SHORT" => $bb->bb_panel('bb-short'),
 			"BB_PANEL_FULL" => $bb->bb_panel('bb-full'),
-			"TITLE" => "",
-			"TEXT_SHORT" => "",
-			"TEXT" => "",
-			"VOTE" => "checked",
-			"DISCUS" => "checked",
-			"ATTACH" => "",
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['news_add_btn'],
+			"PREVIEW" => $preview,
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news/new-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news/new-add.html", $result);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_news_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news'); }
 
 		$id = intval($_GET['id']);
+		$preview = '';
 
 		$query = $this->db->query("SELECT cid, title, text_bb, text_bb_short, vote, discus, attach, `data`
 									FROM `mcr_news`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
+		$categories		= $this->categories($ar['cid']);
+		$title			= $this->db->HSC($ar['title']);
+		$text			= $this->db->HSC($ar['text_bb']);
+		$text_short		= $this->db->HSC($ar['text_bb_short']);
+		$votes			= (intval($ar['vote'])===1) ? 'checked' : '';
+		$discuses		= (intval($ar['discus'])===1) ? 'checked' : '';
+		$attached		= (intval($ar['attach'])===1) ? 'checked' : '';
+
 		$data = json_decode($ar['data']);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Новости' => BASE_URL."?mode=admin&do=news",
-			'Редактирование' => BASE_URL."?mode=admin&do=news&op=edit&id=$id"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['news'] => BASE_URL."?mode=admin&do=news",
+			$this->lng['news_edit'] => BASE_URL."?mode=admin&do=news&op=edit&id=$id"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -264,6 +302,9 @@ class submodule{
 			$title = $this->db->safesql(@$_POST['title']);
 
 			$cid = intval(@$_POST['cid']);
+			
+			$check_cid = $this->db->query("SELECT title FROM `mcr_news_cats` WHERE id='$cid'");
+			if(!$check_cid || $this->db->num_rows($check_cid)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_cat_not_exist'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
 
 			$vote	= (intval(@$_POST['vote'])===1) ? 1 : 0;
 			$discus	= (intval(@$_POST['discus'])===1) ? 1 : 0;
@@ -276,67 +317,79 @@ class submodule{
 			$text_bb_trim = trim($text_bb);
 			$text_bb_short_trim = trim($text_bb_short);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Полное описание\"", 2, '?mode=admin&do=news&op=edit&id='.$id); }
-			if(empty($text_bb_short_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Краткое описание\"", 2, '?mode=admin&do=news&op=edit&id='.$id); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
+			if(empty($text_bb_short_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
 
-			$text_bb				= $this->db->HSC($text_bb);
-			$text_bb_short			= $this->db->HSC($text_bb_short);
-
-			$text_html				= $bb->decode($text_bb);
-			$text_html_short		= $bb->decode($text_bb_short);
+			$text_html				= $bb->parse($text_bb);
+			$text_html_short		= $bb->parse($text_bb_short);
 
 			$safe_text_html			= $this->db->safesql($text_html);
 			$safe_text_html_short	= $this->db->safesql($text_html_short);
 
-			$text_bb				= $this->db->safesql($text_bb);
-			$text_bb_short			= $this->db->safesql($text_bb_short);
+			$safe_text_bb			= $this->db->safesql($text_bb);
+			$safe_text_bb_short		= $this->db->safesql($text_bb_short);
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Полное описание\"", 2, '?mode=admin&do=news&op=edit&id='.$id); }
-			if(empty($text_html_short_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Краткое описание\"", 2, '?mode=admin&do=news&op=edit&id='.$id); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
+			if(empty($text_html_short_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
 			// Обработка описания -
 
-			$new_data = array(
-				"time_create" => $data->time_create,
-				"time_last" => time(),
-				"uid_create" => $data->uid_create,
-				"uid_last" => $this->user->id
-			);
+			if(isset($_POST['preview'])){
+				$cid_ar			= $this->db->fetch_assoc($check_cid);
+				$preview		= $this->get_preview($title, $text_html, $cid_ar['title'], $cid, $vote);
+				$title			= $this->db->HSC($title);
+				$text			= $text_bb;
+				$text_short		= $text_bb_short;
+				$categories		= $this->categories($cid);
+				$votes			= ($vote===1) ? 'checked' : '';
+				$discuses		= ($discus===1) ? 'checked' : '';
+				$attached		= ($attach===1) ? 'checked' : '';
+			}else{
+				$new_data = array(
+					"time_create" => $data->time_create,
+					"time_last" => time(),
+					"uid_create" => $data->uid_create,
+					"uid_last" => $this->user->id
+				);
 
-			$new_data = $this->db->safesql(json_encode($new_data));
+				$new_data = $this->db->safesql(json_encode($new_data));
 
-			$update = $this->db->query("UPDATE `mcr_news`
-										SET cid='$cid', title='$title', text_bb='$text_bb', text_html='$safe_text_html',
-											text_bb_short='$text_bb_short', text_html_short='$safe_text_html_short',
-											vote='$vote', discus='$discus', attach='$attach', `data`='$new_data'
-										WHERE id='$id'");
+				$update = $this->db->query("UPDATE `mcr_news`
+											SET cid='$cid', title='$title', text_bb='$safe_text_bb', text_html='$safe_text_html',
+												text_bb_short='$safe_text_bb_short', text_html_short='$safe_text_html_short',
+												vote='$vote', discus='$discus', attach='$attach', `data`='$new_data'
+											WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news&op=edit&id='.$id); }
-			
-			$this->core->notify($this->lng["e_success"], "Новость успешно изменена", 3, '?mode=admin&do=news');
+				if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news&op=edit&id='.$id); }
+
+				// Последнее обновление пользователя
+				$this->db->update_user($this->user);
+
+				// Лог действия
+				$this->db->actlog($this->lng['log_edit_news']." #$id ".$this->lng['log_news'], $this->user->id);
+				
+				$this->core->notify($this->core->lng["e_success"], $this->lng['news_edit_success'], 3, '?mode=admin&do=news');
+			}
 		}
 
-		$data = array(
-			"PAGE" => "Редактирование новости",
-			"CATEGORIES" => $this->categories($ar['cid']),
-			"TITLE" => $this->db->HSC($ar['title']),
-			"TEXT_SHORT" => $this->db->HSC($ar['text_bb_short']),
-			"TEXT" => $this->db->HSC($ar['text_bb']),
-			"VOTE" => (intval($ar['vote'])===1) ? 'checked' : '',
-			"DISCUS" => (intval($ar['discus'])===1) ? 'checked' : '',
-			"ATTACH" => (intval($ar['attach'])===1) ? 'checked' : '',
+		$result = array(
+			"PAGE" => $this->lng['news_edit_page_name'],
+			"CATEGORIES" => $categories,
+			"TITLE" => $title,
+			"TEXT_SHORT" => $text_short,
+			"TEXT" => $text,
+			"VOTE" => $votes,
+			"DISCUS" => $discuses,
+			"ATTACH" => $attached,
 			"BB_PANEL_SHORT" => $bb->bb_panel('bb-short'),
 			"BB_PANEL_FULL" => $bb->bb_panel('bb-full'),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->lng['news_edit_btn'],
+			"PREVIEW" => $preview,
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news/new-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news/new-add.html", $result);
 	}
 
 	public function content(){
@@ -351,11 +404,7 @@ class submodule{
 			default:		$content = $this->news_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки сайта</div>
+		<div class="block-name"><?php echo $this->lng_m['set_main']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -9,12 +9,12 @@
 	<div class="adm-settings">
 		<form method="post"></form>
 		<ul class="nav nav-tabs" id="myTab">
-			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main">Основные</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin">Постраничная навигация</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail">Почта</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search">Поиск</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions">Функции</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base">База</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=main"><?php echo $this->lng_m['set_main']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=pagin"><?php echo $this->lng_m['set_pagin']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=mail"><?php echo $this->lng_m['set_mail']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=search"><?php echo $this->lng_m['set_search']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=functions"><?php echo $this->lng_m['set_func']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=settings&op=base"><?php echo $this->lng_m['set_base']; ?></a></li>
 		</ul>
 		 
 		<div class="tab-content">
@@ -23,86 +23,76 @@
 				<form class="form-horizontal" method="post">
 
 					<div class="control-group">
-						<label class="control-label" for="input_s_name">Название сайта</label>
+						<label class="control-label" for="input_s_name"><?php echo $this->lng_m['set_main_sitename']; ?></label>
 						<div class="controls">
-							<input type="text" name="s_name" id="input_s_name" value="<?php echo $data['CFG']['s_name']; ?>" placeholder="Название сайта">
+							<input type="text" class="span10" name="s_name" id="input_s_name" value="<?php echo $data['CFG']['s_name']; ?>" placeholder="<?php echo $this->lng_m['set_main_sitename']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_s_about">Описание сайта</label>
+						<label class="control-label" for="input_s_about"><?php echo $this->lng_m['set_main_sitedesc']; ?></label>
 						<div class="controls">
-							<input type="text" name="s_about" value="<?php echo $data['CFG']['s_about']; ?>" id="input_s_about" placeholder="Описание сайта">
+							<input type="text" class="span10" name="s_about" value="<?php echo $data['CFG']['s_about']; ?>" id="input_s_about" placeholder="<?php echo $this->lng_m['set_main_sitedesc']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_s_keywords">Ключевые слова</label>
+						<label class="control-label" for="input_s_keywords"><?php echo $this->lng_m['set_main_sitekeys']; ?></label>
 						<div class="controls">
-							<input type="text" name="s_keywords" value="<?php echo $data['CFG']['s_keywords']; ?>" id="input_s_keywords" placeholder="Ключевые слова">
+							<input type="text" class="span10" name="s_keywords" value="<?php echo $data['CFG']['s_keywords']; ?>" id="input_s_keywords" placeholder="<?php echo $this->lng_m['set_main_sitekeys']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_s_dpage">Начальная страница</label>
+						<label class="control-label" for="input_s_dpage"><?php echo $this->lng_m['set_main_start']; ?></label>
 						<div class="controls">
-							<input type="text" name="s_dpage" value="<?php echo $data['CFG']['s_dpage']; ?>" id="input_s_dpage" placeholder="Начальная страница">
+							<input type="text" class="span10" name="s_dpage" value="<?php echo $data['CFG']['s_dpage']; ?>" id="input_s_dpage" placeholder="<?php echo $this->lng_m['set_main_start']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_s_theme">Шаблон</label>
+						<label class="control-label" for="input_s_theme"><?php echo $this->lng_m['set_main_theme']; ?></label>
 						<div class="controls">
-							<select name="s_theme" id="input_s_theme">
+							<select name="s_theme" class="span10" id="input_s_theme">
 								<?php echo $data['THEMES']; ?>
 							</select>
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_log">Лог ошибок</label>
+						<label class="control-label" for="input_log"><?php echo $this->lng_m['set_main_log']; ?></label>
 						<div class="controls">
-							<select name="log" id="input_log">
-								<option value="0">Отключен</option>
-								<option value="1" <?php echo $data['LOG']; ?>>Включен</option>
+							<select name="log" class="span10" id="input_log">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['LOG']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_debug">Отладка</label>
+						<label class="control-label" for="input_debug"><?php echo $this->lng_m['set_main_debug']; ?></label>
 						<div class="controls">
-							<select name="debug" id="input_debug">
-								<option value="0">Отключена</option>
-								<option value="1" <?php echo $data['DEBUG']; ?>>Включена</option>
+							<select name="debug" class="span10" id="input_debug">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['DEBUG']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_mon_type">Тип мониторинга</label>
+						<label class="control-label" for="input_reg_accept"><?php echo $this->lng_m['set_main_reg']; ?></label>
 						<div class="controls">
-							<select name="mon_type" id="input_mon_type">
-								<option value="0">Через сокеты</option>
-								<option value="1" <?php echo $data['MON_TYPE']; ?>>Через API MineTools</option>
+							<select name="reg_accept" class="span10" id="input_reg_accept">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['REG_ACCEPT']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_reg_accept">Подтверждение регистрации</label>
+						<label class="control-label" for="input_captch"><?php echo $this->lng_m['set_main_captcha']; ?></label>
 						<div class="controls">
-							<select name="reg_accept" id="input_reg_accept">
-								<option value="0">Отключено</option>
-								<option value="1" <?php echo $data['REG_ACCEPT']; ?>>Включено</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="control-group">
-						<label class="control-label" for="input_captch">Капча</label>
-						<div class="controls">
-							<select name="captcha" id="input_captch">
+							<select name="captcha" class="span10" id="input_captch">
 								<?php echo $data['CAPTHA']; ?>
 							</select>
 						</div>
@@ -111,38 +101,38 @@
 					<legend>ReCaptcha</legend>
 
 					<div class="control-group">
-						<label class="control-label" for="input_rc_public">Публичный ключ</label>
+						<label class="control-label" for="input_rc_public"><?php echo $this->lng_m['set_main_key_public']; ?></label>
 						<div class="controls">
-							<input type="text" name="rc_public" value="<?php echo $data['CFG']['rc_public']; ?>" id="input_rc_public" placeholder="Публичный ключ">
+							<input type="text" class="span10" name="rc_public" value="<?php echo $data['CFG']['rc_public']; ?>" id="input_rc_public" placeholder="<?php echo $this->lng_m['set_main_key_public']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_rc_private">Приватный ключ</label>
+						<label class="control-label" for="input_rc_private"><?php echo $this->lng_m['set_main_key_private']; ?></label>
 						<div class="controls">
-							<input type="text" name="rc_private" value="<?php echo $data['CFG']['rc_private']; ?>" id="input_rc_private" placeholder="Приватный ключ">
+							<input type="text" class="span10" name="rc_private" value="<?php echo $data['CFG']['rc_private']; ?>" id="input_rc_private" placeholder="<?php echo $this->lng_m['set_main_key_private']; ?>">
 						</div>
 					</div>
 
 					<legend>KeyCaptcha</legend>
 
 					<div class="control-group">
-						<label class="control-label" for="input_kc_public">Публичный ключ</label>
+						<label class="control-label" for="input_kc_public"><?php echo $this->lng_m['set_main_key_public']; ?></label>
 						<div class="controls">
-							<input type="text" name="kc_public" value="<?php echo $data['CFG']['kc_public']; ?>" id="input_kc_public" placeholder="Публичный ключ">
+							<input type="text" class="span10" name="kc_public" value="<?php echo $data['CFG']['kc_public']; ?>" id="input_kc_public" placeholder="<?php echo $this->lng_m['set_main_key_public']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_kc_private">Приватный ключ</label>
+						<label class="control-label" for="input_kc_private"><?php echo $this->lng_m['set_main_key_private']; ?></label>
 						<div class="controls">
-							<input type="text" name="kc_private" value="<?php echo $data['CFG']['kc_private']; ?>" id="input_kc_private" placeholder="Приватный ключ">
+							<input type="text" class="span10" name="kc_private" value="<?php echo $data['CFG']['kc_private']; ?>" id="input_kc_private" placeholder="<?php echo $this->lng_m['set_main_key_private']; ?>">
 						</div>
 					</div>
 
 					<div class="control-group">
 						<div class="controls">
-							<button type="submit" name="submit" class="btn">Сохранить</button>
+							<button type="submit" name="submit" class="btn"><?php echo $this->lng['save']; ?></button>
 						</div>
 					</div>
 

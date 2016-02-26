@@ -2,7 +2,7 @@
 	<div class="form-block">
 
 		<div class="block-header">
-			<div class="block-name">Привилегии</div>
+			<div class="block-name"><?php echo $this->lng_m['mod_name']; ?></div>
 		</div>
 
 		<div class="block-line"></div>
@@ -11,9 +11,9 @@
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Название</th>
-					<th>Значение</th>
-					<th class="action">Действие <input type="checkbox" class="check-all" data-for="check-input"></th>
+					<th><?php echo $this->lng_m['perm_field_name']; ?></th>
+					<th><?php echo $this->lng_m['perm_field_value']; ?></th>
+					<th class="action"><?php echo $this->lng_m['perm_field_action']; ?> <input type="checkbox" class="check-all" data-for="check-input"></th>
 				</tr>
 			</thead>
 
@@ -26,11 +26,11 @@
 	<div class="form-block actions">
 		<?php echo $data['PAGINATION']; ?>
 		<div class="right-act">
-			Действие с привилегиями: 
+			<?php echo $this->lng_m['perm_field_action2']; ?>: 
 			<div class="btn-group">
 				<a class="btn" href="<?php echo ADMIN_URL; ?>&do=permissions&op=add"><i class="icon-plus"></i></a>
 				<a class="btn edit" data-for="check-input" data-link="<?php echo ADMIN_URL; ?>&do=permissions&op=edit&id=" href="#"><i class="icon-pencil"></i></a>
-				<button class="btn remove" data-for="check-input" data-text="Удаление привилегий может повлиять на работу некоторых модулей. Вы уверены, что хотите удалить выбранные элементы?" type="submit" name="delete"><i class="icon-remove"></i></button>
+				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['perm_accept']; ?>" type="submit" name="delete"><i class="icon-remove"></i></button>
 			</div>
 		</div>
 		

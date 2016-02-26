@@ -8,30 +8,51 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['mon_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['mon_field_name']; ?>">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputText">Описание</label>
+			<label class="control-label" for="inputText"><?php echo $this->lng_m['mon_field_desc']; ?></label>
 			<div class="controls">
-				<textarea id="inputText" placeholder="Описание" name="text" maxlength="255" rows="5"><?php echo $data['TEXT']; ?></textarea>
+				<textarea id="inputText" class="span10" placeholder="<?php echo $this->lng_m['mon_field_desc']; ?>" name="text" maxlength="255" rows="5"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">IP адрес</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['mon_field_ip']; ?></label>
 			<div class="controls">
-				<input type="text" name="ip" value="<?php echo $data['IP']; ?>" id="inputTitle" placeholder="IP адрес сервера">
+				<input type="text" class="span10" name="ip" value="<?php echo $data['IP']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['mon_field_ip']; ?>">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Порт</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['mon_field_port']; ?></label>
 			<div class="controls">
-				<input type="text" name="port" value="<?php echo $data['PORT']; ?>" id="inputTitle" placeholder="Порт">
+				<input type="text" class="span10" name="port" value="<?php echo $data['PORT']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['mon_field_port']; ?>">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputType"><?php echo $this->lng_m['mon_field_type']; ?></label>
+			<div class="controls">
+				<select id="inputType" class="span10" name="type"><?php echo $data['TYPES']; ?></select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputCache"><?php echo $this->lng_m['mon_field_cache']; ?></label>
+			<div class="controls">
+				<input type="text" class="span10" name="cache" value="<?php echo $data['CACHE']; ?>" id="inputCache" placeholder="<?php echo $this->lng_m['mon_field_cache']; ?>">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputError"><?php echo $this->lng_m['mon_field_error']; ?></label>
+			<div class="controls">
+				<input type="text" class="span10" value="<?php echo $data['ERROR']; ?>" id="inputError" disabled placeholder="<?php echo $this->lng_m['mon_field_error']; ?>">
 			</div>
 		</div>
 

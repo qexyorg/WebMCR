@@ -15,7 +15,7 @@ class user{
 
 	public $is_cloak = false;
 
-	public $skin = '.default';
+	public $skin = 'default';
 
 	public $cloak = '';
 
@@ -26,40 +26,6 @@ class user{
 	public $bank = 0;
 
 	public $gid = -1;
-
-	public function get_default_permissions(){
-		$query = $this->db->query("SELECT `value`, `type`, `default` FROM `mcr_permissions`");
-
-		if(!$query || $this->db->num_rows($query)<=0){ return; }
-
-		$array = array();
-
-		while($ar = $this->db->fetch_assoc($query)){
-
-			switch($ar['type']){
-				case 'integer':
-					$array[$ar['value']] = intval($ar['default']);
-				break;
-
-				case 'float':
-					$array[$ar['value']] = floatval($ar['default']);
-				break;
-
-				case 'string':
-					$array[$ar['value']] = $this->db->safesql($ar['default']);
-				break;
-
-				default:
-					$array[$ar['value']] = ($ar['default']=='true') ? true : false;
-				break;
-			}
-
-		}
-
-		$permissions = json_encode($array);
-
-		return array(json_decode($permissions), json_decode($permissions, true));
-	}
 
 	public function __construct($core){
 		$this->core			= $core;
@@ -161,7 +127,7 @@ class user{
 		// Is isset cloak
 		$this->is_cloak		= (intval($ar['is_cloak'])==1) ? true : false;
 
-		$this->skin			= ($this->is_skin || $this->is_cloak) ? $this->login : '.default';
+		$this->skin			= ($this->is_skin || $this->is_cloak) ? $this->login : 'default';
 
 		$this->cloak		= ($this->is_cloak) ? $this->login : '';
 
@@ -177,6 +143,57 @@ class user{
 		// Bank money balance (for plugins)
 		$this->bank			= floatval($ar['bank']);
 
+	}
+
+	public function update_default_permissions(){
+
+		$query = $this->db->query("SELECT `value`, `type`, `default` FROM `mcr_permissions`");
+
+		if(!$query || $this->db->num_rows($query)<=0){ return; }
+
+		$array = array();
+
+		while($ar = $this->db->fetch_assoc($query)){
+
+			switch($ar['type']){
+				case 'integer':
+					$array[$ar['value']] = intval($ar['default']);
+				break;
+
+				case 'float':
+					$array[$ar['value']] = floatval($ar['default']);
+				break;
+
+				case 'string':
+					$array[$ar['value']] = $this->db->safesql($ar['default']);
+				break;
+
+				default:
+					$array[$ar['value']] = ($ar['default']=='true') ? true : false;
+				break;
+			}
+
+		}
+
+		$permissions = json_encode($array);
+
+		@file_put_contents(MCR_CACHE_PATH.'permissions', $permissions);
+
+		return $permissions;
+	}
+
+	public function get_default_permissions(){
+		if(file_exists(MCR_CACHE_PATH.'permissions')){
+			$json = file_get_contents(MCR_CACHE_PATH.'permissions');
+			$array = json_decode($json, true);
+			$object = json_decode($json);
+
+			return array($object, $array);
+		}
+
+		$permissions = @$this->update_default_permissions();
+
+		return array(json_decode($permissions), json_decode($permissions, true));
 	}
 
 	public function set_unauth(){

@@ -10,14 +10,13 @@ class submodule{
 		$this->db		= $core->db;
 		$this->config	= $core->config;
 		$this->user		= $core->user;
-		$this->lng		= $core->lng;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			"Поиск" => BASE_URL."?mode=search",
-			"По комментариям" => BASE_URL."?mode=search&type=comments"
+			$this->lng['mod_name'] => BASE_URL."?mode=search",
+			$this->lng['by_comments'] => BASE_URL."?mode=search&type=comments"
 		);
-
-		$this->core->title = "Поиск — По комментариям";
+		
 		$this->core->bc = $this->core->gen_bc($bc);
 	}
 
@@ -37,9 +36,9 @@ class submodule{
 									WHERE `c`.text_bb LIKE '%$value%'
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ /*echo $this->core->sp(MCR_THEME_MOD."search/comments/comment-none.html");*/ return; }
 
-		if(!$query || $this->db->num_rows($query)<=0){ /*echo $this->core->sp(MCR_THEME_MOD."search/comments/comment-none.html");*/ return ob_get_clean(); }
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -73,13 +72,13 @@ class submodule{
 
 	public function results(){
 		
-		if(!$this->core->is_access('sys_search_comments')){ $this->core->notify("Доступ запрещен!", "Поиск по комментариям ограничен администрацией", 1, "?mode=403"); }
+		if(!$this->core->is_access('sys_search_comments')){ $this->core->notify($this->core->lng['403'], $this->lng['access_denied_com'], 1, "?mode=403"); }
 
 		$value = (isset($_GET['value'])) ? $_GET['value'] : '';
 
 		$value = trim(urldecode($value));
 
-		if(empty($value)){ $this->core->notify("404", "Не заданы критерии поиска", 2, "?mode=403"); }
+		if(empty($value)){ $this->core->notify($this->core->lng['404'], $this->lng['empty_query'], 2, "?mode=403"); }
 
 		$safe_value = $this->db->safesql($value);
 		$html_value = $this->db->HSC($value);
@@ -101,11 +100,7 @@ class submodule{
 			"QUERY_COUNT" => intval($ar[0])
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."search/comments/comment-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."search/comments/comment-list.html", $data);
 	}
 }
 

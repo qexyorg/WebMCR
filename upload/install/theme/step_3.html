@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Установка</div>
+		<div class="block-name"><?php echo $this->lng_m['mod_name']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -10,28 +10,28 @@
 		<form class="form-horizontal" method="POST">
 
 			<div class="control-group">
-				<label class="control-label" for="inputLogin">Логин администратора</label>
+				<label class="control-label" for="inputLogin"><?php echo $this->lng_m['adm_login']; ?></label>
 				<div class="controls">
-					<input type="text" name="login" value="admin" id="inputLogin" placeholder="Логин" required>
+					<input type="text" name="login" value="<?php echo $_SESSION['f_login']; ?>" id="inputLogin" placeholder="<?php echo $this->lng_m['adm_login']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputPassword">Пароль администратора</label>
+				<label class="control-label" for="inputPassword"><?php echo $this->lng_m['adm_pass']; ?></label>
 				<div class="controls">
-					<input type="password" name="password" id="inputPassword" placeholder="Пароль администратора" required>
+					<input type="password" name="password" value="<?php echo $_SESSION['f_pass']; ?>" id="inputPassword" placeholder="<?php echo $this->lng_m['adm_pass']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputRePassword">Повторите пароль</label>
+				<label class="control-label" for="inputRePassword"><?php echo $this->lng_m['adm_repass']; ?></label>
 				<div class="controls">
-					<input type="password" name="repassword" id="inputRePassword" placeholder="Повторите пароль" required>
+					<input type="password" name="repassword" value="<?php echo $_SESSION['f_repass']; ?>" id="inputRePassword" placeholder="<?php echo $this->lng_m['adm_repass']; ?>" required>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputType">Метод шифрования паролей</label>
+				<label class="control-label" for="inputType"><?php echo $this->lng_m['encrypt_method']; ?></label>
 				<div class="controls">
 					<select name="method" id="inputType">
 						<option value="0">MD5</option>
@@ -55,13 +55,13 @@
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputEmail">E-Mail</label>
+				<label class="control-label" for="inputEmail"><?php echo $this->lng_m['adm_mail']; ?></label>
 				<div class="controls">
-					<input type="text" name="email" id="inputEmail" placeholder="E-Mail" required>
+					<input type="text" name="email" value="<?php echo $_SESSION['f_email']; ?>" id="inputEmail" placeholder="<?php echo $this->lng_m['adm_mail']; ?>" required>
 				</div>
 			</div>
 
-			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
 		</form>
 	</div>
 

@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Комментарии';
+		if(!$this->core->is_access('sys_adm_comments')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Комментарии' => BASE_URL."?mode=admin&do=comments"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -34,12 +34,9 @@ class submodule{
 									ORDER BY `c`.id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/comments/com-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -53,7 +50,7 @@ class submodule{
 				"ID" => intval($ar['id']),
 				"NID" => intval($ar['nid']),
 				"NEW" => $new,
-				"TEXT" => $this->db->HSC($text)
+				"TEXT" => $text
 			);
 		
 			echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-id.html", $page_data);
@@ -75,19 +72,18 @@ class submodule{
 			"COMMENTS" => $this->comment_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/comments/com-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=comments'); }
+
+		if(!$this->core->is_access('sys_adm_comments_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=comments'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=comments'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=comments'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['com_not_selected'], 2, '?mode=admin&do=comments'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -95,13 +91,17 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_comments` WHERE id IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=comments'); }
+		if(!$this->db->remove_fast("mcr_comments", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=comments'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: комментариев - $count1", 3, '?mode=admin&do=comments');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_com']." $list ".$this->lng['log_com'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['com_del_elements']." - $count1", 3, '?mode=admin&do=comments');
 
 	}
 
@@ -109,19 +109,18 @@ class submodule{
 		$selected = intval($selected);
 		$query = $this->db->query("SELECT id, title FROM `mcr_news` ORDER BY title ASC");
 
-		ob_start();
-
 		if(!$query || $this->db->num_rows($query)<=0){
 
 			$data = array(
 				"ID" => 1,
-				"TITLE" => 'Без новости',
+				"TITLE" => $this->lng['com_without_news'],
 				"SELECTED" => 'selected disabled'
 			);
 
-			echo $this->core->sp(MCR_THEME_MOD."admin/comments/nid-list-id.html", $data);
-			return ob_get_clean();
+			return $this->core->sp(MCR_THEME_MOD."admin/comments/nid-list-id.html", $data);
 		}
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 			$data = array(
@@ -138,12 +137,12 @@ class submodule{
 
 	private function add(){
 
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_comments_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=comments'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Комментарии' => BASE_URL."?mode=admin&do=comments",
-			'Добавление' => BASE_URL."?mode=admin&do=comments&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments",
+			$this->lng['com_add'] => BASE_URL."?mode=admin&do=comments&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -159,7 +158,7 @@ class submodule{
 
 			$text_bb_trim = trim($text_bb);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Комментарий\"", 2, '?mode=admin&do=comments&op=add'); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['com_empty'], 2, '?mode=admin&do=comments&op=add'); }
 
 			$text_bb				= $this->db->HSC($text_bb);
 
@@ -171,7 +170,7 @@ class submodule{
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Комментарий\"", 2, '?mode=admin&do=comments&op=add'); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['com_incorrect'], 2, '?mode=admin&do=comments&op=add'); }
 			// Обработка описания -
 
 			$new_data = array(
@@ -186,27 +185,33 @@ class submodule{
 										VALUES
 											('$nid', '$text_bb', '$text_html', '{$this->user->id}', '$new_data')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=comments&op=add'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=comments&op=add'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_com']." #$id ".$this->lng['log_com'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Комментарий успешно добавлен", 3, '?mode=admin&do=comments');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['com_add_success'], 3, '?mode=admin&do=comments');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление комментария",
+			"PAGE" => $this->lng['com_add_page_name'],
 			"NEWS" => $this->news(),
 			"TEXT" => "",
 			"BB_PANEL" => $bb->bb_panel('bb-comment'),
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['com_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/comments/com-add.html", $data);
 	}
 
 	private function edit(){
+
+		if(!$this->core->is_access('sys_adm_comments_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=comments'); }
 
 		$id = intval($_GET['id']);
 
@@ -214,18 +219,16 @@ class submodule{
 									FROM `mcr_comments`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=comments'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=comments'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
 		$data = json_decode($ar['data']);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Комментарии' => BASE_URL."?mode=admin&do=comments",
-			'Редактирование' => BASE_URL."?mode=admin&do=comments&op=edit&id=$id"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments",
+			$this->lng['com_edit'] => BASE_URL."?mode=admin&do=comments&op=edit&id=$id"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -241,7 +244,7 @@ class submodule{
 
 			$text_bb_trim = trim($text_bb);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Комментарий\"", 2, '?mode=admin&do=comments&op=add'); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['com_empty'], 2, '?mode=admin&do=comments&op=add'); }
 
 			$text_bb				= $this->db->HSC($text_bb);
 
@@ -253,7 +256,7 @@ class submodule{
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Комментарий\"", 2, '?mode=admin&do=comments&op=add'); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['com_incorrect'], 2, '?mode=admin&do=comments&op=add'); }
 			// Обработка описания -
 
 			$new_data = array(
@@ -267,24 +270,26 @@ class submodule{
 										SET nid='$nid', text_bb='$text_bb', text_html='$safe_text_html', `data`='$new_data'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=comments&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=comments&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_com']." #$id ".$this->lng['log_com'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Комментарий успешно изменен", 3, '?mode=admin&do=comments');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['com_edit_success'], 3, '?mode=admin&do=comments');
 		}
 
 		$data = array(
-			"PAGE" => "Редактирование комментария",
+			"PAGE" => $this->lng['com_edit_page_name'],
 			"NEWS" => $this->news($ar['nid']),
 			"TEXT" => $this->db->HSC($ar['text_bb']),
 			"BB_PANEL" => $bb->bb_panel('bb-comment'),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->lng['com_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/comments/com-add.html", $data);
 	}
 
 	public function content(){
@@ -299,11 +304,7 @@ class submodule{
 			default:		$content = $this->comment_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

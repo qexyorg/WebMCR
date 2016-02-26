@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Информация и статистика</div>
+		<div class="block-name"><?php echo $this->lng_m['info_and_stats']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -9,9 +9,9 @@
 	<div class="adm-info-main">
 		<form method="post"></form>
 		<ul class="nav nav-tabs" id="myTab">
-			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=main">Информация</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=extensions">Дополнения</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=stats">Статистика</a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=main"><?php echo $this->lng_m['info']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=extensions"><?php echo $this->lng_m['info_ext']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=stats"><?php echo $this->lng_m['info_stats']; ?></a></li>
 		</ul>
 		 
 		<div class="tab-content">
@@ -20,18 +20,18 @@
 				<ul class="thumbnails">
 					<li class="span6">
 						<div class="thumbnail">
-							<h3>Новости</h3>
+							<h3><?php echo $this->lng_m['info_news']; ?></h3>
 							<p><span id="api-engine-news"></span></p>
 						</div>
 					</li>
 					
 					<li class="span6">
 						<div class="thumbnail">
-							<h3>Версия движка</h3>
-							<p><b>Текущая версия</b>: <span id="engine-version"><?php echo VERSION; ?></span></p>
-							<p><b>Последняя стабильная версия</b>: <span id="api-engine-version"></span></p>
-							<p><b>Версия на GitHub</b>: <span id="git-engine-version"></span></p>
-							<p><b>Dev версия</b>: <span id="git-dev-version"></span></p>
+							<h3><?php echo $this->lng_m['info_eng_ver']; ?></h3>
+							<p><b><?php echo $this->lng_m['info_eng_ver_now']; ?></b>: <span id="engine-version"><?php echo VERSION; ?></span></p>
+							<p><b><?php echo $this->lng_m['info_eng_ver_last']; ?></b>: <span id="api-engine-version"></span></p>
+							<p><b><?php echo $this->lng_m['info_eng_ver_git']; ?></b>: <span id="git-engine-version"></span></p>
+							<p><b><?php echo $this->lng_m['info_eng_ver_dev']; ?></b>: <span id="git-dev-version"></span></p>
 						</div>
 					</li>
 				</ul>

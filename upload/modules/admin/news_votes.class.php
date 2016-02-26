@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Голоса';
+		if(!$this->core->is_access('sys_adm_news_votes')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Голоса' => BASE_URL."?mode=admin&do=news_votes"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['votes'] => BASE_URL."?mode=admin&do=news_votes"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -36,18 +36,17 @@ class submodule{
 									ORDER BY `v`.id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/news_votes/vote-none.html");
-			return ob_get_clean();
-		}
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/news_votes/vote-none.html"); }
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
 			if(empty($ar['title'])){
 				$status_class = 'error';
-				$new = 'Новость удалена';
+				$new = $this->lng['nvt_news_deleted'];
 			}else{
 				$status_class = '';
 				$new = $this->db->HSC($ar['title']);
@@ -76,28 +75,24 @@ class submodule{
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_news_votes`");
 
-		if(!$query){ exit("SQL Error"); }
-
-		$ar = $this->db->fetch_array($query);
+		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
 			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news_votes'], "?mode=admin&do=news_votes&pid=", $ar[0]),
 			"VOTES" => $this->votes_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news_votes/vote-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news_votes/vote-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=news_votes'); }
+		if(!$this->core->is_access('sys_adm_news_votes_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news_votes'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=news_votes'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=news_votes'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['nvt_not_selected'], 2, '?mode=admin&do=news_votes'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -105,13 +100,17 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_news_votes` WHERE id IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_votes'); }
+		if(!$this->db->remove_fast("mcr_news_votes", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_votes'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: голосов - $count1", 3, '?mode=admin&do=news_votes');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_nvt']." $list ".$this->lng['log_nvt'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['nvt_del_elements']." $count1", 3, '?mode=admin&do=news_votes');
 
 	}
 
@@ -125,11 +124,7 @@ class submodule{
 			default:		$content = $this->votes_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

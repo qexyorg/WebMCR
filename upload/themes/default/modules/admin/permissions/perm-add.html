@@ -9,37 +9,37 @@
 	<form class="form-horizontal" method="post">
 
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['perm_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['perm_field_name']; ?>" required>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="textareaText">Описание</label>
+			<label class="control-label" for="textareaText"><?php echo $this->lng_m['perm_field_desc']; ?></label>
 			<div class="controls">
-				<textarea name="text" class="span8" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+				<textarea name="text" class="span10" placeholder="<?php echo $this->lng_m['perm_field_desc']; ?>" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputPerm">Значение</label>
+			<label class="control-label" for="inputPerm"><?php echo $this->lng_m['perm_field_value']; ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="value" value="<?php echo $data['VALUE']; ?>" id="inputPerm" placeholder="Уникальное значение">
+				<input type="text" class="span10" name="value" value="<?php echo $data['VALUE']; ?>" id="inputPerm" placeholder="<?php echo $this->lng_m['perm_field_value']; ?>">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputPerm">Тип</label>
+			<label class="control-label" for="inputPerm"><?php echo $this->lng_m['perm_field_type']; ?></label>
 			<div class="controls">
-				<select name="type" class="span8" id="perm-type">
+				<select name="type" class="span10" id="perm-type">
 					<?php echo $data['TYPES']; ?>
 				</select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputDefault">По умолчанию</label>
+			<label class="control-label" for="inputDefault"><?php echo $this->lng_m['perm_field_default']; ?></label>
 			<div class="controls" id="perm-default">
 				<?php echo $data['DEFAULT']; ?>
 			</div>

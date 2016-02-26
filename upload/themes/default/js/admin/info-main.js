@@ -2,7 +2,7 @@ function load_last_version(){
 
 	$.ajax({
 		url: "http://api.webmcr.com/?do=versions&limit=1",
-		beforeSend: function(){ $("#api-engine-version").html($.mcr.loader); },
+		beforeSend: function(){ $("#api-engine-version").html(mcr.loader); },
 		dataType: "json",
 		success: function(json){
 			data = json.data[0];
@@ -18,9 +18,12 @@ function load_last_version(){
 function load_last_news(){
 
 	$.ajax({
-		url: "http://api.webmcr.loc/?do=news&limit=1",
-		beforeSend: function(){ $("#api-engine-news").html($.mcr.loader); },
+		url: "http://api.webmcr.com/?do=news&limit=1",
+		beforeSend: function(){ $("#api-engine-news").html(mcr.loader); },
 		dataType: "json",
+		error: function(data){
+			console.log(data);
+		},
 		success: function(json){
 			data = json.data[0];
 			if(json.type=='success'){
@@ -53,7 +56,7 @@ function load_git_dev_version(){
 
 $(function(){
 
-	if(!navigator.onLine){ notify("Ошибка!", "Отсутствует интернет-соединение", 1); return; }
+	if(!navigator.onLine){ notify(lng.error, lng_im.e_connection, 1); return; }
 
 	$("#api-engine-news, #api-engine-version, #git-engine-version, #git-dev-version").html("∞");
 

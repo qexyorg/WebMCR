@@ -4,6 +4,10 @@ define('MCR', '');
 
 require_once("../system.php");
 
+require_once(MCR_LANG_DIR."install.php");
+
+$core->lng_m = $lng;
+
 $core->def_header = $core->sp(MCR_ROOT."install/theme/header.html");
 
 $mode = (isset($_GET['mode'])) ? $_GET['mode'] : 'step_1';
@@ -23,21 +27,26 @@ switch($mode){
 	break;
 
 	case 'finish':
+		$core->bc = $core->gen_bc(array($lng['mod_name'] => ''));
 		$content = $core->sp(MCR_ROOT."install/theme/finish.html");
+		if(isset($_SESSION['step_1'])){ unset($_SESSION['step_1']); }
+		if(isset($_SESSION['step_2'])){ unset($_SESSION['step_2']); }
+		if(isset($_SESSION['step_3'])){ unset($_SESSION['step_3']); }
+		if(isset($_SESSION['settings'])){ unset($_SESSION['settings']); }
 	break;
 
 	default:
-		$content = $core->notify('Установка!', 'Шаг #1', 4, 'install/?mode=step_1');
+		$content = $core->notify($lng['mod_name'], 'Шаг #1', 4, 'install/?mode=step_1');
 	break;
 }
 
 function load_left_block($core, $mode){
 	$array = array(
-		"step_1" => "Шаг #1",
-		"step_2" => "Шаг #2",
-		"step_3" => "Шаг #3",
-		"settings" => "Настройки",
-		"finish" => "Завершение установки"
+		"step_1" => $core->lng_m['step_1'],
+		"step_2" => $core->lng_m['step_2'],
+		"step_3" => $core->lng_m['step_3'],
+		"settings" => $core->lng_m['settings'],
+		"finish" => $core->lng_m['finish']
 	);
 
 	ob_start();
@@ -53,7 +62,14 @@ function load_left_block($core, $mode){
 
 	$data['ITEMS'] = ob_get_clean();
 
-	return $core->sp(MCR_ROOT."blocks/1_notify.php").$core->sp(MCR_ROOT."install/theme/left-block.html", $data);
+	include(MCR_SIDE_PATH."1_notify.php");
+
+	require_once(MCR_LANG_DIR.'blocks/notify.php');
+	$core->lng_b = $lng;
+
+	$notify = new block_notify($core);
+
+	return $notify->content().$core->sp(MCR_ROOT."install/theme/left-block.html", $data);
 }
 
 $data_global = array(

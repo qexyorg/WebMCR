@@ -1,38 +1,38 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки сайта</div>
+		<div class="block-name"><?php echo $this->lng_m['finish']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
 
 	<div>
-		<h3 class="text-center text-success">Поздравляем!</h3>
+		<h3 class="text-center text-success"><?php echo $this->lng_m['congrats']; ?></h3>
 
-		<p>Вы успешно установили WebMCR</p>
-		<p class="text-error">Обязательно удалите папку <b>install</b> из главного каталога WebMCR</p>
+		<p><?php echo $this->lng_m['fs_msg1']; ?></p>
+		<p class="text-error"><?php echo $this->lng_m['fs_msg2']; ?> <b>install</b> <?php echo $this->lng_m['fs_msg3']; ?></p>
 
-		<p class="text-center"><a href="<?php echo BASE_URL; ?>" class="btn btn-success">На главную сайта</a> <a href="<?php echo BASE_URL; ?>?mode=admin" class="btn btn-success">В панель управления</a></p>
+		<p class="text-center"><a href="<?php echo BASE_URL; ?>" class="btn btn-success"><?php echo $this->lng_m['go_home']; ?></a> <a href="<?php echo BASE_URL; ?>?mode=admin" class="btn btn-success"><?php echo $this->lng_m['go_cp']; ?></a></p>
 
 		<br>
 		<div class="accordion" id="accordion2">
 			<div class="accordion-group">
 				<div class="accordion-heading">
 					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-						Полезные ссылки
+						<?php echo $this->lng_m['useful_links']; ?>
 					</a>
 				</div>
 				<div id="collapseOne" class="accordion-body collapse">
 					<div class="accordion-inner">
 						<ul class="unstyled">
-							<li>- <a href="http://webmcr.com/" target="_blank">Официальный сайт</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="http://webmcr.loc/?do=wiki" target="_blank">Документация</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="http://webmcr.loc/?do=extensions" target="_blank">Дополнения</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="https://twitter.com/webmcr_official" target="_blank">Twitter</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="https://vk.com/webmcr" target="_blank">Страница VK</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="http://qexy.org" target="_blank">Toster (Разработчик новых версий)</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="http://catface.ru" target="_blank">NC22 (Автор WebMCR & Разработчик предыдущих версий)</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
-							<li>- <a href="http://www.rubukkit.org/members/killerprost.5532/" target="_blank">KillerProst (Автор изначального шаблона)</a> <i class="icon-share" rel="tooltip" title="Откроется в новой вкладке"></i></li>
+							<li>- <a href="http://webmcr.com/" target="_blank"><?php echo $this->lng_m['official_site']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="http://wiki.webmcr.com" target="_blank"><?php echo $this->lng_m['documentation']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="http://webmcr.com/?do=extensions" target="_blank"><?php echo $this->lng_m['extensions']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="https://twitter.com/webmcr_official" target="_blank">Twitter</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="https://vk.com/webmcr" target="_blank"><?php echo $this->lng_m['vk_page']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="http://qexy.org" target="_blank">Toster (<?php echo $this->lng_m['dev_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="http://catface.ru" target="_blank">NC22 (<?php echo $this->lng_m['author_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+							<li>- <a href="http://www.rubukkit.org/members/killerprost.5532/" target="_blank">KillerProst (<?php echo $this->lng_m['theme_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
 						</ul>
 					</div>
 				</div>
@@ -41,7 +41,7 @@
 			<div class="accordion-group">
 				<div class="accordion-heading">
 					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-						Пожертвования
+						<?php echo $this->lng_m['donate']; ?>
 					</a>
 				</div>
 				<div id="collapseTwo" class="accordion-body collapse">
@@ -50,9 +50,9 @@
 						<p>[USD] WebMoney: Z382336720676</p>
 						<p>[UAH] WebMoney: U352343863491</p>
 						<p>[EUR] WebMoney: E208570680033</p>
-						<p>WebMCR - это некоммерческий проект с открытым исходным кодом. Вся разработка идет на энтузиазме, а ваши пожертвования, дают нам повод для развития своих идей и продолжения разработки.<br>
-						Мы рады любым суммам.<br>
-						Спасибо.</p>
+						<p><?php echo $this->lng_m['fs_msg4']; ?><br>
+						<?php echo $this->lng_m['fs_msg5']; ?><br>
+						<?php echo $this->lng_m['fs_msg6']; ?></p>
 					</div>
 				</div>
 			</div>

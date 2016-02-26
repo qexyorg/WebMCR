@@ -1,7 +1,7 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Информация и статистика</div>
+		<div class="block-name"><?php echo $this->lng_m['info_and_stats']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -9,9 +9,9 @@
 	<div class="adm-info-stats">
 		<form method="post"></form>
 		<ul class="nav nav-tabs" id="myTab">
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=main">Информация</a></li>
-			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=extensions">Дополнения</a></li>
-			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=stats">Статистика</a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=main"><?php echo $this->lng_m['info']; ?></a></li>
+			<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=extensions"><?php echo $this->lng_m['info_ext']; ?></a></li>
+			<li class="active"><a href="<?php echo BASE_URL; ?>?mode=admin&do=info&op=stats"><?php echo $this->lng_m['info_stats']; ?></a></li>
 		</ul>
 		 
 		<div class="tab-content">
@@ -20,31 +20,31 @@
 				<ul class="thumbnails">
 					<li class="span6">
 						<div class="thumbnail">
-							<h3>Статистика новостей</h3>
+							<h3><?php echo $this->lng_m['info_news_stats']; ?></h3>
 							<p>
 								<table class="table table-hover">
 									<tr>
-										<td>Новостей</td>
+										<td><?php echo $this->lng_m['info_count_news']; ?></td>
 										<td class="text-right"><?php echo $data['COUNT_NEWS']; ?></td>
 									</tr>
 
 									<tr>
-										<td>Просмотров</td>
+										<td><?php echo $this->lng_m['info_count_views']; ?><</td>
 										<td class="text-right"><?php echo $data['COUNT_VIEWS']; ?></td>
 									</tr>
 
 									<tr>
-										<td>Голосов</td>
+										<td><?php echo $this->lng_m['info_count_votes']; ?><</td>
 										<td class="text-right"><?php echo $data['COUNT_VOTES']; ?></td>
 									</tr>
 
 									<tr>
-										<td>Категорий</td>
+										<td><?php echo $this->lng_m['info_count_cats']; ?><</td>
 										<td class="text-right"><?php echo $data['COUNT_CATEGORIES']; ?></td>
 									</tr>
 
 									<tr>
-										<td>Комментариев</td>
+										<td><?php echo $this->lng_m['info_count_coms']; ?><</td>
 										<td class="text-right"><?php echo $data['COUNT_COMMENTS']; ?></td>
 									</tr>
 								</table>
@@ -54,18 +54,18 @@
 					
 					<li class="span6">
 						<div class="thumbnail">
-							<h3>Статистика пользователей</h3>
+							<h3><?php echo $this->lng_m['info_users_stats']; ?></h3>
 							<p>
 								<table class="table table-hover">
 									<?php echo $data['USERS_STATS']; ?>
 									<tfoot>
 										<tr>
-											<td><b>Всего пользователей</b></td>
+											<td><b><?php echo $this->lng_m['info_count_users']; ?></b></td>
 											<td class="text-right"><?php echo $data['COUNT_USERS']; ?></td>
 										</tr>
 
 										<tr>
-											<td><b>Всего групп</b></td>
+											<td><b><?php echo $this->lng_m['info_count_groups']; ?></b></td>
 											<td class="text-right"><?php echo $data['COUNT_GROUPS']; ?></td>
 										</tr>
 									</tfoot>
@@ -76,16 +76,16 @@
 
 					<li class="span12">
 						<div class="thumbnail">
-							<h3>Разное</h3>
+							<h3><?php echo $this->lng_m['info_other']; ?></h3>
 							<p>
 								<table class="table table-hover">
 									<tr>
-										<td>Статических страниц</td>
+										<td><?php echo $this->lng_m['info_count_statics']; ?></td>
 										<td class="text-right"><?php echo $data['COUNT_STATICS']; ?></td>
 									</tr>
 
 									<tr>
-										<td>Привилегий</td>
+										<td><?php echo $this->lng_m['info_count_perms']; ?></td>
 										<td class="text-right"><?php echo $data['COUNT_PERMISSIONS']; ?></td>
 									</tr>
 								</table>

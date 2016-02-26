@@ -8,15 +8,15 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['cn_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['cn_field_name']; ?>">
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label" for="inputText">Описание</label>
+			<label class="control-label" for="inputText"><?php echo $this->lng_m['cn_field_desc']; ?></label>
 			<div class="controls">
-				<textarea id="inputText" placeholder="Описание" name="text" maxlength="255" rows="5"><?php echo $data['TEXT']; ?></textarea>
+				<textarea id="inputText" class="span10" placeholder="<?php echo $this->lng_m['cn_field_desc']; ?>" name="text" maxlength="255" rows="5"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 		<div class="control-group">

@@ -8,16 +8,16 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['mi_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['mi_field_name']; ?>" required>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputImg">Изображение</label>
+			<label class="control-label" for="inputImg"><?php echo $this->lng_m['mi_field_img']; ?></label>
 			<div class="controls">
-				<input type="text" name="img" value="<?php echo $data['IMG']; ?>" id="inputImg" placeholder="Изображение (По умолчанию default.png)">
+				<input type="text" class="span10" name="img" value="<?php echo $data['IMG']; ?>" id="inputImg" placeholder="<?php echo $this->lng_m['mi_field_img']; ?>">
 			</div>
 		</div>
 

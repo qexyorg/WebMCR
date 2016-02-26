@@ -1,0 +1,64 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['PAGE']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<form class="form-horizontal" method="post">
+		<h3><?php echo $data['TITLE']; ?></h3>
+		<small>- <?php echo $data['DESC']; ?></small>
+		<hr>
+		<address>
+			<dl class="dl-horizontal">
+
+				<dt><?php echo $this->lng_m['mod_field_author']; ?>:</dt>
+				<dd><?php echo $data['AUTHOR']; ?></dd>
+
+				<dt><?php echo $this->lng_m['mod_field_site']; ?>:</dt>
+				<dd><a href="<?php echo $data['SITE']; ?>" target="_blank"><?php echo $data['SITE']; ?></a></dd>
+
+				<dt><?php echo $this->lng_m['mod_field_email']; ?>:</dt>
+				<dd><a href="mailto:<?php echo $data['EMAIL']; ?>"><?php echo $data['EMAIL']; ?></a></dd>
+
+				<dt><?php echo $this->lng_m['mod_field_ver']; ?>:</dt>
+				<dd><?php echo $data['VERSION']; ?> <?php echo $data['UPDATE_RESULT']; ?></dd>
+			</dl>
+		</address>
+
+		<div class="control-group">
+			<label class="control-label" for="inputStatus"><?php echo $this->lng_m['mod_field_status']; ?></label>
+			<div class="controls">
+				<select name="status" id="inputStatus">
+					<option value="0"><?php echo $this->lng_m['mod_off']; ?></option>
+					<option value="1" <?php echo $data['STATUS']; ?>><?php echo $this->lng_m['mod_on']; ?></option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputUpdate"><?php echo $this->lng_m['mod_field_upd']; ?></label>
+			<div class="controls">
+				<select name="updates" id="inputUpdate">
+					<option value="0"><?php echo $this->lng_m['mod_off1']; ?></option>
+					<option value="1" <?php echo $data['UPDATE_CHECK']; ?>><?php echo $this->lng_m['mod_on1']; ?></option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="inputUrl"><?php echo $this->lng_m['mod_field_url']; ?></label>
+			<div class="controls">
+				<input type="text" id="inputUrl" name="update_url" value="<?php echo $data['UPDATE_URL']; ?>">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+			</div>
+		</div>
+	</form>
+		
+</div>

@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Группы меню ПУ';
+		if(!$this->core->is_access('sys_adm_menu_groups')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы меню ПУ' => BASE_URL."?mode=admin&do=menu_groups"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -34,12 +34,9 @@ class submodule{
 									ORDER BY `g`.`priority` ASC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -70,19 +67,17 @@ class submodule{
 			"GROUPS" => $this->group_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=menu_groups'); }
+		if(!$this->core->is_access('sys_adm_menu_groups_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_groups'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=menu_groups'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=menu_groups'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mgrp_not_selected'], 2, '?mode=admin&do=menu_groups'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -90,30 +85,31 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_menu_adm_groups` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
+		if(!$this->db->remove_fast("mcr_menu_adm_groups", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
 
 		$count = $this->db->affected_rows();
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_menu_adm` WHERE gid IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
+		if(!$this->db->remove_fast("mcr_menu_adm", "gid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: групп меню - $count, пунктов меню - $count1", 3, '?mode=admin&do=menu_groups');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_mgrp']." $list ".$this->lng['log_mgrp'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['mgrp_del_elements']." $count, ".$this->lng['mgrp_del_elements1']." $count1", 3, '?mode=admin&do=menu_groups');
 
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_menu_groups_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_groups'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы меню ПУ' => BASE_URL."?mode=admin&do=menu_groups",
-			'Добавление' => BASE_URL."?mode=admin&do=menu_groups&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups",
+			$this->lng['mgrp_add'] => BASE_URL."?mode=admin&do=menu_groups&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -124,35 +120,40 @@ class submodule{
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
 			$priority		= intval(@$_POST['priority']);
 
-			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->lng["e_msg"], "Привилегия не существует", 2, '?mode=admin&do=menu'); }
+			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mgrp_perm_not_exist'], 2, '?mode=admin&do=menu'); }
 
 			$insert = $this->db->query("INSERT INTO `mcr_menu_adm_groups`
 											(title, `text`, `access`, `priority`)
 										VALUES
 											('$title', '$text', '$permissions', '$priority')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_mgrp']." #$id ".$this->lng['log_mgrp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Группа меню успешно добавлена", 3, '?mode=admin&do=menu_groups');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mgrp_add_success'], 3, '?mode=admin&do=menu_groups');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление меню",
+			"PAGE" => $this->lng['mgrp_add_page_name'],
 			"TITLE" => '',
 			"TEXT" => '',
 			"PERMISSIONS" => $this->core->perm_list(),
 			"PRIORITY" => 1,
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['mgrp_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_menu_groups_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_groups'); }
 
 		$id = intval($_GET['id']);
 
@@ -160,16 +161,14 @@ class submodule{
 									FROM `mcr_menu_adm_groups`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Группы меню ПУ' => BASE_URL."?mode=admin&do=menu_groups",
-			'Редактирование' => BASE_URL."?mode=admin&do=menu_groups&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups",
+			$this->lng['mgrp_edit'] => BASE_URL."?mode=admin&do=menu_groups&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -180,31 +179,33 @@ class submodule{
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
 			$priority		= intval(@$_POST['priority']);
 
-			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->lng["e_msg"], "Привилегия не существует", 2, '?mode=admin&do=menu'); }
+			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mgrp_perm_not_exist'], 2, '?mode=admin&do=menu'); }
 
 			$update = $this->db->query("UPDATE `mcr_menu_adm_groups`
 										SET title='$title', `text`='$text', `access`='$permissions', `priority`='$priority'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_mgrp']." #$id ".$this->lng['log_mgrp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Группа меню успешно изменена", 3, '?mode=admin&do=menu_groups&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mgrp_edit_success'], 3, '?mode=admin&do=menu_groups&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE"			=> "Редактирование группы",
+			"PAGE"			=> $this->lng['mgrp_edit_page_name'],
 			"TITLE"			=> $this->db->HSC($ar['title']),
 			"TEXT"			=> $this->db->HSC($ar['text']),
 			"PERMISSIONS"	=> $this->core->perm_list($ar['access']),
 			"PRIORITY"		=> intval($ar['priority']),
-			"BUTTON"		=> "Сохранить"
+			"BUTTON"		=> $this->lng['mgrp_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_groups/group-add.html", $data);
 	}
 
 	public function content(){
@@ -219,11 +220,7 @@ class submodule{
 			default:		$content = $this->group_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

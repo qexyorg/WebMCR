@@ -1,0 +1,38 @@
+<form method="post" class="panel-modules" action="<?php echo ADMIN_URL; ?>&do=modules&op=delete">
+	<div class="form-block">
+
+		<div class="block-header">
+			<div class="block-name"><?php echo $this->lng_m['modules']; ?></div>
+		</div>
+
+		<div class="block-line"></div>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th><?php echo $this->lng_m['mod_field_status']; ?></th>
+					<th><?php echo $this->lng_m['mod_field_name']; ?></th>
+					<th><?php echo $this->lng_m['mod_field_author']; ?></th>
+					<th><?php echo $this->lng_m['mod_field_ver']; ?></th>
+					<th class="action"><?php echo $this->lng_m['mod_field_action']; ?> <input type="checkbox" class="check-all" data-for="check-input"></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<?php echo $data['MODULES']; ?>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="form-block actions">
+		<div class="right-act">
+			<?php echo $this->lng_m['mod_field_action2']; ?>: 
+			<div class="btn-group">
+				<a class="btn edit" data-for="check-input" data-link="<?php echo ADMIN_URL; ?>&do=modules&op=edit&id=" href="#"><i class="icon-pencil"></i></a>
+				<button class="btn" id="enable" data-for="check-input"><i class="icon-play"></i></button>
+				<button class="btn" id="disable" data-for="check-input"><i class="icon-pause"></i></button>
+			</div>
+		</div>
+		
+	</div>
+</form>

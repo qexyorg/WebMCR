@@ -18,10 +18,10 @@
 			},
 			ru: { // Russian
 				months: [
-					'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+					lng.jan, lng.feb, lng.mar, lng.apr, lng.may, lng.jun, lng.jul, lng.aug, lng.sep, lng.oct, lng.nov, lng.dec
 				],
 				dayOfWeek: [
-					"Вск", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
+					lng.sun, lng.mon, lng.tue, lng.wed, lng.thu, lng.fri, lng.sat
 				]
 			},
 			uk: { // Ukrainian

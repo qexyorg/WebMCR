@@ -90,15 +90,17 @@ class menu{
 	}
 
 	private function menu_array(){
-		ob_start();
+		
 
 		$query = $this->db->query("SELECT id, title, `parent`, `url`, `target`, `permissions`
 									FROM `mcr_menu`
 									ORDER BY `parent` DESC");
 
-		if(!$query || $this->db->num_rows($query)<=0){ return ob_get_clean(); }
+		if(!$query || $this->db->num_rows($query)<=0){ return; }
 
 		$array = array();
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -122,11 +124,8 @@ class menu{
 	}
 
 	public function _list(){
-		ob_start();
 
-		echo $this->menu_array();
-
-		return ob_get_clean();
+		return $this->menu_array();
 	}
 }
 

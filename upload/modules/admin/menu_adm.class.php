@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Меню ПУ';
+		if(!$this->core->is_access('sys_adm_menu_adm')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Меню ПУ' => BASE_URL."?mode=admin&do=menu_adm"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -34,12 +34,9 @@ class submodule{
 									ORDER BY `m`.`priority` ASC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -62,28 +59,24 @@ class submodule{
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_menu_adm`");
 
-		if(!$query){ exit("SQL Error"); }
-
-		$ar = $this->db->fetch_array($query);
+		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
 			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], "?mode=admin&do=menu_adm&pid=", $ar[0]),
 			"MENU" => $this->menu_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=menu_adm'); }
+		if(!$this->core->is_access('sys_adm_menu_adm_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_adm'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=menu_adm'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=menu_adm'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mcp_not_selected'], 2, '?mode=admin&do=menu_adm'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -91,13 +84,17 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_menu_adm` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
+		if(!$this->db->remove_fast("mcr_menu_adm", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
 
 		$count = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: пунктов меню - $count", 3, '?mode=admin&do=menu_adm');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_mcp']." $list ".$this->lng['log_mcp'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['mcp_del_elements']." $count", 3, '?mode=admin&do=menu_adm');
 
 	}
 
@@ -166,13 +163,12 @@ class submodule{
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_menu_adm_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_adm'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Меню ПУ' => BASE_URL."?mode=admin&do=menu_adm",
-			'Добавление' => BASE_URL."?mode=admin&do=menu_adm&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm",
+			$this->lng['mcp_add'] => BASE_URL."?mode=admin&do=menu_adm&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -187,24 +183,32 @@ class submodule{
 			$priority		= intval(@$_POST['priority']);
 			$icon			= intval(@$_POST['icon']);
 
-			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->lng["e_msg"], "Привилегия не существует", 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mcp_perm_not_exist'], 2, '?mode=admin&do=menu_adm'); }
 
 			// Check exist fields in base
-			if(!$this->validate_element($gid, 'mcr_menu_adm_groups')){ $this->core->notify($this->lng["e_msg"], $this->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
-			if(!$this->validate_element($icon, 'mcr_menu_adm_icons')){ $this->core->notify($this->lng["e_msg"], $this->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->validate_element($gid, 'mcr_menu_adm_groups')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->validate_element($icon, 'mcr_menu_adm_icons')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
 
 			$insert = $this->db->query("INSERT INTO `mcr_menu_adm`
 											(title, gid, `text`, `url`, `target`, `access`, `priority`, icon)
 										VALUES
 											('$title', '$gid', '$text', '$url', '$target', '$permissions', '$priority', '$icon')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_mcp']." #$id ".$this->lng['log_mcp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Пункт меню успешно добавлен", 3, '?mode=admin&do=menu_adm');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mcp_add_success'], 3, '?mode=admin&do=menu_adm');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление меню",
+			"PAGE" => $this->lng['mcp_add_page_name'],
 			"TITLE" => '',
 			"TEXT" => '',
 			"URL" => '',
@@ -213,17 +217,14 @@ class submodule{
 			"ICONS" => $this->icons(),
 			"TARGET" => '',
 			"PRIORITY" => 1,
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['mcp_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_menu_adm_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_adm'); }
 
 		$id = intval($_GET['id']);
 
@@ -231,16 +232,14 @@ class submodule{
 									FROM `mcr_menu_adm`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Меню ПУ' => BASE_URL."?mode=admin&do=menu_adm",
-			'Редактирование' => BASE_URL."?mode=admin&do=menu_adm&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm",
+			$this->lng['mcp_edit'] => BASE_URL."?mode=admin&do=menu_adm&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -255,24 +254,30 @@ class submodule{
 			$priority		= intval(@$_POST['priority']);
 			$icon			= intval(@$_POST['icon']);
 
-			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->lng["e_msg"], "Привилегия не существует", 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mcp_perm_not_exist'], 2, '?mode=admin&do=menu_adm'); }
 
 			// Check exist fields in base
-			if(!$this->validate_element($gid, 'mcr_menu_adm_groups')){ $this->core->notify($this->lng["e_msg"], $this->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
-			if(!$this->validate_element($icon, 'mcr_menu_adm_icons')){ $this->core->notify($this->lng["e_msg"], $this->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->validate_element($gid, 'mcr_menu_adm_groups')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
+			if(!$this->validate_element($icon, 'mcr_menu_adm_icons')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_hack"], 2, '?mode=admin&do=menu_adm'); }
 
 			$update = $this->db->query("UPDATE `mcr_menu_adm`
 										SET title='$title', gid='$gid', `text`='$text', `url`='$url', `target`='$target',
 											`access`='$permissions', `priority`='$priority', icon='$icon'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_adm&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_mcp']." #$id ".$this->lng['log_mcp'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Пункт меню успешно изменен", 3, '?mode=admin&do=menu_adm&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mcp_edit_success'], 3, '?mode=admin&do=menu_adm&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE" => "Редактирование меню",
+			"PAGE" => $this->lng['mcp_edit_page_name'],
 			"TITLE" => $this->db->HSC($ar['title']),
 			"TEXT" => $this->db->HSC($ar['text']),
 			"URL" => $this->db->HSC($ar['url']),
@@ -281,14 +286,10 @@ class submodule{
 			"ICONS" => $this->icons($ar['icon']),
 			"TARGET" => ($ar['target']=='_blank') ? 'selected' : '',
 			"PRIORITY" => intval($ar['priority']),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->lng['mcp_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-add.html", $data);
 	}
 
 	private function parents($select=0, $not=false){
@@ -306,7 +307,7 @@ class submodule{
 
 		$selected = ($select===0) ? 'selected' : '';
 		
-		echo '<option value="0" '.$selected.'>Верхний уровень</option>';
+		echo '<option value="0" '.$selected.'>'.$this->lng['mcp_top_lvl'].'</option>';
 
 		if(!$query || $this->db->num_rows($query)<=0){ return ob_get_clean(); }
 
@@ -334,11 +335,7 @@ class submodule{
 			default:		$content = $this->menu_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

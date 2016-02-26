@@ -9,17 +9,17 @@
 	<form class="form-horizontal" method="post">
 
 		<div class="control-group">
-			<label class="control-label" for="inputCategory">Новость</label>
+			<label class="control-label" for="inputCategory"><?php echo $this->lng_m['com_col_news']; ?></label>
 			<div class="controls">
-				<select name="nid" id="inputCategory"><?php echo $data['NEWS']; ?></select>
+				<select name="nid" class="span10" id="inputCategory"><?php echo $data['NEWS']; ?></select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputText">Комментарий</label>
+			<label class="control-label" for="inputText"><?php echo $this->lng_m['com_col_comment']; ?></label>
 			<div class="controls">
 				<?php echo $data['BB_PANEL']; ?>
-				<textarea id="inputText" placeholder="Текст комментария" data-for="bb-comment" class="input-block-level" name="text" rows="6"><?php echo $data['TEXT']; ?></textarea>
+				<textarea id="inputText" placeholder="<?php echo $this->lng_m['com_text']; ?>" data-for="bb-comment" class="input-block-level" name="text" rows="6"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 

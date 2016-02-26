@@ -10,14 +10,13 @@ class submodule{
 		$this->db		= $core->db;
 		$this->config	= $core->config;
 		$this->user		= $core->user;
-		$this->lng		= $core->lng;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			"Поиск" => BASE_URL."?mode=search",
-			"По новостям" => BASE_URL."?mode=search&type=news"
+			$this->lng['mod_name'] => BASE_URL."?mode=search",
+			$this->lng['by_news'] => BASE_URL."?mode=search&type=news"
 		);
-
-		$this->core->title = "Поиск — По новостям";
+		
 		$this->core->bc = $this->core->gen_bc($bc);
 	}
 
@@ -35,10 +34,10 @@ class submodule{
 									WHERE `n`.title LIKE '%$value%' OR `n`.text_bb LIKE '%$value%'
 									LIMIT $start, $end");
 
+		if(!$query || $this->db->num_rows($query)<=0){ /*echo $this->core->sp(MCR_THEME_MOD."search/news/news-none.html");*/ return; }
+
 		ob_start();
-
-		if(!$query || $this->db->num_rows($query)<=0){ /*echo $this->core->sp(MCR_THEME_MOD."search/news/news-none.html");*/ return ob_get_clean(); }
-
+		
 		while($ar = $this->db->fetch_assoc($query)){
 
 			$title = $this->db->HSC($ar['title']);
@@ -71,13 +70,13 @@ class submodule{
 
 	public function results(){
 		
-		if(!$this->core->is_access('sys_search_news')){ $this->core->notify("Доступ запрещен!", "Поиск по новостям ограничен администрацией", 1, "?mode=403"); }
+		if(!$this->core->is_access('sys_search_news')){ $this->core->notify($this->core->lng['403'], $this->core->lng['t_403'], 1, "?mode=403"); }
 
 		$value = (isset($_GET['value'])) ? $_GET['value'] : '';
 
 		$value = trim(urldecode($value));
 
-		if(empty($value)){ $this->core->notify("404", "Не заданы критерии поиска", 2, "?mode=403"); }
+		if(empty($value)){ $this->core->notify($this->core->lng['404'], $this->lng['empty_query'], 2, "?mode=403"); }
 
 		$safe_value = $this->db->safesql($value);
 		$html_value = $this->db->HSC($value);
@@ -86,7 +85,7 @@ class submodule{
 
 		$query = $this->db->query($sql);
 
-		if(!$query){ $this->core->notify($this->lng['e_msg'], $this->lng['e_sql_critical'], 2); }
+		if(!$query){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_sql_critical'], 2); }
 
 		$ar = $this->db->fetch_array($query);
 
@@ -99,11 +98,7 @@ class submodule{
 			"QUERY_COUNT" => intval($ar[0])
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."search/news/news-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."search/news/news-list.html", $data);
 	}
 }
 

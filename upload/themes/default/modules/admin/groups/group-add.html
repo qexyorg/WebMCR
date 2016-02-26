@@ -8,19 +8,19 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['grp_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название" required>
+				<input type="text" class="span8" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['grp_field_name']; ?>" required>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="textareaText">Описание</label>
+			<label class="control-label" for="textareaText"><?php echo $this->lng_m['grp_field_desc']; ?></label>
 			<div class="controls">
-				<textarea name="text" class="span8" placeholder="Описание" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
+				<textarea name="text" class="span8" placeholder="<?php echo $this->lng_m['grp_field_desc']; ?>" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
-		<legend>Привилегии</legend>
+		<legend><?php echo $this->lng_m['grp_field_perm']; ?></legend>
 		<?php echo $data['PERMISSIONS']; ?>
 
 		<div class="control-group">

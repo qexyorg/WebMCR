@@ -1,0 +1,21 @@
+<div class="form-block static-page">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $data['TITLE']; ?> (<?php echo $this->lng_m['stc_preview']; ?>)</div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="static-content">
+		<?php echo $data['TEXT']; ?>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="block-footer">
+		<div class="date" rel="tooltip" title="Дата создания"><?php echo date("d.m.Y", time()); ?></div>
+		<div class="time" rel="tooltip" title="Время создания"><?php echo date("H:i", time()); ?></div>
+		<div class="readmore"><a target="_blank" href="<?php echo BASE_URL; ?>"><?php echo $this->lng_m['stc_go_home']; ?></a></div>
+	</div>
+
+</div>

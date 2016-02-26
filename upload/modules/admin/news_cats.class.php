@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Категории новостей';
+		if(!$this->core->is_access('sys_adm_news_cats')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']);; }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Категории новостей' => BASE_URL."?mode=admin&do=news_cats"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['categories'] => BASE_URL."?mode=admin&do=news_cats"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -32,12 +32,11 @@ class submodule{
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-none.html");
-			return ob_get_clean();
-		}
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-none.html"); }
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -66,19 +65,17 @@ class submodule{
 			"CATEGORIES" => $this->cats_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=news_cats'); }
+		if(!$this->core->is_access('sys_adm_news_cats_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news_cats'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=news_cats'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=news_cats'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['cn_not_selected'], 2, '?mode=admin&do=news_cats'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -86,16 +83,14 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_news_cats` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+		if(!$this->db->remove_fast("mcr_news_cats", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
 
 		$count = $this->db->affected_rows();
 
 		$query = $this->db->query("SELECT id FROM `mcr_news` WHERE id IN ($list)");
 
 		if(!$query || $this->db->num_rows($query)<=0){
-			$this->core->notify($this->lng["e_success"], "Выбранные элементы успешно удалены ($count)", 3, '?mode=admin&do=news_cats');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['cn_del_elements4']." ($count)", 3, '?mode=admin&do=news_cats');
 		}
 
 		$elem = array();
@@ -104,36 +99,35 @@ class submodule{
 
 		$elements = implode(", ", $elem);
 
-		$delete2 = $this->db->query("DELETE FROM `mcr_news` WHERE id IN ($elements)");
-
-		if(!$delete2){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+		if(!$this->db->remove_fast("mcr_news", "id IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
 
 		$count2 = $this->db->affected_rows();
 
-		$delete3 = $this->db->query("DELETE FROM `mcr_news_views` WHERE nid IN ($elements)");
-
-		if(!$delete3){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+		if(!$this->db->remove_fast("mcr_news_views", "nid IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
 
 		$count3 = $this->db->affected_rows();
 
-		$delete4 = $this->db->query("DELETE FROM `mcr_news_votes` WHERE nid IN ($elements)");
-
-		if(!$delete4){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+		if(!$this->db->remove_fast("mcr_news_votes", "nid IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
 
 		$count4 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: категорий - $count, новостей - $count2, просмотров - $count3, голосов - $count4", 3, '?mode=admin&do=news_cats');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_cn']." $list ".$this->lng['log_cn'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['cn_del_elements']." $count, ".$this->lng['cn_del_elements2']." $count2, ".$this->lng['cn_del_elements3']." $count3, ".$this->lng['cn_del_elements5']." $count4", 3, '?mode=admin&do=news_cats');
 
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_news_cats_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news_cats'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Категории новостей' => BASE_URL."?mode=admin&do=news_cats",
-			'Добавление' => BASE_URL."?mode=admin&do=news_cats&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['categories'] => BASE_URL."?mode=admin&do=news_cats",
+			$this->lng['cn_add'] => BASE_URL."?mode=admin&do=news_cats&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -154,26 +148,31 @@ class submodule{
 											(title, description, `data`)
 										VALUES
 											('$title', '$text', '$new_data')");
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_cn']." #$id ".$this->lng['log_cn'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Категория успешно добавлена", 3, '?mode=admin&do=news_cats');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['cn_add_success'], 3, '?mode=admin&do=news_cats');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление категории",
+			"PAGE" => $this->lng['cn_add_page_name'],
 			"TITLE" => "",
 			"TEXT" => "",
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['cn_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_news_cats_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news_cats'); }
 
 		$id = intval($_GET['id']);
 
@@ -181,16 +180,14 @@ class submodule{
 									FROM `mcr_news_cats`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Категории новостей' => BASE_URL."?mode=admin&do=news_cats",
-			'Редактирование' => BASE_URL."?mode=admin&do=news_cats&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['categories'] => BASE_URL."?mode=admin&do=news_cats",
+			$this->lng['cn_edit'] => BASE_URL."?mode=admin&do=news_cats&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -213,23 +210,25 @@ class submodule{
 										SET title='$title', description='$text', `data`='$new_data'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_cn']." #$id ".$this->lng['log_cn'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Категория успешно изменена", 3, '?mode=admin&do=news_cats&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['cn_edit_success'], 3, '?mode=admin&do=news_cats&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE" => "Редактирование категории",
+			"PAGE" => $this->lng['cn_edit_page_name'],
 			"TITLE" => $this->db->HSC($ar['title']),
 			"TEXT" => $this->db->HSC($ar['description']),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->lng['cn_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-add.html", $data);
 	}
 
 	public function content(){
@@ -244,11 +243,7 @@ class submodule{
 			default:		$content = $this->cats_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

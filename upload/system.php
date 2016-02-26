@@ -7,16 +7,20 @@ ini_set("post_max_size", "50M");
 
 // System constants
 define('PROGNAME', 'WebMCR Reloaded'. MCR);
-define('VERSION', 'Alpha 0.15');
+define('VERSION', 'WebMCR Beta 1.0');
 define('FEEDBACK', '<a href="http://webmcr.com" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy'); 
 define('MCR_ROOT', dirname(__FILE__).'/');
 define('MCR_MODE_PATH', MCR_ROOT.'modules/');
 define('MCR_TOOL_PATH', MCR_ROOT.'engine/');
+define('MCR_LIBS_PATH', MCR_TOOL_PATH.'libs/');
+define('MCR_MON_PATH', MCR_TOOL_PATH.'monitoring/');
 define('MCR_SIDE_PATH', MCR_ROOT.'blocks/');
 define('MCR_LANG_PATH', MCR_ROOT.'language/');
+define('MCR_CONF_PATH', MCR_ROOT.'configs/');
 define('MCR_UPL_PATH', MCR_ROOT.'uploads/');
 define('MCR_SKIN_PATH', MCR_UPL_PATH.'skins/');
 define('MCR_CLOAK_PATH', MCR_UPL_PATH.'cloaks/');
+define('MCR_CACHE_PATH', MCR_ROOT.'cache/');
 
 session_save_path(MCR_UPL_PATH.'tmp');
 if(!session_start()){ session_start(); }
@@ -35,17 +39,16 @@ ini_set("display_errors", $core->config->main['debug']);
 $warn_type = ($core->config->main['debug']) ? E_ALL : 0;
 error_reporting($warn_type);
 
-$base_url = ($core->config->main['install']) ? $core->base_url() : $core->config->main['s_root'];
+$meta_json_data = array(
+	'secure' => MCR_SECURE_KEY,
+	'lang' => MCR_LANG,
+	'base_url' => BASE_URL,
+	'theme_url' => STYLE_URL,
+	'upload_url' => UPLOAD_URL,
+	'server_time' => time(),
+);
 
-// System constants
-define('MCR_LANG', $core->config->main['s_lang']);
-define('MCR_THEME_PATH', MCR_ROOT.'themes/'.$core->config->main['s_theme'].'/');
-define('MCR_THEME_MOD', MCR_THEME_PATH.'modules/');
-define('MCR_THEME_BLOCK', MCR_THEME_PATH.'blocks/');
-define('BASE_URL', $base_url);
-define('ADMIN_URL', BASE_URL.'?mode=admin');
-define('STYLE_URL', BASE_URL.'themes/'.$core->config->main['s_theme'].'/');
-define('UPLOAD_URL', BASE_URL.'uploads/');
+define('META_JSON_DATA', json_encode($meta_json_data));
 
 // Csrf security validation
 $core->csrf_check();

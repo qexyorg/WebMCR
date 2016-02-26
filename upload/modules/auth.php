@@ -4,19 +4,20 @@ if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
 	private $core, $db, $user, $config, $lng;
+	public $cfg = array();
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
 		$this->config	= $core->config;
-		$this->lng		= $core->lng;
+		$this->lng		= $core->lng_m;
 	}
 
 	public function content(){
 		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify('Hacking Attempt!'); }
 		
-		if($this->user->is_auth){ $this->core->notify('', $this->lng["e_auth_already"], 1); }
+		if($this->user->is_auth){ $this->core->notify('', $this->lng["e_already"], 1); }
 
 		$login = $this->db->safesql($_POST['login']);
 		$remember = (isset($_POST['remember']) && intval($_POST['remember'])==1) ? true : false;
@@ -29,7 +30,7 @@ class module{
 									WHERE `u`.login='$login'
 									LIMIT 1");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng['e_auth_wrong_pass']); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
 
 		$ar = $this->db->fetch_assoc($query);
 
@@ -37,7 +38,7 @@ class module{
 
 		$password = $this->core->gen_password($_POST['password'], $ar['salt']);
 
-		if($ar['password']!==$password){ $this->core->notify($this->lng["e_msg"], $this->lng['e_auth_wrong_pass']); }
+		if($ar['password']!==$password){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
 
 		$permissions = json_decode($ar['permissions'], true);
 
@@ -61,9 +62,9 @@ class module{
 									WHERE login='$login' AND password='$password'
 									LIMIT 1");
 
-		if(!$update){ $this->core->notify($this->lng['e_attention'], $this->lng['e_sql_critical']); }
+		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
-		if(!@$permissions['sys_auth']){ $this->core->notify("403", "Вам запрещена авторизация", 2, '?mode=403'); }
+		if(!@$permissions['sys_auth']){ $this->core->notify($this->core->lng['403'], $this->lng['e_access'], 2, '?mode=403'); }
 
 		$new_hash = $uid.$new_tmp.$new_ip.md5($this->config->main['mcr_secury']);
 
@@ -73,7 +74,10 @@ class module{
 
 		setcookie("mcr_user", $new_hash, $safetime, '/');
 
-		$this->core->notify($this->lng['e_success'], $this->lng['e_auth_success'], 3);
+		// Лог действия
+		$this->db->actlog($this->lng['log_auth'], $this->user->id);
+
+		$this->core->notify($this->core->lng['e_success'], $this->lng['e_success'], 3);
 	}
 
 }

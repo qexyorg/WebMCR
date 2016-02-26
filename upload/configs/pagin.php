@@ -19,5 +19,6 @@ $pagin = array (
   'adm_groups' => 10,
   'adm_permissions' => 10,
   'adm_statics' => 10,
+  'adm_logs' => 10,
 );
 ?>

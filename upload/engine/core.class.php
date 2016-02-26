@@ -4,17 +4,14 @@ if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class core{
 	// Set default scope and values
-	public $config		= array();
 
 	public $bc, $title, $header, $r_block, $l_block, $menu;
 
 	public $def_header	= '';
 
-	public $db			= false;
+	public $db, $user, $config = false;
 
-	public $user		= false;
-
-	public $lng			= array();
+	public $lng, $lng_m, $lng_b = array();
 
 	public $csrf_time	= 1800;
 
@@ -32,10 +29,10 @@ class core{
 		// Create & set new object of config
 		$this->config = new config();
 
-		if(!file_exists(MCR_LANG_PATH.$this->config->main['s_lang'].'/main.php')){ exit("Language path not found"); }
+		if(!file_exists(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php')){ exit("Language path not found"); }
 
 		// Load language package
-		require_once(MCR_LANG_PATH.$this->config->main['s_lang'].'/main.php');
+		require_once(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php');
 
 		// Set language var
 		$this->lng = $lng;
@@ -60,8 +57,26 @@ class core{
 		// Create & set new object of menu
 		$this->menu = new menu($this);
 
+		$base_url = ($this->config->main['install']) ? $this->base_url() : $this->config->main['s_root'];
+
 		// Generate CSRF Secure key
-		define("MCR_SECURE_KEY", $this->gen_csrf_secure());
+		define("MCR_SECURE_KEY", $this->gen_csrf_secure());// System constants
+		define('MCR_LANG', $this->config->main['s_lang']);
+		define('MCR_LANG_DIR', MCR_LANG_PATH.MCR_LANG.'/');
+		define('MCR_THEME_PATH', MCR_ROOT.'themes/'.$this->config->main['s_theme'].'/');
+		define('MCR_THEME_MOD', MCR_THEME_PATH.'modules/');
+		define('MCR_THEME_BLOCK', MCR_THEME_PATH.'blocks/');
+		define('BASE_URL', $base_url);
+		define('ADMIN_URL', BASE_URL.'?mode=admin');
+		define('STYLE_URL', BASE_URL.'themes/'.$this->config->main['s_theme'].'/');
+		define('UPLOAD_URL', BASE_URL.'uploads/');
+		define('LANG_URL', BASE_URL.'language/'.MCR_LANG.'/');
+
+		$bc = array(
+			$this->lng['e_msg'] => BASE_URL,
+		);
+
+		$this->bc = $this->gen_bc($bc);
 	}
 
 	/**
@@ -95,16 +110,20 @@ class core{
 
 	/**
 	 * Генерация AJAX оповещений
+	 * @param String $title - Название
 	 * @param String $message - Сообщение
-	 * @param Boolean $status - Статус ошибки (true|false - Истина|Ложь)
+	 * @param Boolean $type - Тип ошибки (true|false - Истина|Ложь)
 	 * @param Array $data - Основное содержимое оповещения и доп. поля
 	 * @return JSON exit
 	 */
-	public function js_notify($message='', $status=false, $data=array()){
+	public function js_notify($message='', $title='', $type=false, $data=array()){
+
+		if(empty($title)){ $title = $this->lng['e_msg']; }
 
 		$data = array(
-			"_status" => $status,
+			"_title" => $title,
 			"_message" => $message,
+			"_type" => $type,
 			"_data" => $data
 		);
 
@@ -268,9 +287,9 @@ class core{
 	 * @return object
 	 */
 	public function load_bb_class(){
-		include(MCR_TOOL_PATH.'libs/bb.class.php');
+		include(MCR_TOOL_PATH.'libs/bbcode.parse.php');
 
-		return new bb($this);
+		return new bbcode($this);
 	}
 
 	/**
@@ -279,21 +298,21 @@ class core{
 	 */
 	public function csrf_check(){
 		if($_SERVER['REQUEST_METHOD']=='POST'){
-			if(!isset($_POST['mcr_secure'])){ $this->notify('Hacking Attempt!'); }
+			if(!isset($_POST['mcr_secure'])){ $this->notify($this->lng['e_hack']); }
 
 			$secure_key = explode('_', $_POST['mcr_secure']);
 
-			if(!isset($secure_key[1])){ $this->notify('Hacking Attempt!'); }
+			if(!isset($secure_key[1])){ $this->notify($this->lng['e_hack']); }
 
 			$secure_time = intval($secure_key[0]);
 
-			if(($secure_time+$this->csrf_time)<time()){ $this->notify('Hacking Attempt!'); }
+			if(($secure_time+$this->csrf_time)<time()){ $this->notify($this->lng['e_hack']); }
 
 			$secure_var = $secure_key[1];
 			
 			$mcr_secure = $secure_time.'_'.md5($this->user->ip.$this->config->main['mcr_secury'].$secure_time);
 
-			if($mcr_secure!==$_POST['mcr_secure']){ $this->notify('Hacking Attempt!'); }
+			if($mcr_secure!==$_POST['mcr_secure']){ $this->notify($this->lng['e_hack']); }
 		}
 	}
 
@@ -333,6 +352,7 @@ class core{
 		ob_start();
 
 		foreach($array as $title => $url){
+			$string .= ($i==0) ? $title : ' — '.$title;
 			if($count==$i){
 				echo $this->sp(MCR_THEME_PATH."breadcrumbs/id-active.html", array("TITLE" => $title));
 			}else{
@@ -343,6 +363,8 @@ class core{
 			$i++;
 		}
 
+		$this->title = $this->db->HSC($string);
+
 		return ob_get_clean();
 	}
 
@@ -352,11 +374,33 @@ class core{
 	 * @return Buffer string
 	 */
 	public function gen_bc($array=array()){
-		if(!$this->config->func['breadcrumbs']){ return false; }
 
 		$data['LIST'] = $this->gen_bc_list($array);
 
+		if(!$this->config->func['breadcrumbs']){ return false; }
+
 		return $this->sp(MCR_THEME_PATH."breadcrumbs/list.html", $data);
+	}
+
+	public function check_cfg($cfg){
+		$validator = array('MOD_ENABLE',
+			'MOD_TITLE',
+			'MOD_DESC',
+			'MOD_AUTHOR',
+			'MOD_SITE',
+			'MOD_EMAIL',
+			'MOD_VERSION',
+			'MOD_URL_UPDATE',
+			'MOD_CHECK_UPDATE',
+		);
+
+		$result = true;
+
+		foreach($validator as $key => $val){
+			if(!isset($cfg[$val])){ $result = false; }
+		}
+
+		return $result;
 	}
 
 	/**
@@ -365,17 +409,44 @@ class core{
 	 * @return Object
 	 */
 	public function load_mode($mode){
-		if(!preg_match("/^\w+$/i", $mode) || !file_exists(MCR_MODE_PATH.$mode.".php")){ $this->title = $this->lng['e_mode_found']; return $this->sp(MCR_THEME_PATH."default_sp/404.html"); }
+		if(!preg_match("/^\w+$/i", $mode) || !file_exists(MCR_MODE_PATH.$mode.".php")){
+			$this->title = $this->lng['e_mode_found'];
+			return $this->sp(MCR_THEME_PATH."default_sp/404.html");
+		}
 		
+		if(!file_exists(MCR_CONF_PATH.'modules/'.$mode.'.php')){
+			return $this->sp(MCR_THEME_PATH."default_sp/mod_disable.html");
+		}
+
+		require_once(MCR_CONF_PATH.'modules/'.$mode.'.php');
+
+		if(!isset($cfg) || !$this->check_cfg($cfg) || !$cfg['MOD_ENABLE']){
+			return $this->sp(MCR_THEME_PATH."default_sp/mod_disable.html");
+		}
+
 		include_once(MCR_MODE_PATH.$mode.".php");
 
 		if(!class_exists("module")){ return $this->lng['e_mode_class']; }
 
+		$this->lng_m = $this->load_language($mode);
+
 		$module = new module($this);
+
+		@$module->cfg = $cfg;
 		
 		if(!method_exists($module, "content")){ return $this->lng['e_mode_method']; }
 
 		return $module->content();
+	}
+
+	private function load_language($mod){
+		if(!file_exists(MCR_LANG_DIR.$mod.'.php')){
+			return array();
+		}
+
+		require(MCR_LANG_DIR.$mod.'.php');
+
+		return $lng;
 	}
 
 	/**
@@ -431,7 +502,17 @@ class core{
 		
 		include_once(MCR_MODE_PATH.$mode.".php");
 
+		require_once(MCR_CONF_PATH.'modules/'.$mode.'.php');
+
+		require(MCR_LANG_PATH.$this->config->main['s_lang'].'/'.$mode.'.php');
+
+		if(!$cfg['MOD_ENABLE']){ return $this->sp(MCR_THEME_PATH."default_sp/mod_disable.html"); }
+
+		$this->lng_m = $lng;
+
 		$module = new module($this);
+
+		$module->cfg = $cfg;
 
 		return $module->content();
 	}
@@ -443,18 +524,39 @@ class core{
 	public function load_def_blocks(){
 		$list = scandir(MCR_SIDE_PATH);
 
-		if(empty($list)){ return false;; }
+		if(empty($list)){ return false; }
 
-		ob_start();
+		$content = '';
 
 		foreach($list as $key => $file){
 			if($file=='.' || $file=='..' || substr($file, -4)!='.php'){ continue; }
 
+			$expl = explode('_', $file);
+
+			if(file_exists(MCR_LANG_DIR.'blocks/'.$expl[1])){
+				require_once(MCR_LANG_DIR.'blocks/'.$expl[1]);
+				$this->lng_b = $lng;
+			}else{
+				$this->lng_b = array();
+			}
+			
 			include_once(MCR_SIDE_PATH.$file);
+
+			$classname = 'block_'.substr($expl[1], 0, -4);
+
+			if(!class_exists($classname)){ continue; }
+
+			$obj = new $classname($this);
+
+			if(!method_exists($obj, 'content')){ continue; }
+
+			$content .= $obj->content();
+
+			unset($obj);
 
 		}
 
-		return ob_get_clean();
+		return $content;
 	}
 
 	/**
@@ -570,11 +672,11 @@ class core{
 	  * @return Boolean
 	  */
 	public function send_mail($to, $subject='[WebMCR]', $message='', $altmassage='', $smtp=false, $cc=false){
-		require(MCR_TOOL_PATH.'smtp/PHPMailerAutoload.php');
+		require(MCR_LIBS_PATH.'smtp/PHPMailerAutoload.php');
 
 		PHPMailerAutoload('smtp');
 
-		include_once(MCR_TOOL_PATH.'smtp/class.phpmailer.php');
+		include_once(MCR_LIBS_PATH.'smtp/class.phpmailer.php');
 
 		$mail = new PHPMailer;
 
@@ -591,7 +693,7 @@ class core{
 		}
 
 		$mail->CharSet = 'UTF-8';
-		$mail->setLanguage('ru', MCR_TOOL_PATH.'smpt/language/');
+		$mail->setLanguage('ru', MCR_LANG_DIR.'smpt/');
 		$mail->From = ($this->config->mail['smtp']) ? $this->config->mail['smtp_user'] : $this->config->mail['from'];
 		$mail->FromName = $this->config->mail['from_name'];
 		if(is_array($to)){
@@ -733,25 +835,6 @@ class core{
 
 		return ob_get_clean();
 	}
-	
-	public function savecfg($cfg=array(), $file='main.php', $var='main'){
-
-		if(empty($cfg)){ return false; }
-
-		$filename = MCR_ROOT."configs/".$file;
-
-		$txt  = '<?php'.PHP_EOL;
-		$txt .= '$'.$var.' = '.var_export($cfg, true).';'.PHP_EOL;
-		$txt .= '?>';
-
-		if(file_exists($filename) && !is_writable($filename)){ return false; }
-
-		$result = file_put_contents($filename, $txt);
-
-		if (is_bool($result) and $result == false){return false;}
-
-		return true;
-	}
 
 	public function validate_perm($perm){
 		$perm = $this->db->safesql($perm);
@@ -762,6 +845,14 @@ class core{
 		$ar = $this->db->fetch_array($query);
 
 		return ($ar[0]<=0) ? false : true;
+	}
+
+	public function file_manager(){
+
+		if(!$this->is_access('sys_adm_manager')){ return; }
+
+
+		return $this->sp(MCR_THEME_PATH."default_sp/file_manager.html");
 	}
 }
 

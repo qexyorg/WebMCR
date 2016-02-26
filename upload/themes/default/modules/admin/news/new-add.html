@@ -1,3 +1,5 @@
+<?php echo $data['PREVIEW']; ?>
+
 <div class="form-block">
 
 	<div class="block-header">
@@ -8,39 +10,39 @@
 
 	<form class="form-horizontal" method="post">
 		<div class="control-group">
-			<label class="control-label" for="inputTitle">Название</label>
+			<label class="control-label" for="inputTitle"><?php echo $this->lng_m['news_field_name']; ?></label>
 			<div class="controls">
-				<input type="text" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="Название">
+				<input type="text" class="span10" name="title" value="<?php echo $data['TITLE']; ?>" id="inputTitle" placeholder="<?php echo $this->lng_m['news_field_name']; ?>">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputCategory">Категория</label>
+			<label class="control-label" for="inputCategory"><?php echo $this->lng_m['news_field_cat']; ?></label>
 			<div class="controls">
-				<select name="cid" id="inputCategory"><?php echo $data['CATEGORIES']; ?></select>
+				<select name="cid" class="span10" id="inputCategory"><?php echo $data['CATEGORIES']; ?></select>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputShortText">Краткое описание</label>
+			<label class="control-label" for="inputShortText"><?php echo $this->lng_m['news_field_sdesc']; ?></label>
 			<div class="controls">
 				<?php echo $data['BB_PANEL_SHORT']; ?>
-				<textarea id="inputShortText" class="input-block-level" data-for="bb-short" placeholder="Краткое описание" name="text_short" rows="4"><?php echo $data['TEXT_SHORT']; ?></textarea>
+				<textarea id="inputShortText" class="input-block-level" data-for="bb-short" placeholder="<?php echo $this->lng_m['news_field_sdesc']; ?>" name="text_short" rows="4"><?php echo $data['TEXT_SHORT']; ?></textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="inputText">Полное описание</label>
+			<label class="control-label" for="inputText"><?php echo $this->lng_m['news_field_desc']; ?></label>
 			<div class="controls">
 				<?php echo $data['BB_PANEL_FULL']; ?>
-				<textarea id="inputText" class="input-block-level" data-for="bb-full" placeholder="Полное описание" name="text" rows="8"><?php echo $data['TEXT']; ?></textarea>
+				<textarea id="inputText" class="input-block-level" data-for="bb-full" placeholder="<?php echo $this->lng_m['news_field_desc']; ?>" name="text" rows="8"><?php echo $data['TEXT']; ?></textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<div class="controls">
 				<label class="checkbox">
-					<input type="checkbox" name="vote" value="1" <?php echo $data['VOTE']; ?>> Включить голосования
+					<input type="checkbox" name="vote" value="1" <?php echo $data['VOTE']; ?>> <?php echo $this->lng_m['news_field_vote']; ?>
 				</label>
 			</div>
 		</div>
@@ -48,7 +50,7 @@
 		<div class="control-group">
 			<div class="controls">
 				<label class="checkbox">
-					<input type="checkbox" name="discus" value="1" <?php echo $data['DISCUS']; ?>> Включить комметарии
+					<input type="checkbox" name="discus" value="1" <?php echo $data['DISCUS']; ?>> <?php echo $this->lng_m['news_field_com']; ?>
 				</label>
 			</div>
 		</div>
@@ -56,7 +58,7 @@
 		<div class="control-group">
 			<div class="controls">
 				<label class="checkbox">
-					<input type="checkbox" name="attach" value="1" <?php echo $data['ATTACH']; ?>> Закрепить
+					<input type="checkbox" name="attach" value="1" <?php echo $data['ATTACH']; ?>> <?php echo $this->lng_m['news_field_attach']; ?>
 				</label>
 			</div>
 		</div>
@@ -64,8 +66,11 @@
 		<div class="control-group">
 			<div class="controls">
 				<button type="submit" class="btn" name="submit"><?php echo $data['BUTTON']; ?></button>
+				<button type="submit" class="btn" name="preview"><?php echo $this->lng_m['news_preview']; ?></button>
 			</div>
 		</div>
 	</form>
 		
 </div>
+
+<?php echo $this->file_manager(); ?>

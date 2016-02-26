@@ -1,35 +1,68 @@
 <div class="bb-panel" id="<?php echo $data['PANEL_ID']; ?>">
-	<div class="btn-toolbar">
-		<div class="btn-group">
-			<!-- Font edition -->
-			<a href="#" rel="tooltip" class="btn bb" title="Жирный" data-left="b"><b>B</b></a>
-			<a href="#" rel="tooltip" class="btn bb" title="Курсив" data-left="i"><i>i</i></a>
-			<a href="#" rel="tooltip" class="btn bb" title="Зачеркнутый" data-left="s"><s>S</s></a>
-			<a href="#" rel="tooltip" class="btn bb" title="Подчеркнутый" data-left="u"><u>u</u></a>
 
-			<!-- Position elements -->
-			<a href="#" rel="tooltip" class="btn bb" title="Выравнивание по левому краю" data-left="left"><i class="icon-align-left"></i></a>
-			<a href="#" rel="tooltip" class="btn bb" title="Выравнивание по центру" data-left="center"><i class="icon-align-center"></i></a>
-			<a href="#" rel="tooltip" class="btn bb" title="Выравнивание по правому краю" data-left="right"><i class="icon-align-right"></i></a>
+	<ul class="bb-right">
+		<li><a href="#" rel="tooltip" class="bb-clear" title="<?php echo $this->lng['bb_c_remove']; ?>"><i class="icon-fire"></i></a></li>
+	</ul><!--
 
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_strong']; ?>" data-left="[b]" data-right="[/b]"><b>B</b></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn bb" title="Код" data-left="code"><i class="icon-qrcode"></i></a>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_italic']; ?>" data-left="[i]" data-right="[/i]"><i>i</i></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn bb" title="Ссылка" data-left="url=&quot;&quot;" data-right="url"><i class="icon-globe"></i></a>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_strike']; ?>" data-left="[s]" data-right="[/s]"><s>S</s></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn bb" title="Размер шрифта" data-left="size=&quot;&quot;" data-right="size"><i class="icon-text-height"></i></a>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_underl']; ?>" data-left="[u]" data-right="[/u]"><u>u</u></a></li>
+	</ul><!--
 
-			<a href="#" rel="tooltip" class="btn bb" title="Изображение" data-left="img"><i class="icon-picture"></i></a>
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_left']; ?>" data-left="[left]" data-right="[/left]"><i class="icon-align-left"></i></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn bb" title="Цвет текста" data-left="color=&quot;&quot;" data-right="color"><i class="icon-tint"></i></a>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_center']; ?>" data-left="[center]" data-right="[/center]"><i class="icon-align-center"></i></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn bb"  title="Цитата" data-left="quote"><i class="icon-comment"></i></a>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_right']; ?>" data-left="[right]" data-right="[/right]"><i class="icon-align-right"></i></a></li>
+	</ul><!--
+	
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_font_size']; ?>" data-left="[size=&quot;&quot;]" data-right="[/size]"><i class="icon-text-height"></i></a></li><!--
 
-			<a href="#" rel="tooltip" class="btn spl-btn" data-click="spl1" title="Смайлики"><i class="icon-eye-open"></i></a>
-		</div>
-	</div>
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_font']; ?>" data-left="[font=&quot;Arial&quot;]" data-right="[/font]"><i class="icon-font"></i></a></li><!--
 
-	<div class="spl-body closed" id="spl1">
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_color']; ?>" data-left="[color=&quot;#ff0000&quot;]" data-right="[/color]"><i class="icon-tint"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_bgcolor']; ?>" data-left="[background=&quot;&quot;]" data-right="[/background]"><i class="icon-adjust"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb"  title="<?php echo $this->lng['bb_c_reverse']; ?>" data-left="[reverse]" data-right="[/reverse]"><i class="icon-repeat"></i></a></li>
+	</ul><!--
+
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_link']; ?>" data-left="[url=&quot;&quot;]" data-right="[/url]"><i class="icon-globe"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_email']; ?>" data-left="[email]" data-right="[/email]"><i class="icon-envelope"></i></a></li>
+	</ul><!--
+
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_list']; ?>" data-left="[list=&quot;markers&quot;]" data-right="[/list]"><i class="icon-list"></i></a></li><!--
+		
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_line']; ?>" data-left="[line]" data-right="[/line]"><i class="icon-minus"></i></a></li>
+	</ul><!--
+
+	--><ul>
+		<li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_code']; ?>" data-left="[code]" data-right="[/code]"><i class="icon-qrcode"></i></a></li><!--
+	
+		--><li><a href="#" rel="tooltip" class="bb"  title="<?php echo $this->lng['bb_c_quote']; ?>" data-left="[quote]" data-right="[/quote]"><i class="icon-comment"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb"  title="<?php echo $this->lng['bb_c_spoiler']; ?>" data-left="[spoiler]" data-right="[/spoiler]"><i class="icon-asterisk"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb"  title="<?php echo $this->lng['bb_c_offtop']; ?>" data-left="[offtop]" data-right="[/offtop]"><i class="icon-trash"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_img']; ?>" data-left="[img]" data-right="[/img]"><i class="icon-picture"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="bb" title="<?php echo $this->lng['bb_c_video']; ?>" data-left="[video=&quot;&quot;]" data-right="[/video]"><i class="icon-film"></i></a></li><!--
+
+		--><li><a href="#" rel="tooltip" class="spl-btn closed" data-for="spl-<?php echo $data['PANEL_ID']; ?>" title="<?php echo $this->lng['bb_c_smiles']; ?>"><i class="icon-eye-open"></i></a></li>
+	</ul>
+
+	<div class="spl-body closed" id="spl-<?php echo $data['PANEL_ID']; ?>">
 		<?php echo $data['SMILES']; ?>
 	</div>
 </div>

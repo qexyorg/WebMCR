@@ -2,7 +2,7 @@
 	<div class="form-block">
 
 		<div class="block-header">
-			<div class="block-name">Просмотры</div>
+			<div class="block-name"><?php echo $this->lng_m['views']; ?></div>
 		</div>
 
 		<div class="block-line"></div>
@@ -11,10 +11,10 @@
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Новость</th>
-					<th>Пользователь</th>
-					<th>Дата</th>
-					<th class="action">Действие <input type="checkbox" class="check-all" data-for="check-input"></th>
+					<th><?php echo $this->lng_m['nv_field_news']; ?></th>
+					<th><?php echo $this->lng_m['nv_field_user']; ?></th>
+					<th><?php echo $this->lng_m['nv_field_date']; ?></th>
+					<th class="action"><?php echo $this->lng_m['nv_field_action']; ?> <input type="checkbox" class="check-all" data-for="check-input"></th>
 				</tr>
 			</thead>
 
@@ -27,9 +27,9 @@
 	<div class="form-block actions">
 		<?php echo $data['PAGINATION']; ?>
 		<div class="right-act">
-			Действие с просмотрами: 
+			<?php echo $this->lng_m['nv_field_action2']; ?>: 
 			<div class="btn-group">
-				<button class="btn remove" data-for="check-input" data-text="Вы уверены, что хотите удалить выбранные элементы?" type="submit" name="delete"><i class="icon-remove"></i></button>
+				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['nv_accept']; ?>" type="submit" name="delete"><i class="icon-remove"></i></button>
 			</div>
 		</div>
 		

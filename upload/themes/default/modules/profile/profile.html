@@ -1,7 +1,7 @@
 <div class="form-block profile">
 
 	<div class="block-header">
-		<div class="block-name"><?php echo $this->lng['t_profile']; ?></div>
+		<div class="block-name"><?php echo $this->lng_m['mod_name']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
@@ -11,9 +11,9 @@
 			<div class="navbar-inner">
 				<b class="brand" href="#"><?php echo $this->user->login; ?></b>
 				<ul class="nav">
-					 <li class="active"><a href="#tab1" data-toggle="tab">Информация</a></li>
-					 <li><a href="#tab2" data-toggle="tab">Образ</a></li>
-					 <li><a href="#tab3" data-toggle="tab">Настройки</a></li>
+					 <li class="active"><a href="#tab1" data-toggle="tab"><?php echo $this->lng_m['f_info']; ?></a></li>
+					 <li><a href="#tab2" data-toggle="tab"><?php echo $this->lng_m['f_skin']; ?></a></li>
+					 <li><a href="#tab3" data-toggle="tab"><?php echo $this->lng_m['f_settings']; ?></a></li>
 				</ul>
 			</div>
 		</div>
@@ -24,19 +24,18 @@
 				<div class="tab-pane active" id="tab1">
 
 					<div class="profile-info">
-						<div class="info-line"><b>Логин:</b> <span><?php echo $this->user->login; ?></span></div>
-						<div class="info-line"><b>E-Mail:</b> <span><?php echo $this->user->email; ?></span></div>
-						<div class="info-line"><b>Группа:</b> <span><?php echo $this->user->group; ?></span></div>
-						<div class="info-line"><b>Дата регистрации:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_create); ?></span></div>
-						<div class="info-line"><b>Последнее действие:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_last); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['login']; ?>:</b> <span><?php echo $this->user->login; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['email']; ?>:</b> <span><?php echo $this->user->email; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['group']; ?>:</b> <span><?php echo $this->user->group; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['date_reg']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_create); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['last_activity']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_last); ?></span></div>
 
-						<div class="info-line"><b>Имя:</b> <span><?php echo $this->user->data->firstname; ?></span></div>
-						<div class="info-line"><b>Фамилия:</b> <span><?php echo $this->user->data->lastname; ?></span></div>
-						<div class="info-line"><b>Пол:</b> <span><?php echo $this->user->gender; ?></span></div>
-						<div class="info-line"><b>Дата рождения:</b> <span><?php echo date("d.m.Y", $this->user->data->birthday); ?></span></div>
-						<div class="info-line"><b>Игровой баланс:</b> <span><?php echo $this->user->money; ?> майн.</span></div>
-						<div class="info-line"><b>Реальный баланс:</b> <span><?php echo $this->user->realmoney; ?> руб.</span></div>
-						<!--<div class="info-line"><b>Игровой баланс:</b> <span><?php echo $this->user->money; ?></span></div>-->
+						<div class="info-line"><b><?php echo $this->lng_m['f_name']; ?>:</b> <span><?php echo $this->user->data->firstname; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_lname']; ?>:</b> <span><?php echo $this->user->data->lastname; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_gender']; ?>:</b> <span><?php echo $this->user->gender; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_bday']; ?>:</b> <span><?php echo date("d.m.Y", $this->user->data->birthday); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_gmoney']; ?>:</b> <span><?php echo $this->user->money; ?> майн.</span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_rmoney']; ?>:</b> <span><?php echo $this->user->realmoney; ?> руб.</span></div>
 					</div>
 					
 				</div>
@@ -49,13 +48,13 @@
 
 					<div class="uploader-forms">
 						<form class="skin-uploader" enctype="multipart/form-data" method="POST">
-							<input type="file" name="skin" class="file-inputs" title="Перенесите сюда новый скин персонажа">
-							<button class="btn" name="del-skin" value="1">Удалить скин</button>
+							<input type="file" name="skin" class="file-inputs" title="<?php echo $this->lng_m['drop_skin_here']; ?>">
+							<button class="btn" name="del-skin" value="1"><?php echo $this->lng_m['delete_skin']; ?></button>
 						</form>
 
 						<form class="cloak-uploader" enctype="multipart/form-data" method="POST">
-							<input type="file" name="cloak" class="file-inputs" title="Перенесите сюда новый плащ персонажа">
-							<button class="btn" name="del-cloak" value="1">Удалить плащ</button>
+							<input type="file" name="cloak" class="file-inputs" title="<?php echo $this->lng_m['drop_cloak_here']; ?>">
+							<button class="btn" name="del-cloak" value="1"><?php echo $this->lng_m['delete_cloak']; ?></button>
 						</form>
 					</div>
 				
@@ -64,50 +63,50 @@
 				<div class="tab-pane" id="tab3">
 					<form class="form-horizontal settings" method="post">
 						<div class="control-group">
-							<label class="control-label" for="inputFName">Имя</label>
+							<label class="control-label" for="inputFName"><?php echo $this->lng_m['f_name']; ?></label>
 							<div class="controls">
-								<input type="text" name="firstname" id="inputFName" value="<?php echo $this->user->data->firstname; ?>" maxlength="24" placeholder="Имя" pattern="^[а-яА-ЯёЁa-zA-Z]+$">
+								<input type="text" name="firstname" id="inputFName" value="<?php echo $this->user->data->firstname; ?>" maxlength="24" placeholder="<?php echo $this->lng_m['f_name']; ?>" pattern="^[а-яА-ЯёЁa-zA-Z]+$">
 							</div>
 						</div>
 
 						<div class="control-group">
-							<label class="control-label" for="inputLName">Фамилия</label>
+							<label class="control-label" for="inputLName"><?php echo $this->lng_m['f_lname']; ?></label>
 							<div class="controls">
-								<input type="text" name="lastname" id="inputLName" value="<?php echo $this->user->data->lastname; ?>" maxlength="24" pattern="^[а-яА-ЯёЁa-zA-Z]+$" placeholder="Фамилия">
+								<input type="text" name="lastname" id="inputLName" value="<?php echo $this->user->data->lastname; ?>" maxlength="24" pattern="^[а-яА-ЯёЁa-zA-Z]+$" placeholder="<?php echo $this->lng_m['f_lname']; ?>">
 							</div>
 						</div>
 
 						<div class="control-group">
-							<label class="control-label" for="inputLBirthday">Дата рождения</label>
+							<label class="control-label" for="inputLBirthday"><?php echo $this->lng_m['f_bday']; ?></label>
 							<div class="controls">
-								<input type="text" name="birthday" id="inputBirthday" maxlength="10" pattern="^\d{2}.\d{2}.\d{4}$" placeholder="Дата рождения">
+								<input type="text" name="birthday" id="inputBirthday" maxlength="10" pattern="^\d{2}.\d{2}.\d{4}$" placeholder="<?php echo $this->lng_m['f_bday']; ?>">
 							</div>
 						</div>
 
 						<div class="control-group">
-							<label class="control-label" for="inputOldpass">Старый пароль</label>
+							<label class="control-label" for="inputOldpass"><?php echo $this->lng_m['f_oldpass']; ?></label>
 							<div class="controls">
-								<input type="password" name="oldpass" id="inputOldpass" placeholder="Старый пароль">
+								<input type="password" name="oldpass" id="inputOldpass" placeholder="<?php echo $this->lng_m['f_oldpass']; ?>">
 							</div>
 						</div>
 
 						<div class="control-group">
-							<label class="control-label" for="inputNewpass"><?php echo $this->lng['int_newpass']; ?></label>
+							<label class="control-label" for="inputNewpass"><?php echo $this->lng['pass']; ?></label>
 							<div class="controls">
-								<input type="password" name="newpass" id="inputNewpass" placeholder="<?php echo $this->lng['int_newpass']; ?>">
+								<input type="password" name="newpass" id="inputNewpass" placeholder="<?php echo $this->lng['pass']; ?>">
 							</div>
 						</div>
 
 						<div class="control-group">
-							<label class="control-label" for="inputRepass">Повторите пароль</label>
+							<label class="control-label" for="inputRepass"><?php echo $this->lng_m['f_repass']; ?></label>
 							<div class="controls">
-								<input type="password" name="repass" id="inputRepass" placeholder="Повторите пароль">
+								<input type="password" name="repass" id="inputRepass" placeholder="<?php echo $this->lng_m['f_repass']; ?>">
 							</div>
 						</div>
 
 						<div class="control-group">
 							<div class="controls">
-								<button type="submit" name="settings" class="btn">Сохранить</button>
+								<button type="submit" name="settings" class="btn"><?php echo $this->lng_m['btn_save']; ?></button>
 							</div>
 						</div>
 					</form>

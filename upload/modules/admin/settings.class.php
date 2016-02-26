@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Настройки';
+		if(!$this->core->is_access('sys_adm_settings')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Настройки' => BASE_URL."?mode=admin&do=settings"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['settings'] => BASE_URL."?mode=admin&do=settings"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -117,7 +117,7 @@ class submodule{
 			$cfg['s_dpage']		= $this->core->safestr(@$_POST['s_dpage']);
 
 			$s_theme = $this->core->safestr(@$_POST['s_theme']);
-			if(!$this->is_theme_exist($s_theme)){ $this->core->notify($this->lng["e_msg"], "Шаблон указан некорректно", 2, '?mode=admin&do=settings'); }
+			if(!$this->is_theme_exist($s_theme)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_theme_incorrect'], 2, '?mode=admin&do=settings'); }
 			$cfg['s_theme'] = $s_theme;
 
 			$cfg['log']			= (intval(@$_POST['log']) === 1) ? true : false;
@@ -126,7 +126,7 @@ class submodule{
 
 			$captcha = intval(@$_POST['captcha']);
 
-			if(!$this->is_captcha_exist($captcha)){ $this->core->notify($this->lng["e_msg"], "Капча указана некорректно", 2, '?mode=admin&do=settings'); }
+			if(!$this->is_captcha_exist($captcha)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_captcha_incorrect'], 2, '?mode=admin&do=settings'); }
 			$cfg['captcha']		= $captcha;
 
 			$cfg['rc_public']	= $this->core->safestr(@$_POST['rc_public']);
@@ -137,11 +137,15 @@ class submodule{
 
 			$cfg['kc_private']	= $this->core->safestr(@$_POST['kc_private']);
 
-			$cfg['mon_type']	= (intval(@$_POST['mon_type']) === 1) ? 1 : 0;
+			if(!$this->config->savecfg($cfg)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings'); }
 
-			if(!$this->core->savecfg($cfg)){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings'); }
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_main_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings');
 		}
 
 		$data = array(
@@ -150,15 +154,10 @@ class submodule{
 			"LOG"			=> ($cfg['log']) ? 'selected' : '',
 			"DEBUG"			=> ($cfg['debug']) ? 'selected' : '',
 			"REG_ACCEPT"	=> ($cfg['reg_accept']) ? 'selected' : '',
-			"MON_TYPE"		=> ($cfg['mon_type']==1) ? 'selected' : '',
 			"CAPTHA"		=> $this->captcha($cfg['captcha']),
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/main.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/main.html", $data);
 	}
 
 	private function to_int_keys($array=array()){
@@ -189,24 +188,26 @@ class submodule{
 			$post_keys = array_keys($post);
 			rsort($post_keys);
 
-			if($cfg_keys!==$post_keys){ $this->core->notify($this->lng["e_msg"], "Неверная хэш-сумма полей", 2, '?mode=admin&do=settings&op=pagin'); }
+			if($cfg_keys!==$post_keys){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_hash'], 2, '?mode=admin&do=settings&op=pagin'); }
 
 			$cfg = $this->to_int_keys($post);
 
-			if(!$this->core->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=pagin'); }
+			if(!$this->config->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->core->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=pagin'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_pagin_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings&op=pagin');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings&op=pagin');
 		}
 
 		$data = array(
-			"CFG"			=> $cfg
+			"CFG" => $cfg
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/pagin.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/pagin.html", $data);
 	}
 
 	private function _mail(){
@@ -231,9 +232,15 @@ class submodule{
 
 			$cfg['smtp_pass']		= $this->core->safestr(@$_POST['smtp_pass']);
 
-			if(!$this->core->savecfg($cfg, 'mail.php', 'mail')){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=mail'); }
+			if(!$this->config->savecfg($cfg, 'mail.php', 'mail')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=mail'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_mail_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings&op=mail');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings&op=mail');
 		}
 
 		$data = array(
@@ -241,11 +248,7 @@ class submodule{
 			"CFG"			=> $cfg,
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/mail.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/mail.html", $data);
 	}
 
 	private function search_items($cfg){
@@ -272,9 +275,9 @@ class submodule{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
-			if(!isset($_POST['key']) || !isset($cfg[$_POST['key']])){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=settings&op=search'); }
+			if(!isset($_POST['key']) || !isset($cfg[$_POST['key']])){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=settings&op=search'); }
 
-			if(!$this->core->validate_perm(@$_POST['permissions'])){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=settings&op=search'); }
+			if(!$this->core->validate_perm(@$_POST['permissions'])){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=settings&op=search'); }
 
 			$key = $_POST['key'];
 
@@ -283,20 +286,22 @@ class submodule{
 				"permissions" => $this->core->safestr(@$_POST['permissions']),
 			);
 
-			if(!$this->core->savecfg($cfg, 'search.php', 'search')){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=search'); }
+			if(!$this->config->savecfg($cfg, 'search.php', 'search')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=search'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_search_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings&op=search');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings&op=search');
 		}
 
 		$data = array(
 			"ITEMS"			=> $this->search_items($cfg),
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/search.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/search.html", $data);
 	}
 
 	private function functions(){
@@ -309,9 +314,15 @@ class submodule{
 
 			$cfg['breadcrumbs'] = (intval(@$_POST['breadcrumbs'])===1) ? true : false;
 
-			if(!$this->core->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=functions'); }
+			if(!$this->config->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=functions'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_func_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings&op=functions');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings&op=functions');
 		}
 
 		$data = array(
@@ -319,11 +330,7 @@ class submodule{
 			"BREADCRUMBS" => ($cfg['breadcrumbs']) ? 'selected' : '',
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/functions.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/functions.html", $data);
 	}
 
 	private function base(){
@@ -344,9 +351,15 @@ class submodule{
 			
 			$db['port'] = intval(@$_POST['port']);
 
-			if(!$this->core->savecfg($db, 'db.php', 'db')){ $this->core->notify($this->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=base'); }
+			if(!$this->config->savecfg($db, 'db.php', 'db')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=base'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_set_base_save'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Настройки успешно сохранены", 3, '?mode=admin&do=settings&op=base');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['set_save_success'], 3, '?mode=admin&do=settings&op=base');
 		}
 
 		$data = array(
@@ -360,11 +373,7 @@ class submodule{
 			"PORT" => intval($db['port']),
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."admin/settings/base.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/settings/base.html", $data);
 	}
 
 	public function content(){
@@ -381,11 +390,7 @@ class submodule{
 			default:		$content = $this->main(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

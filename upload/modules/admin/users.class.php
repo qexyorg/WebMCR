@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Пользователи';
+		if(!$this->core->is_access('sys_adm_users')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Пользователи' => BASE_URL."?mode=admin&do=users"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['users'] => BASE_URL."?mode=admin&do=users"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -27,19 +27,16 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_users'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_users']; // Set end pagination
 
-		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `g`.title AS `group`
+		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `g`.title AS `group`, `u`.ip_create, `u`.ip_last
 									FROM `mcr_users` AS `u`
 									LEFT JOIN `mcr_groups` AS `g`
 										ON `g`.id=`u`.gid
 									ORDER BY `u`.login ASC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/users/user-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/users/user-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -48,7 +45,9 @@ class submodule{
 				"GID" => intval($ar['gid']),
 				"LOGIN" => $this->db->HSC($ar['login']),
 				"EMAIL" => $this->db->HSC($ar['email']),
-				"GROUP" => $this->db->HSC($ar['group'])
+				"GROUP" => $this->db->HSC($ar['group']),
+				"IP_LAST" => $this->db->HSC($ar['ip_last']),
+				"IP_CREATE" => $this->db->HSC($ar['ip_create']),
 			);
 		
 			echo $this->core->sp(MCR_THEME_MOD."admin/users/user-id.html", $page_data);
@@ -61,38 +60,52 @@ class submodule{
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_users`");
 
-		if(!$query){ exit("SQL Error"); }
-
-		$ar = $this->db->fetch_array($query);
+		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
 			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], "?mode=admin&do=users&pid=", $ar[0]),
 			"USERS" => $this->user_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/users/user-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/users/user-list.html", $data);
 	}
 
 	private function ban($list, $ban=1){
+		if(!$this->core->is_access('sys_adm_users_ban')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
+
 		$update = $this->db->query("UPDATE `mcr_users` SET ban_server='$ban' WHERE id IN ($list)");
 
-		if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
-		$message = ($ban==1) ? "забанены" : "разбанены";
+		$message = ($ban==1) ? $this->lng['user_ban'] : $this->lng['user_unban'];
 
-		$this->core->notify($this->lng["e_success"], "Выбранные пользователи успешно $message", 3, '?mode=admin&do=users');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_ban_user']." $list ".$this->lng['log_user'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['user_success']." ".$message, 3, '?mode=admin&do=users');
+	}
+
+	private function get_logins($list){
+		$query = $this->db->query("SELECT `login` FROM `mcr_users` WHERE id IN ($list)");
+
+		if(!$query || $this->db->num_rows($query)<=0){ return false; }
+
+		$logins = array();
+
+		while($ar = $this->db->fetch_assoc($query)){ $logins[] = $ar['login']; }
+
+		return $logins;
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=users'); }
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=users'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=users'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['user_not_selected'], 2, '?mode=admin&do=users'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -100,39 +113,50 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
+		$logins = $this->get_logins($list);
+
+		if($logins===false){$this->core->notify($this->core->lng["e_msg"], $this->lng['user_not_found'], 2, '?mode=admin&do=users');  }
+
 		if(isset($_POST['ban'])){
 			$this->ban($list);
 		}elseif(isset($_POST['unban'])){
 			$this->ban($list, 0);
 		}
 
-		if(!isset($_POST['delete'])){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=users'); }
+		if(!$this->core->is_access('sys_adm_users_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
 
-		$delete = $this->db->query("DELETE FROM `mcr_users` WHERE id IN ($list)");
+		if(!isset($_POST['delete'])){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=users'); }
 
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$this->db->remove_fast("mcr_users", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$count = $this->db->affected_rows();
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_news_votes` WHERE uid IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$this->db->remove_fast("mcr_news_votes", "uid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$delete2 = $this->db->query("DELETE FROM `mcr_news_views` WHERE uid IN ($list)");
-
-		if(!$delete2){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$this->db->remove_fast("mcr_news_views", "uid IN ($list)")){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$count2 = $this->db->affected_rows();
 
-		$delete3 = $this->db->query("DELETE FROM `mcr_comments` WHERE uid IN ($list)");
-
-		if(!$delete3){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$this->db->remove_fast("mcr_comments", "uid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$count3 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: пользователей - $count, комментариев - $count3, голосов - $count1, просмотров - $count2", 3, '?mode=admin&do=users');
+		foreach($logins as $key => $value){
+			if(file_exists(MCR_SKIN_PATH.$value.'.png')){ @unlink(MCR_SKIN_PATH.$value.'.png'); }
+			if(file_exists(MCR_SKIN_PATH.'interface/'.$value.'.png')){ @unlink(MCR_SKIN_PATH.'interface/'.$value.'.png'); }
+			if(file_exists(MCR_SKIN_PATH.'interface/'.$value.'_mini.png')){ @unlink(MCR_SKIN_PATH.'interface/'.$value.'_mini.png'); }
+			if(file_exists(MCR_CLOAK_PATH.$value.'.png')){ @unlink(MCR_CLOAK_PATH.$value.'.png'); }
+		}
+
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_user']." $list ".$this->lng['log_user'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['user_del_elements']." $count, ".$this->lng['user_del_elements2']." $count3, ".$this->lng['user_del_elements3']." $count1, ".$this->lng['user_del_elements4']." $count2", 3, '?mode=admin&do=users');
 
 	}
 
@@ -148,13 +172,12 @@ class submodule{
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_users_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Пользователи' => BASE_URL."?mode=admin&do=users",
-			'Добавление' => BASE_URL."?mode=admin&do=users&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['users'] => BASE_URL."?mode=admin&do=users",
+			$this->lng['user_add'] => BASE_URL."?mode=admin&do=users&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -166,7 +189,7 @@ class submodule{
 			$password	= $this->core->gen_password($_POST['password'], $salt);
 			$password	= $this->db->safesql($password);
 
-			if(mb_strlen($_POST['password'], "UTF-8")<6){ $this->core->notify($this->lng['e_msg'], $this->lng['e_reg_pass_length'], 2, '?mode=admin&do=users&op=add'); }
+			if(mb_strlen($_POST['password'], "UTF-8")<6){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_reg_pass_length'], 2, '?mode=admin&do=users&op=add'); }
 
 			$email			= $this->db->safesql(@$_POST['email']);
 
@@ -178,13 +201,13 @@ class submodule{
 
 			$gender = (intval(@$_POST['gender'])==1) ? 1 : 0;
 
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=add'); }
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=add'); }
-			if(!preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=admin&do=users&op=add'); }
+			if(!empty($firstname) && !preg_match("/^[a-zA-Zа-яА-ЯёЁ]+$/iu", $firstname)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_fname'], 2, '?mode=admin&do=users&op=add'); }
+			if(!empty($lastname) && !preg_match("/^[a-zA-Zа-яА-ЯёЁ]+$/iu", $lastname)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_lname'], 2, '?mode=admin&do=users&op=add'); }
+			if(!empty($birthday) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_bday'], 2, '?mode=admin&do=users&op=add'); }
 
 			$birthday = intval(strtotime($birthday));
 
-			if(!$this->exist_group($gid)){ $this->core->notify($this->lng['e_msg'], "Группа не существует", 1, '?mode=admin&do=users&op=add'); }
+			if(!$this->exist_group($gid)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_group_not_found'], 1, '?mode=admin&do=users&op=add'); }
 
 			$money = floatval(@$_POST['money']);
 			$realmoney = floatval(@$_POST['realmoney']);
@@ -205,20 +228,28 @@ class submodule{
 										VALUES
 											('$gid', '$login', '$email', '$password', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+
+			$id = $this->db->insert_id();
 			
 			$insert1 = $this->db->query("INSERT INTO `mcr_iconomy`
 											(login, `money`, `realmoney`)
 										VALUES
 											('$login', '$money', '$realmoney')");
 
-			if(!$insert1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+			if(!$insert1){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_user']." #$id ".$this->lng['log_user'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Пункт меню успешно добавлен", 3, '?mode=admin&do=users');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['user_add_success'], 3, '?mode=admin&do=users');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление пользователя",
+			"PAGE" => $this->lng['user_add_page_name'],
 			"LOGIN" => '',
 			"EMAIL" => '',
 			"FIRSTNAME" => '',
@@ -228,17 +259,14 @@ class submodule{
 			"GROUPS" => $this->groups(),
 			"MONEY" => 0,
 			"REALMONEY" => 0,
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['user_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/users/user-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/users/user-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_users_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
 
 		$id = intval($_GET['id']);
 
@@ -249,18 +277,16 @@ class submodule{
 										ON `i`.login=`u`.login
 									WHERE `u`.id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
 		$data = json_decode($ar['data']);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Пользователи' => BASE_URL."?mode=admin&do=users",
-			'Редактирование' => BASE_URL."?mode=admin&do=users&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['users'] => BASE_URL."?mode=admin&do=users",
+			$this->lng['user_edit'] => BASE_URL."?mode=admin&do=users&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -275,7 +301,7 @@ class submodule{
 				$salt		= $this->db->safesql($this->core->random());
 				$salt		= "'$salt'";
 				
-				if(mb_strlen($_POST['password'], "UTF-8")<6){ $this->core->notify($this->lng['e_msg'], $this->lng['e_reg_pass_length'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+				if(mb_strlen($_POST['password'], "UTF-8")<6){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_reg_pass_length'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 				
 				$password	= $this->core->gen_password($_POST['password'], $salt);
 				$password	= $this->db->safesql($password);
@@ -292,13 +318,13 @@ class submodule{
 
 			$gender = (intval(@$_POST['gender'])==1) ? 1 : 0;
 
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/i", $firstname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_fname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
-			if(!preg_match("/^[a-zа-яА-ЯёЁ]+$/i", $lastname)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
-			if(!preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!empty($firstname) && !preg_match("/^[a-zA-Zа-яА-ЯёЁ]+$/i", $firstname)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_fname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!empty($lastname) && !preg_match("/^[a-zA-Zа-яА-ЯёЁ]+$/i", $lastname)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_lname'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!empty($birthday) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $birthday)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_incorrect_bday'], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 
 			$birthday = intval(strtotime($birthday));
 
-			if(!$this->exist_group($gid)){ $this->core->notify($this->lng['e_msg'], "Группа не существует", 1, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!$this->exist_group($gid)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_group_not_found'], 1, '?mode=admin&do=users&op=edit&id='.$id); }
 
 			$money = floatval(@$_POST['money']);
 			$realmoney = floatval(@$_POST['realmoney']);
@@ -319,24 +345,42 @@ class submodule{
 											password=$password, `salt`=$salt, `data`='$new_data'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 			
 			$old_login = $this->db->safesql($ar['login']);
+
+			if(file_exists(MCR_SKIN_PATH.$old_login.'.png')){
+				if(!rename(MCR_SKIN_PATH.$old_login.'.png', MCR_SKIN_PATH.$login.'.png')){
+					$this->core->notify($this->lng["e_msg"], $this->lng['user_e_skin_name'], 2, '?mode=admin&do=users&op=edit&id='.$id);
+				}
+			}
+
+			if(file_exists(MCR_CLOAK_PATH.$old_login.'.png')){
+				if(!rename(MCR_CLOAK_PATH.$old_login.'.png', MCR_CLOAK_PATH.$login.'.png')){
+					$this->core->notify($this->core->lng["e_msg"], $this->lng['user_e_cloak_name'], 2, '?mode=admin&do=users&op=edit&id='.$id);
+				}
+			}
 
 			$update2 = $this->db->query("UPDATE `mcr_iconomy`
 										SET login='$login', `money`='$money', `realmoney`='$realmoney'
 										WHERE login='$old_login'");
 
-			if(!$update2){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+			if(!$update2){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_user']." #$id ".$this->lng['log_user'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Информация о пользователе успешно изменена", 3, '?mode=admin&do=users&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['user_edit_success'], 3, '?mode=admin&do=users&op=edit&id='.$id);
 		}
 
 		$birthday = date("d-m-Y", $data->birthday);
 		$gender = (intval($data->gender)==1) ? "selected" : "";
 
 		$data = array(
-			"PAGE" => "Редактирование пользователя",
+			"PAGE" => $this->lng['user_edit_page_name'],
 			"LOGIN" => $this->db->HSC($ar['login']),
 			"EMAIL" => $this->db->HSC($ar['email']),
 			"FIRSTNAME" => $this->db->HSC($data->firstname),
@@ -346,14 +390,10 @@ class submodule{
 			"GROUPS" => $this->groups($ar['gid']),
 			"MONEY" => floatval($ar['money']),
 			"REALMONEY" => floatval($ar['realmoney']),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->lng['user_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/users/user-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/users/user-add.html", $data);
 	}
 
 	private function groups($select=1){
@@ -364,9 +404,9 @@ class submodule{
 									FROM `mcr_groups`
 									ORDER BY title ASC");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return; }
 
-		if(!$query || $this->db->num_rows($query)<=0){ return ob_get_clean(); }
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 			$id = intval($ar['id']);
@@ -393,11 +433,7 @@ class submodule{
 			default:		$content = $this->user_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Мониторинг серверов';
+		if(!$this->core->is_access('sys_adm_monitoring')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Мониторинг серверов' => BASE_URL."?mode=admin&do=monitoring"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -32,12 +32,9 @@ class submodule{
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -67,19 +64,17 @@ class submodule{
 			"SERVERS" => $this->monitor_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=monitoring'); }
+		if(!$this->core->is_access('sys_adm_monitoring_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=monitoring'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=monitoring'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=monitoring'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mon_not_selected'], 2, '?mode=admin&do=monitoring'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -87,110 +82,152 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_monitoring` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
+		if(!$this->db->remove_fast("mcr_monitoring", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
 
 		$count = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: серверов - $count", 3, '?mode=admin&do=monitoring');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_mon']." $list ".$this->lng['log_mon'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['mon_del_elements']." $count", 3, '?mode=admin&do=monitoring');
 
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_monitoring_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=monitoring'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Мониторинг серверов' => BASE_URL."?mode=admin&do=monitoring",
-			'Добавление' => BASE_URL."?mode=admin&do=monitoring&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring",
+			$this->lng['mon_add'] => BASE_URL."?mode=admin&do=monitoring&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
-			$title = $this->db->safesql(@$_POST['title']);
-			$text = $this->db->safesql(@$_POST['text']);
-			$ip = $this->db->safesql(@$_POST['ip']);
-			$port = intval(@$_POST['port']);
+			$title		= $this->db->safesql(@$_POST['title']);
+			$text		= $this->db->safesql(@$_POST['text']);
+			$ip			= $this->db->safesql(@$_POST['ip']);
+			$port		= intval(@$_POST['port']);
+			$updater	= intval(@$_POST['cache']);
+			$type		= $this->db->safesql(@$_POST['type']);
+
+			if(!file_exists(MCR_MON_PATH.$type.'.php')){ $type = 'MineToolsAPIPing'; }
 
 			$insert = $this->db->query("INSERT INTO `mcr_monitoring`
-											(title, `text`, ip, `port`)
+											(title, `text`, ip, `port`, `type`, updater)
 										VALUES
-											('$title', '$text', '$ip', '$port')");
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
+											('$title', '$text', '$ip', '$port', '$type', '$updater')");
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_add_mon']." #$id ".$this->lng['log_mon'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Сервер успешно добавлен", 3, '?mode=admin&do=monitoring');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mon_add_success'], 3, '?mode=admin&do=monitoring');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление сервера",
-			"TITLE" => "",
-			"TEXT" => "",
-			"IP" => "localhost",
-			"PORT" => "25565",
-			"BUTTON" => "Добавить"
+			"PAGE"		=> $this->lng['mon_add_page_name'],
+			"TITLE"		=> "",
+			"TEXT"		=> "",
+			"IP"		=> "localhost",
+			"PORT"		=> "25565",
+			"TYPES"		=> $this->types(),
+			"CACHE"		=> intval($ar['updater']),
+			"ERROR"		=> "",
+			"BUTTON"	=> $this->lng['mon_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_monitoring_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=monitoring'); }
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT title, `text`, ip, `port`
+		$query = $this->db->query("SELECT title, `text`, ip, `port`, last_error, updater, last_error, `type`
 									FROM `mcr_monitoring`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Мониторинг серверов' => BASE_URL."?mode=admin&do=monitoring",
-			'Редактирование' => BASE_URL."?mode=admin&do=monitoring&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring",
+			$this->lng['mon_edit'] => BASE_URL."?mode=admin&do=monitoring&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
-			$title = $this->db->safesql(@$_POST['title']);
-			$text = $this->db->safesql(@$_POST['text']);
-			$ip = $this->db->safesql(@$_POST['ip']);
-			$port = intval(@$_POST['port']);
+			$title		= $this->db->safesql(@$_POST['title']);
+			$text		= $this->db->safesql(@$_POST['text']);
+			$ip			= $this->db->safesql(@$_POST['ip']);
+			$port		= intval(@$_POST['port']);
+			$updater	= intval(@$_POST['cache']);
+			$type		= $this->db->safesql(@$_POST['type']);
+
+			if(!file_exists(MCR_MON_PATH.$type.'.php')){ $type = 'MineToolsAPIPing'; }
 
 
 			$update = $this->db->query("UPDATE `mcr_monitoring`
-										SET title='$title', `text`='$text', ip='$ip', `port`='$port'
+										SET title='$title', `text`='$text', ip='$ip', `port`='$port', `type`='$type', updater='$updater'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_mon']." #$id ".$this->lng['log_mon'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Сервер успешно изменен", 3, '?mode=admin&do=monitoring&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mon_edit_success'], 3, '?mode=admin&do=monitoring&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE" => "Редактирование сервера",
-			"TITLE" => $this->db->HSC($ar['title']),
-			"TEXT" => $this->db->HSC($ar['text']),
-			"IP" => $this->db->HSC($ar['ip']),
-			"PORT" => intval($ar['port']),
-			"BUTTON" => "Сохранить"
+			"PAGE"		=> $this->lng['mon_edit_page_name'],
+			"TITLE"		=> $this->db->HSC($ar['title']),
+			"TEXT"		=> $this->db->HSC($ar['text']),
+			"IP"		=> $this->db->HSC($ar['ip']),
+			"PORT"		=> intval($ar['port']),
+			"CACHE"		=> intval($ar['updater']),
+			"TYPES"		=> $this->types($ar['type']),
+			"ERROR"		=> $this->db->HSC($ar['last_error']),
+			"BUTTON"	=> $this->lng['mon_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-add.html", $data);
+		return $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-add.html", $data);
+	}
 
+	private function types($selected=''){
+		$list = scandir(MCR_MON_PATH);
+
+		if(empty($list)){ return false; }
+
+		ob_start();
+
+		foreach($list as $key => $file){
+			$name = substr($file, 0, -4);
+
+			if($file=='.' || $file=='..' || substr($file, -4)!='.php'){ continue; }
+
+			$select = ($selected==$name) ? 'selected' : '';
+
+			echo '<option value="'.$name.'" '.$select.'>'.$name.'</option>';
+		}
+		
 		return ob_get_clean();
 	}
 
@@ -206,11 +243,7 @@ class submodule{
 			default:		$content = $this->monitor_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

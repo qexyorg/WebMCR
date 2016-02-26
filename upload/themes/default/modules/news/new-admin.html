@@ -3,9 +3,9 @@
 	<a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 
 	<ul class="dropdown-menu">
-		<li><a href="#">Закрепить</a></li>
-		<li><a href="#">Редактировать</a></li>
-		<li><a href="#">Удалить</a></li>
+		<li><a href="#" class="news-attach" data-id="<?php echo $data['ID']; ?>"><?php echo $data['ATTACH']; ?></a></li>
+		<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=news&op=edit&id=<?php echo $data['ID']; ?>"><?php echo $this->lng_m['edit']; ?></a></li>
+		<li><a href="#" class="news-delete" data-id="<?php echo $data['ID']; ?>"><?php echo $this->lng_m['delete']; ?></a></li>
 	
 	</ul>
 </div>

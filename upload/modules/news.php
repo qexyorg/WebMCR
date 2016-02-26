@@ -4,19 +4,19 @@ if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
 	private $core, $db, $config, $user, $lng;
+	public $cfg = array();
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->config	= $core->config;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			"Новости" => BASE_URL."?mode=news"
+			$this->lng['mod_name'] => BASE_URL."?mode=news"
 		);
 
-		$this->core->title = "Новости";
 		$this->core->bc = $this->core->gen_bc($bc);
 	}
 
@@ -40,6 +40,17 @@ class module{
 
 		return $this->core->sp(MCR_THEME_MOD."news/new-comments.html", $data);
 
+	}
+
+	private function get_admin($id, $attach){
+		if(!$this->core->is_access('sys_adm_news')){ return; }
+
+		$data = array(
+			'ID' => $id,
+			'ATTACH' => ($attach==1) ? $this->lng['unattach'] : $this->lng['attach']
+		);
+
+		return $this->core->sp(MCR_THEME_MOD."news/new-admin.html", $data);
 	}
 
 	private function news_array($cid=false){
@@ -75,9 +86,11 @@ class module{
 		if(!$query || $this->db->num_rows($query)<=0){ echo $this->core->sp(MCR_THEME_MOD."news/new-none.html"); return ob_get_clean(); }
 
 		while($ar = $this->db->fetch_assoc($query)){
+			$id = intval($ar['id']);
+			$attach = intval($ar['attach']);
 
 			$new_data	= array(
-				"ID"		=> intval($ar['id']),
+				"ID"		=> $id,
 				"CID"		=> intval($ar['cid']),
 				"TITLE"		=> $this->db->HSC($ar['title']),
 				"CATEGORY"	=> $this->db->HSC($ar['category']),
@@ -86,20 +99,21 @@ class module{
 				"COMMENTS"	=> $this->get_comments($ar['discus'], $ar['comments']),
 				"VIEWS"		=> intval($ar['views']),
 				"DATA"		=> json_decode($ar['data'], true),
-				"LIKES"		=> $this->get_likes($ar['vote'], $ar['id'], $ar['likes'], $ar['dislikes'])
+				"LIKES"		=> $this->get_likes($ar['vote'], $id, $ar['likes'], $ar['dislikes']),
+				"ADMIN"		=> $this->get_admin($id, $attach),
 			);
 
-			$attached = (intval($ar['attach'])==1) ? '-attached' : '';
+			$attached = ($attach==1) ? '-attached' : '';
 
 			echo $this->core->sp(MCR_THEME_MOD."news/new-id".$attached.".html", $new_data);
 		}
 
 		if($cid!==false){
 			$bc = array(
-				"Новости" => BASE_URL."?mode=news",
+				$this->lng['mod_name'] => BASE_URL."?mode=news",
 				$new_data['CATEGORY'] => BASE_URL."?mode=news&cid=$cid"
 			);
-			$this->core->title = "Новости — ".$new_data["CATEGORY"];
+
 			$this->core->bc = $this->core->gen_bc($bc);
 		}
 
@@ -108,7 +122,7 @@ class module{
 
 	private function news_list($cid=false){
 
-		if(!$this->core->is_access('sys_news_list')){ $this->core->notify("403", "У вас нет доступа для просмотра списка новостей", 2, "?mode=403"); }
+		if(!$this->core->is_access('sys_news_list')){ $this->core->notify($this->core->lng['403'], $this->lng['access_denied'], 2, "?mode=403"); }
 
 		$sql	= "SELECT COUNT(*) FROM `mcr_news`";
 		$page	= "?mode=news&pid=";
@@ -130,20 +144,14 @@ class module{
 			"NEWS" => $this->news_array($cid)
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."news/new-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."news/new-list.html", $data);
 
 	}
 
 	private function comments_array($nid=1){
 
 		if(!$this->core->is_access('sys_comment_list')){
-			ob_start();
-			echo $this->core->sp(MCR_THEME_MOD."news/comments/comment-access.html");
-			return ob_get_clean();
+			return $this->core->sp(MCR_THEME_MOD."news/comments/comment-access.html");
 		}
 
 		$start		= $this->core->pagination($this->config->pagin['comments'], 0, 0); // Set start pagination
@@ -156,10 +164,11 @@ class module{
 									WHERE `c`.nid='$nid'
 									ORDER BY `c`.id DESC
 									LIMIT $start, $end");
+
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."news/comments/comment-none.html"); }
+
 		ob_start();
-
-		if(!$query || $this->db->num_rows($query)<=0){ echo $this->core->sp(MCR_THEME_MOD."news/comments/comment-none.html"); return ob_get_clean(); }
-
+		
 		while($ar = $this->db->fetch_assoc($query)){
 			//$vote		= intval($ar['vote']);
 			//$data		= json_decode($ar['data'], true);
@@ -207,11 +216,7 @@ class module{
 
 		$data['BB_PANEL'] = $bb->bb_panel('bb-comments');
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."news/comments/comment-form.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."news/comments/comment-form.html", $data);
 	}
 
 	private function comments_list($nid=1){
@@ -234,11 +239,7 @@ class module{
 			"COMMENTS_FORM"	=> $this->get_comment_form()
 		);
 
-		ob_start();
-
-		echo $this->core->sp(MCR_THEME_MOD."news/comments/comment-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."news/comments/comment-list.html", $data);
 	}
 
 	private function update_views($nid){
@@ -246,7 +247,7 @@ class module{
 									FROM `mcr_news_views`
 									WHERE nid='$nid' AND (uid='{$this->user->id}' OR ip='{$this->user->ip}')");
 
-		if(!$query){ $this->core->notify($this->lng['e_sql_critical']); }
+		if(!$query){ $this->core->notify($this->core->lng['e_sql_critical']); }
 
 		$ar = $this->db->fetch_array($query);
 
@@ -260,7 +261,10 @@ class module{
 									(nid, uid, ip, `time`)
 									VALUES
 									('$nid', '$uid', '{$this->user->ip}', '$time')");
-		if(!$insert){ $this->core->notify($this->lng['e_sql_critical']); }
+		if(!$insert){ $this->core->notify($this->core->lng['e_sql_critical']); }
+
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
 		
 		$_SESSION['views-new-'.$nid] = true;
 
@@ -269,7 +273,7 @@ class module{
 
 	private function news_full(){
 		
-		if(!$this->core->is_access('sys_news_full')){ $this->core->notify("403", "У вас нет доступа для просмотра новостей", 2, "?mode=403"); }
+		if(!$this->core->is_access('sys_news_full')){ $this->core->notify($this->core->lng['403'], $this->lng['access_denied'], 2, "?mode=403"); }
 
 		$id = intval($_GET['id']);
 
@@ -285,13 +289,13 @@ class module{
 									LEFT JOIN `mcr_news_votes` AS `d`
 										ON `d`.nid=`n`.id AND `d`.`value`='0'
 									WHERE `n`.id='$id'");
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify("404", $this->lng['t_404']); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['404'], $this->core->lng['t_404']); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		if(is_null($ar['id'])){ $this->core->notify("404", $this->lng['t_404']); }
+		if(is_null($ar['id'])){ $this->core->notify($this->core->lng['404'], $this->core->lng['t_404']); }
 
 		if(!isset($_SESSION['views-new-'.$id])){
 			$this->update_views($id);
@@ -299,8 +303,10 @@ class module{
 
 		$comments = (intval($ar['discus']) === 1) ? $this->comments_list($id) : $this->core->sp(MCR_THEME_MOD."news/comments/comment-closed.html");;
 
+		$attach = intval($ar['attach']);
+
 		$new_data = array(
-			"ID"			=> intval($ar['id']),
+			"ID"			=> $id,
 			"CID"			=> intval($ar['cid']),
 			"TITLE"			=> $this->db->HSC($ar['title']),
 			"TEXT"			=> $ar['text_html'],
@@ -309,53 +315,45 @@ class module{
 			"CATEGORY"		=> $this->db->HSC($ar['category']),
 			"VIEWS"			=> intval($ar['views']),
 			"COMMENTS"		=> $comments,
-			"LIKES"			=> $this->get_likes($ar['vote'], $id, $ar['likes'], $ar['dislikes'])
+			"LIKES"			=> $this->get_likes($ar['vote'], $id, $ar['likes'], $ar['dislikes']),
+			"ADMIN"			=> $this->get_admin($id, $attach),
 		);
 
 		$bc = array(
-			"Новости" => BASE_URL."?mode=news",
+			$this->lng['mod_name'] => BASE_URL."?mode=news",
 			$new_data["CATEGORY"] => BASE_URL."?mode=news&cid=".$new_data["CID"],
 			$new_data["TITLE"] => ""
 		);
-
-		$this->core->title = "Новости — ".$new_data["CATEGORY"]." — ".$new_data['TITLE'];
+		
 		$this->core->bc = $this->core->gen_bc($bc);
 
-		echo $this->core->sp(MCR_THEME_MOD."news/new-full.html", $new_data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."news/new-full.html", $new_data);
 	}
 
 	public function content(){
 
 		if(isset($_GET['id'])){
-			$this->core->header = $this->core->sp(MCR_THEME_MOD."news/header-full.html");
+			$this->core->header .= $this->core->sp(MCR_THEME_MOD."news/header-full.html");
 
 			$content = $this->news_full();
 
 		}elseif(isset($_GET['cid'])){
-			$this->core->header = $this->core->sp(MCR_THEME_MOD."news/header-list.html");
+			$this->core->header .= $this->core->sp(MCR_THEME_MOD."news/header-list.html");
 
 			$content = $this->news_list($_GET['cid']);
 
-		}elseif(isset($_GET['ajax'])){
-
-			require_once(MCR_MODE_PATH.'news/ajax.class.php');
-			$ajax = new submodule($this->core);
-			$content = $ajax->content();
-
 		}else{
-			$this->core->header = $this->core->sp(MCR_THEME_MOD."news/header-list.html");
+			$this->core->header .= $this->core->sp(MCR_THEME_MOD."news/header-list.html");
 
 			$content = $this->news_list();
 
 		}
 
-		ob_start();
+		if($this->core->is_access('sys_adm_news')){
+			$this->core->header .= $this->core->sp(MCR_THEME_MOD."news/header-admin.html");
+		}
 
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

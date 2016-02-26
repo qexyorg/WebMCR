@@ -1,98 +1,98 @@
 <div class="form-block">
 
 	<div class="block-header">
-		<div class="block-name">Настройки сайта</div>
+		<div class="block-name"><?php echo $this->lng_m['site_settings']; ?></div>
 	</div>
 
 	<div class="block-line"></div>
 
 	<div>
 		<form class="form-horizontal" method="POST">
-			<legend>Основные</legend>
+			<legend><?php echo $this->lng_m['general']; ?></legend>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSName">Название сайта</label>
+				<label class="control-label" for="inputSName"><?php echo $this->lng_m['site_settings']; ?></label>
 				<div class="controls">
-					<input type="text" name="s_name" class="span8" value="<?php echo $this->config->main['s_name']; ?>" id="inputSName" placeholder="Название сайта">
+					<input type="text" name="s_name" class="span8" value="<?php echo $_SESSION['fs_name']; ?>" id="inputSName" placeholder="Название сайта">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSDesc">Описание сайта</label>
+				<label class="control-label" for="inputSDesc"><?php echo $this->lng_m['site_desc']; ?></label>
 				<div class="controls">
-					<input type="text" name="s_about" class="span8" value="<?php echo $this->config->main['s_about']; ?>" id="inputSDesc" placeholder="Описание сайта">
+					<input type="text" name="s_about" class="span8" value="<?php echo $_SESSION['fs_about']; ?>" id="inputSDesc" placeholder="<?php echo $this->lng_m['site_desc']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSKeys">Ключевые слова</label>
+				<label class="control-label" for="inputSKeys"><?php echo $this->lng_m['site_keys']; ?></label>
 				<div class="controls">
-					<input type="text" name="s_keywords" class="span8" value="<?php echo $this->config->main['s_keywords']; ?>" id="inputSKeys" placeholder="Ключевые слова">
+					<input type="text" name="s_keywords" class="span8" value="<?php echo $_SESSION['fs_keywords']; ?>" id="inputSKeys" placeholder="<?php echo $this->lng_m['site_keys']; ?>">
 				</div>
 			</div>
 
-			<legend>Почта</legend>
+			<legend><?php echo $this->lng_m['mail']; ?></legend>
 
 			<div class="control-group">
-				<label class="control-label" for="inputFrom">От кого (E-Mail)</label>
+				<label class="control-label" for="inputFrom"><?php echo $this->lng_m['mail_from']; ?></label>
 				<div class="controls">
-					<input type="text" name="from" class="span8" value="<?php echo $this->config->mail['from']; ?>" id="inputFrom" placeholder="С какого почтового ящика было отправлено сообщение">
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputFromName">От кого (Имя)</label>
-				<div class="controls">
-					<input type="text" name="from_name" class="span8" value="<?php echo $this->config->mail['from_name']; ?>" id="inputFromName" placeholder="От чьего имени было отправлено сообщение">
+					<input type="text" name="from" class="span8" value="<?php echo $_SESSION['fs_from']; ?>" id="inputFrom" placeholder="<?php echo $this->lng_m['mail_from_desc']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputReply">E-Mail ответа</label>
+				<label class="control-label" for="inputFromName"><?php echo $this->lng_m['mail_from_name']; ?></label>
 				<div class="controls">
-					<input type="text" name="reply" class="span8" value="<?php echo $this->config->mail['reply']; ?>" id="inputReply" placeholder="E-Mail ответа">
+					<input type="text" name="from_name" class="span8" value="<?php echo $_SESSION['fs_from_name']; ?>" id="inputFromName" placeholder="<?php echo $this->lng_m['mail_from_name_desc']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputReplyName">E-Mail ответа</label>
+				<label class="control-label" for="inputReply"><?php echo $this->lng_m['mail_reply']; ?></label>
 				<div class="controls">
-					<input type="text" name="reply_name" class="span8" value="<?php echo $this->config->mail['reply_name']; ?>" id="inputReplyName" placeholder="Имя ответа">
+					<input type="text" name="reply" class="span8" value="<?php echo $_SESSION['fs_reply']; ?>" id="inputReply" placeholder="<?php echo $this->lng_m['mail_reply']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSMTP">Использовать SMTP</label>
+				<label class="control-label" for="inputReplyName"><?php echo $this->lng_m['mail_reply_name']; ?></label>
+				<div class="controls">
+					<input type="text" name="reply_name" class="span8" value="<?php echo $_SESSION['fs_reply_name']; ?>" id="inputReplyName" placeholder="<?php echo $this->lng_m['mail_reply_name']; ?>">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputSMTP"><?php echo $this->lng_m['smtp_use']; ?></label>
 				<div class="controls">
 					<select id="inputSMTP" name="smtp">
-						<option value="0">Нет</option>
-						<option value="1">Да</option>
+						<option value="0"><?php echo $this->lng['no']; ?></option>
+						<option value="1" <?php echo $_SESSION['fs_smtp']; ?>><?php echo $this->lng['yes']; ?></option>
 					</select>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSTMPHost">Адрес SMTP сервера</label>
+				<label class="control-label" for="inputSTMPHost"><?php echo $this->lng_m['smtp_host']; ?></label>
 				<div class="controls">
-					<input type="text" name="smtp_host" class="span8" value="<?php echo $this->config->mail['smtp_host']; ?>" id="inputSTMPHost" placeholder="Адрес SMTP сервера">
+					<input type="text" name="smtp_host" class="span8" value="<?php echo $_SESSION['fs_smtp_host']; ?>" id="inputSTMPHost" placeholder="<?php echo $this->lng_m['smtp_host']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSTMPUser">SMTP пользователь</label>
+				<label class="control-label" for="inputSTMPUser"><?php echo $this->lng_m['smtp_user']; ?></label>
 				<div class="controls">
-					<input type="text" name="smtp_user" class="span8" value="<?php echo $this->config->mail['smtp_user']; ?>" id="inputSTMPUser" placeholder="Пользователь SMTP сервера">
+					<input type="text" name="smtp_user" class="span8" value="<?php echo $_SESSION['fs_smtp_user']; ?>" id="inputSTMPUser" placeholder="<?php echo $this->lng_m['smtp_user']; ?>">
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="inputSTMPPass">SMTP пароль</label>
+				<label class="control-label" for="inputSTMPPass"><?php echo $this->lng_m['smtp_pass']; ?></label>
 				<div class="controls">
-					<input type="text" name="smtp_pass" class="span8" value="<?php echo $this->config->mail['smtp_pass']; ?>" id="inputSTMPPass" placeholder="Пароль пользователя SMTP">
+					<input type="text" name="smtp_pass" class="span8" value="<?php echo $_SESSION['fs_smtp_pass']; ?>" id="inputSTMPPass" placeholder="<?php echo $this->lng_m['smtp_pass']; ?>">
 				</div>
 			</div>
 
-			<p class="text-right"><button type="submit" class="btn">Продолжить</button></p>
+			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
 		</form>
 	</div>
 

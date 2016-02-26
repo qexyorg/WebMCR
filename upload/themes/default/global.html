@@ -5,21 +5,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<meta name="description" content="<?php echo $data['CFG']['s_about'] ?>">
-	<meta name="description" content="<?php echo $data['CFG']['s_keywords'] ?>">
+	<meta name="keywords" content="<?php echo $data['CFG']['s_keywords'] ?>">
 	<meta name="author" content="NC22 &amp; Qexy.org">
-	<meta name="style_url" content="<?php echo STYLE_URL; ?>">
+	<meta name='data' content='<?php echo META_JSON_DATA; ?>'>
 	<base href="<?php echo BASE_URL ?>">
 	<?php echo $data['DEF_HEADER']; ?>
 	<?php echo $data['HEADER']; ?>
-	<script type="text/javascript">
-		$(function(){
-			$('form[method="post"]').prepend('<input type="hidden" name="mcr_secure" value="<?php echo MCR_SECURE_KEY; ?>">');
-		});
-	</script>
 </head>
 
 <body>
-<!-- <?php echo $this->config->main['rc_public']; ?> -->
+
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container">
@@ -70,6 +65,13 @@
 			<!-- Левый контейнер -->
 			<div class="span4 main-content">
 
+				<!-- Ajax оповещения -->
+				<div id="js-notify" class="alert">
+					<a href="#" id="close">&times;</a>
+					<div id="title">Название</div>
+					<div id="message">Сообщение</div>
+				</div>
+
 				<?php echo $data['L_BLOCKS']; ?>
 
 			</div>
@@ -86,6 +88,8 @@
 		</div>
 	</div>
 </div>
+
+<div id="js-loader" title="Загрузка..."><img src="<?php echo STYLE_URL; ?>img/loading.gif" alt="Loading..." /></div>
 
 <div class="navbar navbar-fixed-bottom">
 	<div class="navbar-inner">

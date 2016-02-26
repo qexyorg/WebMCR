@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Статические страницы';
+		if(!$this->core->is_access('sys_adm_statics')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Статические страницы' => BASE_URL."?mode=admin&do=statics"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['statics'] => BASE_URL."?mode=admin&do=statics"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -35,16 +35,15 @@ class submodule{
 									ORDER BY `s`.id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/statics/static-none.html");
-			return ob_get_clean();
-		}
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/statics/static-none.html"); }
+
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
-			$perm = (empty($ar['perm'])) ? "ОТСУТСТВУЕТ" : $this->db->HSC($ar['perm']);
+			$perm = (is_null($ar['perm'])) ? $this->lng['stc_perm_not_exist'] : $this->db->HSC($ar['perm']);
 
 			$page_data = array(
 				"ID" => intval($ar['id']),
@@ -64,28 +63,24 @@ class submodule{
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_statics`");
 
-		if(!$query){ exit("SQL Error"); }
-
-		$ar = $this->db->fetch_array($query);
+		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
 			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_statics'], "?mode=admin&do=statics&pid=", $ar[0]),
 			"STATICS" => $this->static_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/statics/static-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/statics/static-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=statics'); }
+		if(!$this->core->is_access('sys_adm_statics_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=statics'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=statics'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=statics'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_not_selected'], 2, '?mode=admin&do=statics'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -93,29 +88,38 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete1 = $this->db->query("DELETE FROM `mcr_statics` WHERE id IN ($list)");
-
-		if(!$delete1){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=statics'); }
+		if(!$this->db->remove_fast("mcr_statics", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=statics'); }
 
 		$count1 = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: страниц - $count1", 3, '?mode=admin&do=statics');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_stc']." $list ".$this->lng['log_stc'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['stc_del_elements']." $count1", 3, '?mode=admin&do=statics');
 
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_statics_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=statics'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Статические страницы' => BASE_URL."?mode=admin&do=statics",
-			'Добавление' => BASE_URL."?mode=admin&do=statics&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['statics'] => BASE_URL."?mode=admin&do=statics",
+			$this->lng['stc_add'] => BASE_URL."?mode=admin&do=statics&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
 		
 		$bb = $this->core->load_bb_class(); // Загрузка класса BB-кодов
+
+		$preview		= '';
+		$title			= '';
+		$uniq			= '';
+		$text			= '';
+		$permissions	= $this->core->perm_list();
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title = $this->db->safesql(@$_POST['title']);
@@ -129,57 +133,78 @@ class submodule{
 
 			$text_bb_trim = trim($text_bb);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Текст страницы\"", 2, '?mode=admin&do=statics&op=add'); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_empty'], 2, '?mode=admin&do=statics&op=add'); }
 
-			$text_bb				= $this->db->HSC($text_bb);
-
-			$text_html				= $bb->decode($text_bb);
+			$text_html				= $bb->parse($text_bb);
 
 			$safe_text_html			= $this->db->safesql($text_html); // in base
-			$text_bb				= $this->db->safesql($text_bb); // in base
+			$safe_text_bb			= $this->db->safesql($text_bb); // in base
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Текст страницы\"", 2, '?mode=admin&do=statics&op=add'); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_incorrect'], 2, '?mode=admin&do=statics&op=add'); }
 			// Обработка описания -
 
-			$new_data = array(
-				"time_create" => time(),
-				"time_last" => time(),
-				"login_create" => $this->user->login,
-				"login_last" => $this->user->login
-			);
+			if(isset($_POST['preview'])){
+				$preview		= $this->get_preview($title, $text_html);
+				$title			= $this->db->HSC($title);
+				$uniq			= $this->db->HSC($uniq);
+				$text			= $this->db->HSC($text_bb);
+				$permissions	= $this->core->perm_list($permissions);
+			}else{
+				$new_data = array(
+					"time_create" => time(),
+					"time_last" => time(),
+					"login_create" => $this->user->login,
+					"login_last" => $this->user->login
+				);
 
-			$new_data = $this->db->safesql(json_encode($new_data));
+				$new_data = $this->db->safesql(json_encode($new_data));
 
-			$insert = $this->db->query("INSERT INTO `mcr_statics`
-											(`uniq`, title, text_bb, text_html, uid, `permissions`, `data`)
-										VALUES
-											('$uniq', '$title', '$text_bb', '$safe_text_html', '{$this->user->id}', '$permissions', '$new_data')");
+				$insert = $this->db->query("INSERT INTO `mcr_statics`
+												(`uniq`, title, text_bb, text_html, uid, `permissions`, `data`)
+											VALUES
+												('$uniq', '$title', '$safe_text_bb', '$safe_text_html', '{$this->user->id}', '$permissions', '$new_data')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=statics&op=add'); }
-			
-			$this->core->notify($this->lng["e_success"], "Статическая страница успешно добавлена", 3, '?mode=admin&do=statics');
+				if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=statics&op=add'); }
+
+				$id = $this->db->insert_id();
+
+				// Последнее обновление пользователя
+				$this->db->update_user($this->user);
+
+				// Лог действия
+				$this->db->actlog($this->lng['log_add_stc']." #$id ".$this->lng['log_stc'], $this->user->id);
+				
+				$this->core->notify($this->core->lng["e_success"], $this->lng['stc_add_success'], 3, '?mode=admin&do=statics');
+			}
 		}
 
 		$data = array(
-			"PAGE" => "Добавление статической страницы",
-			"TITLE" => "",
-			"UNIQ" => "",
-			"TEXT" => "",
-			"PERMISSIONS" => $this->core->perm_list(),
+			"PAGE" => $this->lng['stc_add_page_name'],
+			"TITLE" => $title,
+			"UNIQ" => $uniq,
+			"TEXT" => $text,
+			"PERMISSIONS" => $permissions,
 			"BB_PANEL" => $bb->bb_panel('stc-field'),
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->core->lng['add'],
+			"PREVIEW" => $preview,
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/statics/static-add.html", $data);
+		return $this->core->sp(MCR_THEME_MOD."admin/statics/static-add.html", $data);
+	}
 
-		return ob_get_clean();
+	private function get_preview($title='', $text=''){
+		$data = array(
+			"TITLE" => $this->db->HSC($title),
+			"TEXT" => $text
+		);
+
+		return $this->core->sp(MCR_THEME_MOD."admin/statics/static-preview.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_statics_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=statics'); }
 
 		$id = intval($_GET['id']);
 
@@ -187,18 +212,22 @@ class submodule{
 									FROM `mcr_statics`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=statics'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=statics'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
+		$preview		= '';
+		$title			= $this->db->HSC($ar['title']);
+		$uniq			= $this->db->HSC($ar['uniq']);
+		$text			= $this->db->HSC($ar['text_bb']);
+		$permissions	= $this->core->perm_list($ar['permissions']);
+
 		$data = json_decode($ar['data']);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Статические страницы' => BASE_URL."?mode=admin&do=statics",
-			'Редактирование' => BASE_URL."?mode=admin&do=statics&op=edit&id=$id"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['statics'] => BASE_URL."?mode=admin&do=statics",
+			$this->lng['stc_edit'] => BASE_URL."?mode=admin&do=statics&op=edit&id=$id"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -217,54 +246,63 @@ class submodule{
 
 			$text_bb_trim = trim($text_bb);
 
-			if(empty($text_bb_trim)){ $this->core->notify($this->lng["e_msg"], "Не заполнено поле \"Текст страницы\"", 2, '?mode=admin&do=statics&op=add'); }
+			if(empty($text_bb_trim)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_empty'], 2, '?mode=admin&do=statics&op=add'); }
 
-			$text_bb				= $this->db->HSC($text_bb);
-
-			$text_html				= $bb->decode($text_bb);
+			$text_html				= $bb->parse($text_bb);
 
 			$safe_text_html			= $this->db->safesql($text_html); // in base
-			$text_bb				= $this->db->safesql($text_bb); // in base
+			$safe_text_bb			= $this->db->safesql($text_bb); // in base
 
 			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
 
-			if(empty($text_html_strip)){ $this->core->notify($this->lng["e_msg"], "Не верно заполнено поле \"Текст страницы\"", 2, '?mode=admin&do=statics&op=add'); }
+			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_incorrect'], 2, '?mode=admin&do=statics&op=add'); }
 			// Обработка описания -
 
-			$new_data = array(
-				"time_create" => $data->time_create,
-				"time_last" => time(),
-				"login_create" => $data->login_create,
-				"login_last" => $this->user->login
-			);
+			if(isset($_POST['preview'])){
+				$preview		= $this->get_preview($title, $text_html);
+				$title			= $this->db->HSC($title);
+				$uniq			= $this->db->HSC($uniq);
+				$text			= $this->db->HSC($text_bb);
+				$permissions	= $this->core->perm_list($permissions);
+			}else{
+				$new_data = array(
+					"time_create" => $data->time_create,
+					"time_last" => time(),
+					"login_create" => $data->login_create,
+					"login_last" => $this->user->login
+				);
 
-			$new_data = $this->db->safesql(json_encode($new_data));
+				$new_data = $this->db->safesql(json_encode($new_data));
 
-			$update = $this->db->query("UPDATE `mcr_statics`
-										SET `uniq`='$uniq', title='$title', text_bb='$text_bb', text_html='$safe_text_html',
-											`permissions`='$permissions', `data`='$new_data'
-										WHERE id='$id'");
+				$update = $this->db->query("UPDATE `mcr_statics`
+											SET `uniq`='$uniq', title='$title', text_bb='$safe_text_bb', text_html='$safe_text_html',
+												`permissions`='$permissions', `data`='$new_data'
+											WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=statics&op=edit&id='.$id); }
-			
-			$this->core->notify($this->lng["e_success"], "Статическая страница успешно изменена", 3, '?mode=admin&do=statics');
+				if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=statics&op=edit&id='.$id); }
+
+				// Последнее обновление пользователя
+				$this->db->update_user($this->user);
+
+				// Лог действия
+				$this->db->actlog($this->lng['log_edit_stc']." #$id ".$this->lng['log_stc'], $this->user->id);
+				
+				$this->core->notify($this->core->lng["e_success"], $this->lng['stc_edit_success'], 3, '?mode=admin&do=statics');
+			}
 		}
 
 		$data = array(
-			"PAGE" => "Редактирование статической страницы",
-			"TITLE" => $this->db->HSC($ar['title']),
-			"UNIQ" => $this->db->HSC($ar['uniq']),
-			"TEXT" => $this->db->HSC($ar['text_bb']),
-			"PERMISSIONS" => $this->core->perm_list($ar['permissions']),
+			"PAGE" => $this->lng['stc_edit_page_name'],
+			"TITLE" => $title,
+			"UNIQ" => $uniq,
+			"TEXT" => $text,
+			"PERMISSIONS" => $permissions,
 			"BB_PANEL" => $bb->bb_panel('stc-field'),
-			"BUTTON" => "Сохранить"
+			"BUTTON" => $this->core->lng['save'],
+			"PREVIEW" => $preview,
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/statics/static-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/statics/static-add.html", $data);
 	}
 
 	public function content(){
@@ -279,11 +317,7 @@ class submodule{
 			default:		$content = $this->static_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

@@ -10,13 +10,13 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng;
+		$this->lng	= $core->lng_m;
 
-		$this->core->title = $this->lng['t_admin'].' — Иконки меню ПУ';
+		if(!$this->core->is_access('sys_adm_menu_icons')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Иконки меню ПУ' => BASE_URL."?mode=admin&do=menu_icons"
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menuicons'] => BASE_URL."?mode=admin&do=menu_icons"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -32,12 +32,9 @@ class submodule{
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
-		ob_start();
+		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-none.html"); }
 
-		if(!$query || $this->db->num_rows($query)<=0){
-			echo $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-none.html");
-			return ob_get_clean();
-		}
+		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
@@ -66,19 +63,17 @@ class submodule{
 			"ICONS" => $this->icon_array()
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-list.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-list.html", $data);
 	}
 
 	private function delete(){
-		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->lng["e_msg"], $this->lng['e_hack'], 2, '?mode=admin&do=menu_icons'); }
+		if(!$this->core->is_access('sys_adm_menu_icons_delete')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_icons'); }
+
+		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=menu_icons'); }
 			
 		$list = @$_POST['id'];
 
-		if(empty($list)){ $this->core->notify($this->lng["e_msg"], "Не выбрано ни одного пункта", 2, '?mode=admin&do=menu_icons'); }
+		if(empty($list)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['mi_not_selected'], 2, '?mode=admin&do=menu_icons'); }
 
 		$list = $this->core->filter_int_array($list);
 
@@ -86,24 +81,27 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		$delete = $this->db->query("DELETE FROM `mcr_menu_adm_icons` WHERE id IN ($list)");
-
-		if(!$delete){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
+		if(!$this->db->remove_fast("mcr_menu_adm_icons", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
 
 		$count = $this->db->affected_rows();
 
-		$this->core->notify($this->lng["e_success"], "Удалено элементов: иконок - $count", 3, '?mode=admin&do=menu_icons');
+		// Последнее обновление пользователя
+		$this->db->update_user($this->user);
+
+		// Лог действия
+		$this->db->actlog($this->lng['log_del_mi']." $list ".$this->lng['log_mi'], $this->user->id);
+
+		$this->core->notify($this->core->lng["e_success"], $this->lng['mi_del_elements']." $count", 3, '?mode=admin&do=menu_icons');
 
 	}
 
 	private function add(){
-
-		$this->core->title .= ' — Добавление';
+		if(!$this->core->is_access('sys_adm_menu_icons_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_icons'); }
 
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Иконки меню ПУ' => BASE_URL."?mode=admin&do=menu_icons",
-			'Добавление' => BASE_URL."?mode=admin&do=menu_icons&op=add",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menuicons'] => BASE_URL."?mode=admin&do=menu_icons",
+			$this->lng['mi_add'] => BASE_URL."?mode=admin&do=menu_icons&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -118,26 +116,31 @@ class submodule{
 										VALUES
 											('$title', '$img')");
 
-			if(!$insert){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
+
+			$id = $this->db->insert_id();
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['mi_add_page_name']." #$id ".$this->lng['log_mi'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Иконка меню успешно добавлена", 3, '?mode=admin&do=menu_icons');
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mi_add_success'], 3, '?mode=admin&do=menu_icons');
 		}
 
 		$data = array(
-			"PAGE" => "Добавление иконки",
+			"PAGE" => $this->lng['mi_add_page_name'],
 			"TITLE" => '',
 			"IMG" => 'default.png',
-			"BUTTON" => "Добавить"
+			"BUTTON" => $this->lng['mi_add_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-add.html", $data);
 	}
 
 	private function edit(){
+		if(!$this->core->is_access('sys_adm_menu_icons_edit')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_icons'); }
 
 		$id = intval($_GET['id']);
 
@@ -145,16 +148,14 @@ class submodule{
 									FROM `mcr_menu_adm_icons`
 									WHERE id='$id'");
 
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$this->core->title .= ' — Редактирование';
-
 		$bc = array(
-			$this->lng['t_admin'] => BASE_URL."?mode=admin",
-			'Иконки меню ПУ' => BASE_URL."?mode=admin&do=menu_icons",
-			'Редактирование' => BASE_URL."?mode=admin&do=menu_icons&op=edit&id=$id",
+			$this->lng['mod_name'] => BASE_URL."?mode=admin",
+			$this->lng['menuicons'] => BASE_URL."?mode=admin&do=menu_icons",
+			$this->lng['mi_edit'] => BASE_URL."?mode=admin&do=menu_icons&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -168,23 +169,25 @@ class submodule{
 										SET title='$title', img='$img'
 										WHERE id='$id'");
 
-			if(!$update){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons&op=edit&id='.$id); }
+			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_icons&op=edit&id='.$id); }
+
+			// Последнее обновление пользователя
+			$this->db->update_user($this->user);
+
+			// Лог действия
+			$this->db->actlog($this->lng['log_edit_mi']." #$id ".$this->lng['log_mi'], $this->user->id);
 			
-			$this->core->notify($this->lng["e_success"], "Иконка меню успешно изменена", 3, '?mode=admin&do=menu_icons&op=edit&id='.$id);
+			$this->core->notify($this->core->lng["e_success"], $this->lng['mi_edit_success'], 3, '?mode=admin&do=menu_icons&op=edit&id='.$id);
 		}
 
 		$data = array(
-			"PAGE"			=> "Редактирование иконки",
+			"PAGE"			=> $this->lng['mi_edit_page_name'],
 			"TITLE"			=> $this->db->HSC($ar['title']),
 			"IMG"			=> $this->db->HSC($ar['img']),
-			"BUTTON"		=> "Сохранить"
+			"BUTTON"		=> $this->lng['mi_edit_btn']
 		);
 
-		ob_start();
-		
-		echo $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-add.html", $data);
-
-		return ob_get_clean();
+		return $this->core->sp(MCR_THEME_MOD."admin/menu_icons/icon-add.html", $data);
 	}
 
 	public function content(){
@@ -199,11 +202,7 @@ class submodule{
 			default:		$content = $this->icon_list(); break;
 		}
 
-		ob_start();
-
-		echo $content;
-
-		return ob_get_clean();
+		return $content;
 	}
 }
 

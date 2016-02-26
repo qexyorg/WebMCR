@@ -1,18 +1,10 @@
+<script src="<?php echo LANG_URL; ?>js/lang.js"></script>
 <link href="<?php echo STYLE_URL; ?>css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="<?php echo STYLE_URL; ?>css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 <link href="<?php echo STYLE_URL; ?>css/docs.css" rel="stylesheet" media="screen">
 <link href="<?php echo STYLE_URL; ?>css/global.css" rel="stylesheet" media="screen">
 <script src="<?php echo STYLE_URL; ?>js/jquery.min.js?1"></script>
+<script src="<?php echo STYLE_URL; ?>js/cookie.js"></script>
 <script src="<?php echo STYLE_URL; ?>js/bootstrap.min.js?2"></script>
-<script type="text/javascript">
-$(function(){
-	$("[rel='tooltip']").tooltip({container: 'body'});
-	
-	$("#close-notify").click(function(){
-		$(".block-notify").fadeOut("normal", function(){
-			$(this).remove();
-		});
-		return false;
-	});
-});
-</script>
+<script src="<?php echo STYLE_URL; ?>js/bootstrap.file-input.js"></script>
+<script src="<?php echo STYLE_URL; ?>js/global.js?3"></script>

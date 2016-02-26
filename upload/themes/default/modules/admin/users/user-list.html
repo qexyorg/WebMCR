@@ -2,7 +2,7 @@
 	<div class="form-block">
 
 		<div class="block-header">
-			<div class="block-name">Пользователи</div>
+			<div class="block-name"><?php echo $this->lng_m['users']; ?></div>
 		</div>
 
 		<div class="block-line"></div>
@@ -11,10 +11,11 @@
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Логин</th>
-					<th>Группа</th>
-					<th>E-Mail</th>
-					<th class="action">Действие <input type="checkbox" class="check-all" data-for="check-input"></th>
+					<th><?php echo $this->lng['login']; ?></th>
+					<th><?php echo $this->lng['group']; ?></th>
+					<th><?php echo $this->lng['email']; ?></th>
+					<th><?php echo $this->lng['ip']; ?></th>
+					<th class="action"><?php echo $this->lng_m['user_field_action']; ?> <input type="checkbox" class="check-all" data-for="check-input"></th>
 				</tr>
 			</thead>
 
@@ -27,13 +28,13 @@
 	<div class="form-block actions">
 		<?php echo $data['PAGINATION']; ?>
 		<div class="right-act">
-			Действие с пользователями: 
+			<?php echo $this->lng_m['user_field_action2']; ?>: 
 			<div class="btn-group">
 				<a class="btn" href="<?php echo ADMIN_URL; ?>&do=users&op=add"><i class="icon-plus"></i></a>
 				<a class="btn edit" data-for="check-input" data-link="<?php echo ADMIN_URL; ?>&do=users&op=edit&id=" href="#"><i class="icon-pencil"></i></a>
-				<button class="btn remove" data-for="check-input" data-text="Удаление пользователей приведет к удалению всей информации о них. Вы уверены, что хотите удалить выбранные элементы?" type="submit" name="delete"><i class="icon-remove"></i></button>
-				<button class="btn remove" data-for="check-input" data-text="Вы действительно хотите забанить выбранных пользователей на сервере?" type="submit" name="ban"><i class="icon-ban-circle"></i></button>
-				<button class="btn remove" data-for="check-input" data-text="Вы действительно хотите разбанить выбранных пользователей на сервере?" type="submit" name="unban"><i class="icon-ok-circle"></i></button>
+				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['user_accept']; ?>" type="submit" name="delete"><i class="icon-remove"></i></button>
+				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['user_accept2']; ?>" type="submit" name="ban"><i class="icon-ban-circle"></i></button>
+				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['user_accept3']; ?>" type="submit" name="unban"><i class="icon-ok-circle"></i></button>
 			</div>
 		</div>
 		
