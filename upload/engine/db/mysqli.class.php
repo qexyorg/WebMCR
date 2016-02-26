@@ -8,7 +8,7 @@ class db{
 	private $config;
 
 	public $count_queries = 0;
-	public $count_queries_real = 2;
+	public $count_queries_real = 0;
 
 	public function __construct($config){
 
@@ -19,6 +19,8 @@ class db{
 		if($this->obj->connect_errno){ return; }
 
 		if(!$this->obj->set_charset("utf8")){ return; }
+
+		$this->count_queries_real = 2;
 	}
 
 	public function query($string){

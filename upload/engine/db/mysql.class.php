@@ -8,7 +8,7 @@ class db{
 	private $config;
 
 	public $count_queries = 0;
-	public $count_queries_real = 2;
+	public $count_queries_real = 0;
 
 	public function __construct($config){
 
@@ -17,6 +17,8 @@ class db{
 		if(!@mysql_select_db($config->db['base'], $this->obj)){ return; }
 
 		@mysql_set_charset("UTF8", $this->obj);
+
+		$this->count_queries_real = 2;
 	}
 
 	public function query($string){
