@@ -5,12 +5,12 @@ class db{
 
 	public $result = false;
 
-	private $config, $lng;
+	private $config;
 
 	public $count_queries = 0;
 	public $count_queries_real = 0;
 
-	public function __construct($config, $lng){
+	public function __construct($config){
 
 		$this->obj = @mysql_connect($config->db['host'].':'.$config->db['port'], $config->db['user'], $config->db['pass']);
 
