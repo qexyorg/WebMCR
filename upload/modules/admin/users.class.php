@@ -184,6 +184,7 @@ class submodule{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$login			= $this->db->safesql(@$_POST['login']);
+			$uuid			= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 
 			$salt		= $this->db->safesql($this->core->random());
 			$password	= $this->core->gen_password($_POST['password'], $salt);
@@ -224,9 +225,9 @@ class submodule{
 			$new_data = $this->db->safesql(json_encode($new_data));
 
 			$insert = $this->db->query("INSERT INTO `mcr_users`
-											(gid, login, email, password, `salt`, ip_create, ip_last, `data`)
+											(gid, login, email, password, `uuid`, `salt`, ip_create, ip_last, `data`)
 										VALUES
-											('$gid', '$login', '$email', '$password', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
+											('$gid', '$login', '$email', '$password', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
 
 			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
@@ -293,6 +294,7 @@ class submodule{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$login			= $this->db->safesql(@$_POST['login']);
+			$uuid			= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 
 			$password		= "`password`";
 			$salt			= "`salt`";
@@ -342,7 +344,7 @@ class submodule{
 
 			$update = $this->db->query("UPDATE `mcr_users`
 										SET gid='$gid', login='$login', gid='$gid', email='$email',
-											password=$password, `salt`=$salt, `data`='$new_data'
+											password=$password, `uuid`='$uuid', `salt`=$salt, `data`='$new_data'
 										WHERE id='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }

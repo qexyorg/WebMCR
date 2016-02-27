@@ -42,7 +42,7 @@ class module{
 		$title = $this->db->HSC($ar['title']);
 
 		$bc = array(
-			$this->lng['t_static'] => BASE_URL."?mode=statics&id=$uniq",
+			$this->lng['mod_name'] => BASE_URL."?mode=statics&id=$uniq",
 			$title => BASE_URL."?mode=statics&id=$uniq"
 		);
 

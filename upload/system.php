@@ -4,10 +4,11 @@ if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 ini_set("upload_max_filesize", "50M");
 ini_set("post_max_size", "50M");
+@date_default_timezone_set('Europe/Moscow');
 
 // System constants
 define('PROGNAME', 'WebMCR Reloaded'. MCR);
-define('VERSION', 'WebMCR Beta 1.0');
+define('VERSION', 'WebMCR Beta 1.1');
 define('FEEDBACK', '<a href="http://webmcr.com" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy'); 
 define('MCR_ROOT', dirname(__FILE__).'/');
 define('MCR_MODE_PATH', MCR_ROOT.'modules/');

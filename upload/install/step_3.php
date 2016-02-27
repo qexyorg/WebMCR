@@ -65,6 +65,7 @@ class module{
 			$salt = $this->db->safesql($this->core->random());
 			$password = $this->core->gen_password(@$_POST['password'], $salt, $method);
 			$password = $this->db->safesql($password);
+			$uuid = $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 			$ip = $this->user->ip;
 
 			$data = array(
@@ -100,9 +101,9 @@ class module{
 			}
 
 			$sql1 = $this->db->query("INSERT INTO `mcr_users`
-											(`gid`, `login`, `email`, `password`, `salt`, `ip_create`, `ip_last`, `data`)
+											(`gid`, `login`, `email`, `password`, `uuid`, `salt`, `ip_create`, `ip_last`, `data`)
 										VALUES
-											('3', '$login', '$email', '$password', '$salt', '$ip', '$ip', '$data')");
+											('3', '$login', '$email', '$password', '$uuid', '$salt', '$ip', '$ip', '$data')");
 
 			if(!$sql1){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_add_admin'], 2, 'install/?mode=step_3'); }
 

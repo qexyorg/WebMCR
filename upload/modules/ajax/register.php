@@ -21,6 +21,7 @@ class submodule{
 
 		$login = $this->db->safesql(@$_POST['login']);
 		$email = $this->db->safesql(@$_POST['email']);
+		$uuid = $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 		$password = @$_POST['password'];
 
 		if(intval($_POST['rules'])!==1){ $this->core->js_notify($this->lng['reg_e_rules']); }
@@ -69,9 +70,9 @@ class submodule{
 		$notify_message = $this->core->lng['e_success'];
 
 		$insert = $this->db->query("INSERT INTO `mcr_users`
-										(gid, login, email, password, `salt`, `tmp`, ip_create, ip_last, `data`)
+										(gid, login, email, password, `uuid`, `salt`, `tmp`, ip_create, ip_last, `data`)
 									VALUES
-										('$gid', '$login', '$email', '$password', '$salt', '$tmp', '$ip', '$ip', '$newdata')");
+										('$gid', '$login', '$email', '$password', '$uuid', '$salt', '$tmp', '$ip', '$ip', '$newdata')");
 
 		if(!$insert){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 			
