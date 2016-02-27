@@ -90,7 +90,8 @@ class submodule{
 			$data_mail = array(
 				"LINK" => $this->config->main['s_root_full'].BASE_URL.'?mode=register&op=accept&key='.$id.'_'.md5($salt),
 				"SITENAME" => $this->config->main['s_name'],
-				"SITEURL" => $this->config->main['s_root_full'].BASE_URL
+				"SITEURL" => $this->config->main['s_root_full'].BASE_URL,
+				"LNG" => $this->lng,
 			);
 
 			$message = $this->core->sp(MCR_THEME_PATH."modules/register/body.mail.html", $data_mail);

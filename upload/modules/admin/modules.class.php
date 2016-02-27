@@ -82,7 +82,7 @@ class submodule{
 	private function check_update($cfg){
 		if(empty($cfg['MOD_URL_UPDATE'])){ return $this->lng['mod_not_check']; }
 
-		$json = file_get_contents($url);
+		$json = file_get_contents($cfg['MOD_URL_UPDATE']);
 
 		if(!$json){ return $this->lng['mod_not_check']; }
 
