@@ -26,8 +26,6 @@ $(function(){
 			formData.append('capcode', $('#capcode').val());
 		}else if($('#g-recaptcha-response').length>0){
 			formData.append('g-recaptcha-response', $('#g-recaptcha-response').val());
-		}else{
-			return mcr.notify(lng.error, lng_reg.e_check);
 		}
 
 		$.ajax({
