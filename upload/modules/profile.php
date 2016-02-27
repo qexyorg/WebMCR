@@ -142,7 +142,7 @@ class module{
 			if($_POST['newpass'] !== @$_POST['repass']){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_repass'], 2, '?mode=profile'); }
 			
 			$newsalt = $this->db->safesql($this->core->random());
-			$newpass = $this->db->safesql($this->core->gen_password($_POST['newpass'], $salt));
+			$newpass = $this->db->safesql($this->core->gen_password($_POST['newpass'], $newsalt));
 		}
 
 		$newdata = array(
