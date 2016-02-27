@@ -40,7 +40,7 @@ class MineToolsAPIQuery{
 
 		$this->players = implode(', ', @$array['Playerlist']);
 
-		$this->plugins = implode(', ', @$array['Plugins']);
+		$this->plugins = @implode(', ', @$array['Plugins']);
 
 		$this->map = $array['Map'];
 

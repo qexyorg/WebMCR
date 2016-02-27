@@ -40,7 +40,7 @@ class McAPIcaQuery{
 
 		$this->slots = intval(@$array['Players']['max']);
 
-		$this->players = implode(', ', @$array['Players']['list']);
+		$this->players = @implode(', ', @$array['Players']['list']);
 
 		return true;
 	}
