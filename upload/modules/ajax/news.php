@@ -86,16 +86,21 @@ class submodule{
 
 		$act_del = $act_edt = $act_get = '';
 
+		$data = array(
+			"ID" => $id,
+			"LNG" => $this->lng
+		);
+
 		if($this->core->is_access('sys_comment_del') || $this->core->is_access('sys_comment_del_all')){
-			$act_del = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-del.html", array("ID" => $id));
+			$act_del = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-del.html", $data);
 		}
 
 		if($this->core->is_access('sys_comment_edt') || $this->core->is_access('sys_comment_edt_all')){
-			$act_edt = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-edt.html", array("ID" => $id));
+			$act_edt = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-edt.html", $data);
 		}
 
 		if($this->user->is_auth){
-			$act_get = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-get.html", array("ID" => $id));
+			$act_get = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-get.html", $data);
 		}
 
 		$com_data	= array(
