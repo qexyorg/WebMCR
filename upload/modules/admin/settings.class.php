@@ -124,6 +124,8 @@ class submodule{
 
 			$cfg['debug']		= (intval(@$_POST['debug']) === 1) ? true : false;
 
+			$cfg['reg_accept']		= (intval(@$_POST['reg_accept']) === 1) ? true : false;
+
 			$captcha = intval(@$_POST['captcha']);
 
 			if(!$this->is_captcha_exist($captcha)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_captcha_incorrect'], 2, '?mode=admin&do=settings'); }
