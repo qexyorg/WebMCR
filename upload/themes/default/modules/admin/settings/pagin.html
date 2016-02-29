@@ -125,6 +125,13 @@
 					</div>
 
 					<div class="control-group">
+						<label class="control-label" for="input_adm_monitoring"><?php echo $this->lng_m['set_pagin_cp_mon']; ?></label>
+						<div class="controls">
+							<input type="text" class="span10" name="adm_monitoring" id="input_adm_monitoring" value="<?php echo $data['CFG']['adm_monitoring']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_mon_ph']; ?>">
+						</div>
+					</div>
+
+					<div class="control-group">
 						<label class="control-label" for="input_adm_users"><?php echo $this->lng_m['set_pagin_cp_users']; ?></label>
 						<div class="controls">
 							<input type="text" class="span10" name="adm_users" id="input_adm_users" value="<?php echo $data['CFG']['adm_users']; ?>" placeholder="<?php echo $this->lng_m['set_pagin_cp_users_ph']; ?>">
