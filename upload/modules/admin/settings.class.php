@@ -194,7 +194,7 @@ class submodule{
 
 			$cfg = $this->to_int_keys($post);
 
-			if(!$this->config->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->core->lng["e_msg"], "Не удалось сохранить файл конфигурации", 2, '?mode=admin&do=settings&op=pagin'); }
+			if(!$this->config->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=pagin'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);

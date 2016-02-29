@@ -27,10 +27,20 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_users'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_users']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			if(preg_match("/[а-яА-ЯёЁ]+/iu", $search)){ $search = ""; }
+			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? 'ip_last' : 'login';
+			$where = "WHERE `u`.`$table` LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `g`.title AS `group`, `u`.ip_create, `u`.ip_last
 									FROM `mcr_users` AS `u`
 									LEFT JOIN `mcr_groups` AS `g`
 										ON `g`.id=`u`.gid
+									$where
 									ORDER BY `u`.login ASC
 									LIMIT $start, $end");
 
@@ -58,12 +68,24 @@ class submodule{
 
 	private function user_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_users`");
+		$sql = "SELECT COUNT(*) FROM `mcr_users`";
+		$page = "?mode=admin&do=users&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			if(preg_match("/[а-яА-ЯёЁ]+/iu", $search)){ $search = ""; }
+			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? "ip_last" : "login";
+			$sql = "SELECT COUNT(*) FROM `mcr_users` WHERE `$table` LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=users&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], "?mode=admin&do=users&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], $page, $ar[0]),
 			"USERS" => $this->user_array()
 		);
 
@@ -212,14 +234,15 @@ class submodule{
 
 			$money = floatval(@$_POST['money']);
 			$realmoney = floatval(@$_POST['realmoney']);
+			$time = time();
 
 			$new_data = array(
-				"time_create" => time(),
-				"time_last" => time(),
+				"time_create" => $time,
+				"time_last" => $time,
 				"firstname" => $firstname,
 				"lastname" => $lastname,
 				"gender" => $gender,
-				"birthday" => $birthday
+				"birthday" => $birthday,
 			);
 
 			$new_data = $this->db->safesql(json_encode($new_data));

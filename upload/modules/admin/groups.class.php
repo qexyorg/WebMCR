@@ -27,8 +27,16 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_groups'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_groups']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT id, title, description
 									FROM `mcr_groups`
+									$where
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
@@ -52,14 +60,24 @@ class submodule{
 
 	private function group_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_groups`");
+		$sql = "SELECT COUNT(*) FROM `mcr_groups`";
+		$page = "?mode=admin&do=groups&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_groups` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=groups&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		if(!$query){ exit("SQL Error"); }
 
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], "?mode=admin&do=groups&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page, $ar[0]),
 			"GROUPS" => $this->group_array()
 		);
 

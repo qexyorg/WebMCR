@@ -27,11 +27,19 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_statics'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_statics']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE `s`.title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `s`.id, `s`.`uniq`, `s`.title, `s`.uid,
 										`p`.title AS `perm`
 									FROM `mcr_statics` AS `s`
 									LEFT JOIN `mcr_permissions` AS `p`
 										ON `p`.`value`=`s`.`permissions`
+									$where
 									ORDER BY `s`.id DESC
 									LIMIT $start, $end");
 
@@ -61,12 +69,22 @@ class submodule{
 
 	private function static_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_statics`");
+		$sql = "SELECT COUNT(*) FROM `mcr_statics`";
+		$page = "?mode=admin&do=statics&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_statics` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=statics&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_statics'], "?mode=admin&do=statics&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_statics'], $page, $ar[0]),
 			"STATICS" => $this->static_array()
 		);
 

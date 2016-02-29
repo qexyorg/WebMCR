@@ -18,6 +18,8 @@ class module{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/global.js"></script>';
 	}
 
 	public function content(){

@@ -27,8 +27,16 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_monitoring'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_monitoring']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT id, title, ip, `port`
 									FROM `mcr_monitoring`
+									$where
 									ORDER BY id DESC
 									LIMIT $start, $end");
 
@@ -53,14 +61,24 @@ class submodule{
 
 	private function monitor_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_monitoring`");
+		$sql = "SELECT COUNT(*) FROM `mcr_monitoring`";
+		$page = "?mode=admin&do=monitoring&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_monitoring` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=monitoring&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		if(!$query){ exit("SQL Error"); }
 
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_monitoring'], "?mode=admin&do=monitoring&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_monitoring'], $page, $ar[0]),
 			"SERVERS" => $this->monitor_array()
 		);
 

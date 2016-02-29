@@ -27,12 +27,18 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_news_cats'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_news_cats']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT id, title, `data`
 									FROM `mcr_news_cats`
+									$where
 									ORDER BY id DESC
 									LIMIT $start, $end");
-
-		
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/news_cats/cat-none.html"); }
 
@@ -54,14 +60,24 @@ class submodule{
 
 	private function cats_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_news_cats`");
+		$sql = "SELECT COUNT(*) FROM `mcr_news_cats`";
+		$page = "?mode=admin&do=news_cats&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_news_cats` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=news_cats&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		if(!$query){ exit("SQL Error"); }
 
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news_cats'], "?mode=admin&do=news_cats&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news_cats'], $page, $ar[0]),
 			"CATEGORIES" => $this->cats_array()
 		);
 

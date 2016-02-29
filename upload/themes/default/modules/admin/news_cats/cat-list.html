@@ -25,11 +25,12 @@
 	<div class="form-block actions">
 		<?php echo $data['PAGINATION']; ?>
 		<div class="right-act">
-			<?php echo $this->lng_m['cn_field_action2']; ?>: 
-			<div class="btn-group">
-				<a class="btn" href="<?php echo ADMIN_URL; ?>&do=news_cats&op=add"><i class="icon-plus"></i></a>
-				<a class="btn edit" data-for="check-input" data-link="<?php echo ADMIN_URL; ?>&do=news_cats&op=edit&id=" href="#"><i class="icon-pencil"></i></a>
-				<button class="btn remove" data-for="check-input" data-text="<?php echo $this->lng_m['cn_accept']; ?>" type="submit" name="delete"><i class="icon-remove"></i></button>
+			<div class="input-append">
+				<input type="text" class="adm-search-input" id="adm-search-id" placeholder="<?php echo $this->lng['ph_search']; ?>">
+				<button class="btn adm-search" data-for="#adm-search-id" type="button" rel="tooltip" title="<?php echo $this->lng['search']; ?>"><i class="icon-search"></i></button>
+				<a class="btn" rel="tooltip" title="<?php echo $this->lng['add']; ?>" href="<?php echo ADMIN_URL; ?>&do=news_cats&op=add"><i class="icon-plus"></i></a>
+				<a class="btn edit" rel="tooltip" title="<?php echo $this->lng['edit']; ?>" data-for="check-input" data-link="<?php echo ADMIN_URL; ?>&do=news_cats&op=edit&id=" href="#"><i class="icon-pencil"></i></a>
+				<button class="btn remove" rel="tooltip" title="<?php echo $this->lng['delete']; ?>" data-for="check-input" data-text="<?php echo $this->lng_m['cn_accept']; ?>" type="submit" name="delete"><i class="icon-remove"></i></button>
 			</div>
 		</div>
 		

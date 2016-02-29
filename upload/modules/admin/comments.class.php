@@ -27,10 +27,18 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_comments'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_comments']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE `c`.text_html LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.text_html, `n`.title AS `new`
 									FROM `mcr_comments` AS `c`
 									LEFT JOIN `mcr_news` AS `n`
 										ON `n`.id=`c`.nid
+									$where
 									ORDER BY `c`.id DESC
 									LIMIT $start, $end");
 
@@ -61,14 +69,24 @@ class submodule{
 
 	private function comment_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_comments`");
+		$sql = "SELECT COUNT(*) FROM `mcr_comments`";
+		$page = "?mode=admin&do=comments&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_comments` WHERE text_html LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=comments&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		if(!$query){ exit("SQL Error"); }
 
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_comments'], "?mode=admin&do=comments&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_comments'], $page, $ar[0]),
 			"COMMENTS" => $this->comment_array()
 		);
 

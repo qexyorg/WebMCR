@@ -27,10 +27,18 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_menu_groups'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_menu_groups']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE `g`.title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `g`.id, `g`.title, `g`.`text`, `p`.id AS `pid`, `p`.`title` AS `perm`
 									FROM `mcr_menu_adm_groups` AS `g`
 									LEFT JOIN `mcr_permissions` AS `p`
 										ON `p`.`value`=`g`.`access`
+									$where
 									ORDER BY `g`.`priority` ASC
 									LIMIT $start, $end");
 
@@ -56,14 +64,24 @@ class submodule{
 
 	private function group_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_menu_adm_groups`");
+		$sql = "SELECT COUNT(*) FROM `mcr_menu_adm_groups`";
+		$page = "?mode=admin&do=menu_groups&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_menu_adm_groups` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=menu_groups&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		if(!$query){ exit("SQL Error"); }
 
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_groups'], "?mode=admin&do=menu_groups&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_groups'], $page, $ar[0]),
 			"GROUPS" => $this->group_array()
 		);
 

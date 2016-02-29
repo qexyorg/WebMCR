@@ -27,10 +27,18 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_news'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_news']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE `n`.title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `n`.id, `n`.cid, `n`.title, `c`.title AS `category`
 									FROM `mcr_news` AS `n`
 									LEFT JOIN `mcr_news_cats` AS `c`
 										ON `c`.id=`n`.cid
+									$where
 									ORDER BY `n`.id DESC
 									LIMIT $start, $end");
 
@@ -57,12 +65,22 @@ class submodule{
 
 	private function news_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_news`");
+		$sql = "SELECT COUNT(*) FROM `mcr_news`";
+		$page = "?mode=admin&do=news&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_news` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=news&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news'], "?mode=admin&do=news&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news'], $page, $ar[0]),
 			"NEWS" => $this->news_array()
 		);
 

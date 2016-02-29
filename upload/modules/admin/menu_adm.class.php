@@ -27,10 +27,18 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_menu_adm'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_menu_adm']; // Set end pagination
 
+		$where		= "";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$where = "WHERE `m`.title LIKE '%$search%'";
+		}
+
 		$query = $this->db->query("SELECT `m`.id, `m`.gid, `m`.title, `m`.`url`, `m`.`target`, `g`.title AS `group`
 									FROM `mcr_menu_adm` AS `m`
 									LEFT JOIN `mcr_menu_adm_groups` AS `g`
 										ON `g`.id=`m`.gid
+									$where
 									ORDER BY `m`.`priority` ASC
 									LIMIT $start, $end");
 
@@ -57,12 +65,22 @@ class submodule{
 
 	private function menu_list(){
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_menu_adm`");
+		$sql = "SELECT COUNT(*) FROM `mcr_menu_adm`";
+		$page = "?mode=admin&do=menu_adm&pid=";
+
+		if(isset($_GET['search']) && !empty($_GET['search'])){
+			$search = $this->db->safesql(urldecode($_GET['search']));
+			$sql = "SELECT COUNT(*) FROM `mcr_menu_adm` WHERE title LIKE '%$search%'";
+			$search = $this->db->HSC(urldecode($_GET['search']));
+			$page = "?mode=admin&do=menu_adm&search=$search&pid=";
+		}
+
+		$query = $this->db->query($sql);
 
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], "?mode=admin&do=menu_adm&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], $page, $ar[0]),
 			"MENU" => $this->menu_array()
 		);
 

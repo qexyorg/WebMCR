@@ -74,6 +74,50 @@ var mcr = {
 		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	},
 
+	// Получение всех параметров из URL
+	getUrlParams: function(){
+		var string = location.search.split('?')[1];
+
+		var result = {};
+
+		string = decodeURIComponent(string);
+
+		if(string==undefined){ return result; }
+
+		$.each(string.split('&'), function(key, val){
+			expl = val.split('=');
+
+			result[expl[0]] = expl[1];
+		});
+
+		return result;
+	},
+
+	// Изменение параметра url
+	changeUrlParam: function(json){
+		var get = this.getUrlParams();
+
+		$.each(json, function(key, value){
+			console.log(key + '=' + value);
+			if(get[key]===undefined || value!==false){ get[key] = value; }
+			if(value===false && get[key]!==undefined){ delete get[key]; }
+		});
+
+		if(Object.keys(get).length<=0){ location.search = ''; return false; }
+
+		var string = '?';
+
+		$.each(get, function(key, val){
+			string = string+key+'='+val+'&';
+		});
+
+		string = string.substring(0, string.length - 1);
+
+		location.search = string;
+
+		return true;
+	},
+
 	/*
 	 * Результирующий запрос - запрос, возвращающий результат.
 	 *
