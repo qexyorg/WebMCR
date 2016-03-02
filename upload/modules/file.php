@@ -22,6 +22,8 @@ class module{
 
 	public function content(){
 
+		$images = array('png', 'jpg', 'gif', 'jpeg');
+
 		//$this->core->notify("Доступ запрещен!", "Для доступа к профилю необходима авторизация", 1, "?mode=403");
 
 		$uniq = $this->db->safesql(@$_GET['uniq']);
@@ -38,14 +40,22 @@ class module{
 
 		if(!file_exists(MCR_UPL_PATH.'files/'.$name)){ $this->core->notify($this->core->lng['404'], $this->core->lng['t_404'], 1, "?mode=404"); }
 
-		$ext = '.'.substr(strrchr($name, '.'), 1);
+		$ext = substr(strrchr($name, '.'), 1);
+
+		if(in_array($ext, $images)){
+			header('Content-Type: image/'.$ext);
+			header('Content-Disposition: filename="'.$uniq.'.'.$ext.'"');
+			echo file_get_contents(MCR_UPL_PATH.'files/'.$name);
+
+			exit;
+		}
 
 		header('Content-Type: application/octet-stream');
 		header('Cache-Control:no-cache, must-revalidate');
 		header('Expires:0');
 		header('Pragma:no-cache');
 		header('Content-Length:' . filesize(MCR_UPL_PATH.'files/'.$name));
-		header('Content-Disposition: attachment; filename="'.$uniq.$ext.'"');
+		header('Content-Disposition: attachment; filename="'.$uniq.'.'.$ext.'"');
 		header('Content-Transfer-Encoding:binary');
 
 		readfile(MCR_UPL_PATH.'files/'.$name);
