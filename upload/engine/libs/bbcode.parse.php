@@ -160,7 +160,7 @@ class bbcode{
 		),
 
 		'url' => array(
-			'pattern' => '/\[(url)\=\"(http(s)?\:\/\/[\w\.\/\?\=\&\%\+\~\*\-]+)\"\]((?:[^[]|(?R))*)\[\/url\]/Usi',
+			'pattern' => '/\[(url)\=\"(http(s)?\:\/\/[\w\.\/\?\=\&amp\;\%\+\~\*\-]+)\"\]((?:[^[]|(?R))*)\[\/url\]/Usi',
 			'replace' => '<a href="{2}" class="qxbb-url">{4}</a>',
 			'values' => array(1,2,4),
 			'escapes' => false,
@@ -177,7 +177,7 @@ class bbcode{
 	// Шаблоны ББ-кодов с опциями и тонкими настройками регулярок (не рекурсивные)
 	private $codes_once = array(
 		'img' => array(
-			'pattern' => '/\[img\](http(s)?\:\/\/[\w\.\/\?\=\&\%\+\~\*\-]+)\[\/img\]/Usi',
+			'pattern' => '/\[img\](http(s)?\:\/\/[\w\.\/\?\=\&amp\;\%\+\~\*\-]+)\[\/img\]/Usi',
 			'replace' => '<img src="$1" class="qxbb-img" alt="IMG" />',
 		),
 
@@ -187,7 +187,7 @@ class bbcode{
 		),
 
 		'url' => array(
-			'pattern' => '/\[url\](http(s)?\:\/\/[\w\.\/\?\=\&\%\+\~\*\-]+)\[\/url\]/Usi',
+			'pattern' => '/\[url\](http(s)?\:\/\/[\w\.\/\?\=\&amp\;\%\+\~\*\-]+)\[\/url\]/Usi',
 			'replace' => '<a href="$1" class="qxbb-url">$1</a>',
 		),
 
