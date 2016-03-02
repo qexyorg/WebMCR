@@ -165,6 +165,11 @@ class core{
 		exit;
 	}
 
+	public function colorize($str, $color, $format='<font color="{COLOR}">{STRING}</font>'){
+
+		return str_replace(array('{COLOR}', '{STRING}'), array($color, $str), $format);
+	}
+
 	/**
 	 * Адрес сайта по умолчанию
 	 * @return String - адрес сайта

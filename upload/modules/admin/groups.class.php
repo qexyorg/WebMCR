@@ -28,16 +28,29 @@ class submodule{
 		$end		= $this->config->pagin['adm_groups']; // Set end pagination
 
 		$where		= "";
+		$sort		= "id";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE title LIKE '%$search%'";
 		}
 
-		$query = $this->db->query("SELECT id, title, description
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'title': $sort = "title"; break;
+				case 'desc': $sort = "description"; break;
+			}
+		}
+
+		$query = $this->db->query("SELECT id, title, `color`, description
 									FROM `mcr_groups`
 									$where
-									ORDER BY id DESC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/groups/group-none.html"); }
@@ -46,9 +59,11 @@ class submodule{
 
 		while($ar = $this->db->fetch_assoc($query)){
 
+			$color = $this->db->HSC($ar['color']);
+
 			$page_data = array(
 				"ID" => intval($ar['id']),
-				"TITLE" => $this->db->HSC($ar['title']),
+				"TITLE" => $this->core->colorize($this->db->HSC($ar['title']), $color),
 				"TEXT" => $this->db->HSC($ar['description']),
 			);
 		
@@ -61,13 +76,17 @@ class submodule{
 	private function group_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_groups`";
-		$page = "?mode=admin&do=groups&pid=";
+		$page = "?mode=admin&do=groups";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_groups` WHERE title LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=groups&search=$search&pid=";
+			$page = "?mode=admin&do=groups&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -77,7 +96,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page.'&pid=', $ar[0]),
 			"GROUPS" => $this->group_array()
 		);
 
@@ -192,7 +211,10 @@ class submodule{
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title			= $this->db->safesql(@$_POST['title']);
 			$text			= $this->db->safesql(@$_POST['text']);
+			$color			= $this->db->safesql(@$_POST['color']);
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
+
+			if(!empty($color) && !preg_match("/^\#[a-f0-9]{6}|[a-f0-9]{3}$/i", $color)){ $this->core->notify($this->core->lng["e_msg"], $this->lng["grp_e_color_format"], 2, '?mode=admin&do=groups&op=add'); }
 
 			$perm_data = $_POST;
 
@@ -201,11 +223,11 @@ class submodule{
 			$new_permissions = $this->db->safesql($this->gen_permissions($perm_data));
 
 			$insert = $this->db->query("INSERT INTO `mcr_groups`
-											(title, description, `permissions`)
+											(title, description, `color`, `permissions`)
 										VALUES
-											('$title', '$text', '$new_permissions')");
+											('$title', '$text', '$color', '$new_permissions')");
 
-			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups&op=add'); }
 
 			$id = $this->db->insert_id();
 
@@ -222,6 +244,7 @@ class submodule{
 			"PAGE" => $this->lng['grp_add_page_name'],
 			"TITLE" => '',
 			"TEXT" => '',
+			"COLOR" => '',
 			"PERMISSIONS" => $this->perm_list(),
 			"BUTTON" => $this->lng['grp_add_btn']
 		);
@@ -234,7 +257,7 @@ class submodule{
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT title, `description`, `permissions`
+		$query = $this->db->query("SELECT title, `description`, `color`, `permissions`
 									FROM `mcr_groups`
 									WHERE id='$id'");
 
@@ -253,7 +276,10 @@ class submodule{
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title			= $this->db->safesql(@$_POST['title']);
 			$text			= $this->db->safesql(@$_POST['text']);
+			$color			= $this->db->safesql(@$_POST['color']);
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
+
+			if(!empty($color) && !preg_match("/^\#[a-f0-9]{6}|[a-f0-9]{3}$/i", $color)){ $this->core->notify($this->core->lng["e_msg"], $this->lng["grp_e_color_format"], 2, '?mode=admin&do=groups&op=edit&id='.$id); }
 
 			$perm_data = $_POST;
 
@@ -262,7 +288,7 @@ class submodule{
 			$new_permissions = $this->db->safesql($this->gen_permissions($perm_data));
 
 			$update = $this->db->query("UPDATE `mcr_groups`
-										SET title='$title', description='$text', `permissions`='$new_permissions'
+										SET title='$title', `color`='$color', description='$text', `permissions`='$new_permissions'
 										WHERE id='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups&op=edit&id='.$id); }
@@ -279,6 +305,7 @@ class submodule{
 		$data = array(
 			"PAGE"			=> $this->lng['grp_edit_page_name'],
 			"TITLE"			=> $this->db->HSC($ar['title']),
+			"COLOR"			=> $this->db->HSC($ar['color']),
 			"TEXT"			=> $this->db->HSC($ar['description']),
 			"PERMISSIONS"	=> $this->perm_list($ar['permissions']),
 			"BUTTON"		=> $this->lng['grp_edit_btn']

@@ -28,6 +28,8 @@ class submodule{
 		$end		= $this->config->pagin['adm_users']; // Set end pagination
 
 		$where		= "";
+		$sort		= "`u`.id";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
@@ -36,12 +38,26 @@ class submodule{
 			$where = "WHERE `u`.`$table` LIKE '%$search%'";
 		}
 
-		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `g`.title AS `group`, `u`.ip_create, `u`.ip_last
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'user': $sort = "`u`.login"; break;
+				case 'group': $sort = "`g`.title"; break;
+				case 'email': $sort = "`u`.email"; break;
+				case 'ip': $sort = "`u`.ip_last"; break;
+			}
+		}
+
+		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `u`.`color`, `u`.ip_create, `u`.ip_last,
+										`g`.title AS `group`, `g`.`color` AS `gcolor`
 									FROM `mcr_users` AS `u`
 									LEFT JOIN `mcr_groups` AS `g`
 										ON `g`.id=`u`.gid
 									$where
-									ORDER BY `u`.login ASC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/users/user-none.html"); }
@@ -50,12 +66,15 @@ class submodule{
 
 		while($ar = $this->db->fetch_assoc($query)){
 
+			$ucolor = (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+			$gcolor = $this->db->HSC($ar['gcolor']);
+
 			$page_data = array(
 				"ID" => intval($ar['id']),
 				"GID" => intval($ar['gid']),
-				"LOGIN" => $this->db->HSC($ar['login']),
+				"LOGIN" => $this->core->colorize($this->db->HSC($ar['login']), $ucolor),
 				"EMAIL" => $this->db->HSC($ar['email']),
-				"GROUP" => $this->db->HSC($ar['group']),
+				"GROUP" => $this->core->colorize($this->db->HSC($ar['group']), $gcolor),
 				"IP_LAST" => $this->db->HSC($ar['ip_last']),
 				"IP_CREATE" => $this->db->HSC($ar['ip_create']),
 			);
@@ -69,7 +88,7 @@ class submodule{
 	private function user_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_users`";
-		$page = "?mode=admin&do=users&pid=";
+		$page = "?mode=admin&do=users";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
@@ -77,7 +96,11 @@ class submodule{
 			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? "ip_last" : "login";
 			$sql = "SELECT COUNT(*) FROM `mcr_users` WHERE `$table` LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=users&search=$search&pid=";
+			$page = "?mode=admin&do=users&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -85,7 +108,7 @@ class submodule{
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], $page.'&pid=', $ar[0]),
 			"USERS" => $this->user_array()
 		);
 
@@ -206,11 +229,14 @@ class submodule{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$login			= $this->db->safesql(@$_POST['login']);
+			$color			= $this->db->safesql(@$_POST['color']);
 			$uuid			= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 
 			$salt		= $this->db->safesql($this->core->random());
 			$password	= $this->core->gen_password($_POST['password'], $salt);
 			$password	= $this->db->safesql($password);
+
+			if(!empty($color) && !preg_match("/^\#[a-f0-9]{6}|[a-f0-9]{3}$/i", $color)){ $this->core->notify($this->core->lng["e_msg"], $this->lng["user_e_color_format"], 2, '?mode=admin&do=users&op=add'); }
 
 			if(mb_strlen($_POST['password'], "UTF-8")<6){ $this->core->notify($this->core->lng['e_msg'], $this->lng['user_e_reg_pass_length'], 2, '?mode=admin&do=users&op=add'); }
 
@@ -248,9 +274,9 @@ class submodule{
 			$new_data = $this->db->safesql(json_encode($new_data));
 
 			$insert = $this->db->query("INSERT INTO `mcr_users`
-											(gid, login, email, password, `uuid`, `salt`, ip_create, ip_last, `data`)
+											(gid, login, email, password, `color`, `uuid`, `salt`, ip_create, ip_last, `data`)
 										VALUES
-											('$gid', '$login', '$email', '$password', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
+											('$gid', '$login', '$email', '$password', '$color', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
 
 			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
@@ -273,17 +299,18 @@ class submodule{
 		}
 
 		$data = array(
-			"PAGE" => $this->lng['user_add_page_name'],
-			"LOGIN" => '',
-			"EMAIL" => '',
-			"FIRSTNAME" => '',
-			"LASTNAME" => '',
-			"BIRTHDAY" => date("d-m-Y"),
-			"GENDER" => '',
-			"GROUPS" => $this->groups(),
-			"MONEY" => 0,
-			"REALMONEY" => 0,
-			"BUTTON" => $this->lng['user_add_btn']
+			'PAGE' => $this->lng['user_add_page_name'],
+			'LOGIN' => '',
+			'EMAIL' => '',
+			'FIRSTNAME' => '',
+			'LASTNAME' => '',
+			'COLOR' => '',
+			'BIRTHDAY' => date("d-m-Y"),
+			'GENDER' => '',
+			'GROUPS' => $this->groups(),
+			'MONEY' => 0,
+			'REALMONEY' => 0,
+			'BUTTON' => $this->lng['user_add_btn']
 		);
 
 		return $this->core->sp(MCR_THEME_MOD."admin/users/user-add.html", $data);
@@ -294,7 +321,7 @@ class submodule{
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT `u`.login, `u`.gid, `u`.email, `u`.`data`,
+		$query = $this->db->query("SELECT `u`.login, `u`.gid, `u`.email, `u`.`data`, `u`.`color`,
 											`i`.`money`, `i`.realmoney
 									FROM `mcr_users` AS `u`
 									LEFT JOIN `mcr_iconomy` AS `i`
@@ -317,10 +344,13 @@ class submodule{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$login			= $this->db->safesql(@$_POST['login']);
+			$color			= $this->db->safesql(@$_POST['color']);
 			$uuid			= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 
 			$password		= "`password`";
 			$salt			= "`salt`";
+
+			if(!empty($color) && !preg_match("/^\#[a-f0-9]{6}|[a-f0-9]{3}$/i", $color)){ $this->core->notify($this->core->lng["e_msg"], $this->lng["user_e_color_format"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 
 			if(isset($_POST['password']) && !empty($_POST['password'])){
 				$salt		= $this->db->safesql($this->core->random());
@@ -366,7 +396,7 @@ class submodule{
 			$new_data = $this->db->safesql(json_encode($new_data));
 
 			$update = $this->db->query("UPDATE `mcr_users`
-										SET gid='$gid', login='$login', gid='$gid', email='$email',
+										SET gid='$gid', login='$login', `color`='$color', gid='$gid', email='$email',
 											password=$password, `uuid`='$uuid', `salt`=$salt, `data`='$new_data'
 										WHERE id='$id'");
 
@@ -408,6 +438,7 @@ class submodule{
 			"PAGE" => $this->lng['user_edit_page_name'],
 			"LOGIN" => $this->db->HSC($ar['login']),
 			"EMAIL" => $this->db->HSC($ar['email']),
+			'COLOR' => $this->db->HSC($ar['color']),
 			"FIRSTNAME" => $this->db->HSC($data->firstname),
 			"LASTNAME" => $this->db->HSC($data->lastname),
 			"BIRTHDAY" => $birthday,

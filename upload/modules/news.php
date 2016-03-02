@@ -157,10 +157,14 @@ class module{
 		$start		= $this->core->pagination($this->config->pagin['comments'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['comments']; // Set end pagination
 
-		$query = $this->db->query("SELECT `c`.id, `c`.text_html, `c`.uid, `c`.`data`, `u`.login
+		$query = $this->db->query("SELECT `c`.id, `c`.text_html, `c`.uid, `c`.`data`,
+										`u`.login, `u`.`color`,
+										`g`.`color` AS `gcolor`
 									FROM `mcr_comments` AS `c`
 									LEFT JOIN `mcr_users` AS `u`
 										ON `u`.id=`c`.uid
+									LEFT JOIN `mcr_groups` AS `g`
+										ON `g`.id=`u`.gid
 									WHERE `c`.nid='$nid'
 									ORDER BY `c`.id DESC
 									LIMIT $start, $end");
@@ -194,13 +198,17 @@ class module{
 				$act_get = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-get.html", $data);
 			}
 
+			$login = (is_null($ar['login'])) ? 'Пользователь удален' : $this->db->HSC($ar['login']);
+
+			$color = (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+
 			$com_data	= array(
 				"ID"				=> $id,
 				"NID"				=> $nid,
 				"TEXT"				=> $ar['text_html'],
 				"UID"				=> intval($ar['uid']),
 				"DATA"				=> json_decode($ar['data'], true),
-				"LOGIN"				=> $this->db->HSC($ar['login']),
+				"LOGIN"				=> $this->core->colorize($login, $color),
 				"ACTION_DELETE"		=> $act_del,
 				"ACTION_EDIT"		=> $act_edt,
 				"ACTION_QUOTE"		=> $act_get

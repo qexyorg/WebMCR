@@ -98,7 +98,6 @@ var mcr = {
 		var get = this.getUrlParams();
 
 		$.each(json, function(key, value){
-			console.log(key + '=' + value);
 			if(get[key]===undefined || value!==false){ get[key] = value; }
 			if(value===false && get[key]!==undefined){ delete get[key]; }
 		});

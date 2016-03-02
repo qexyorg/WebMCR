@@ -1,0 +1,16 @@
+.sort-trigger[data-order="asc"]:after,
+.sort-trigger[data-order="desc"]:after {
+	content: "";
+	display: inline-block;
+	vertical-align: middle;
+	width: 15px;
+	height: 15px;
+	line-height: 15px;
+	margin-left: 5px;
+	background-image: url('../../../img/glyphicons-halflings.png');
+	background-position: -313px -119px;
+}
+
+.sort-trigger[data-order="desc"]:after {
+	background-position: -288px -120px;
+}

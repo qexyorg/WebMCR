@@ -28,16 +28,29 @@ class submodule{
 		$end		= $this->config->pagin['adm_monitoring']; // Set end pagination
 
 		$where		= "";
+		$sort		= "id";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE title LIKE '%$search%'";
 		}
 
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'title': $sort = "title"; break;
+				case 'address': $sort = "CONCAT(`ip`, `port`)"; break;
+			}
+		}
+
 		$query = $this->db->query("SELECT id, title, ip, `port`
 									FROM `mcr_monitoring`
 									$where
-									ORDER BY id DESC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/monitoring/monitor-none.html"); }
@@ -62,13 +75,17 @@ class submodule{
 	private function monitor_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_monitoring`";
-		$page = "?mode=admin&do=monitoring&pid=";
+		$page = "?mode=admin&do=monitoring";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_monitoring` WHERE title LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=monitoring&search=$search&pid=";
+			$page = "?mode=admin&do=monitoring&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -78,7 +95,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_monitoring'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_monitoring'], $page.'&pid=', $ar[0]),
 			"SERVERS" => $this->monitor_array()
 		);
 

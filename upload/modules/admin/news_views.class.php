@@ -27,13 +27,31 @@ class submodule{
 		$start		= $this->core->pagination($this->config->pagin['adm_news_views'], 0, 0); // Set start pagination
 		$end		= $this->config->pagin['adm_news_views']; // Set end pagination
 
-		$query = $this->db->query("SELECT `v`.id, `v`.nid, `v`.uid, `v`.`time`, `n`.title, `u`.login
+		$sort		= "`v`.id";
+		$sortby		= "DESC";
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'news': $sort = "`n`.title"; break;
+				case 'user': $sort = "`u`.login"; break;
+				case 'date': $sort = "`v`.`time`"; break;
+			}
+		}
+
+		$query = $this->db->query("SELECT `v`.id, `v`.nid, `v`.uid, `v`.`time`, `n`.title,
+										`u`.login, `u`.`color`, `g`.`color` AS `gcolor`
 									FROM `mcr_news_views` AS `v`
 									LEFT JOIN `mcr_news` AS `n`
 										ON `n`.id=`v`.nid
 									LEFT JOIN `mcr_users` AS `u`
 										ON `u`.id=`v`.uid
-									ORDER BY `v`.id DESC
+									LEFT JOIN `mcr_groups` AS `g`
+										ON `g`.id=`u`.gid
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/news_views/view-none.html"); }
@@ -50,11 +68,15 @@ class submodule{
 				$new = $this->db->HSC($ar['title']);
 			}
 
+			$login = (is_null($ar['login'])) ? 'Пользователь удален' : $this->db->HSC($ar['login']);
+
+			$color = (empty($ar['color'])) ? $this->db->HSC($ar['gcolor']) : $this->db->HSC($ar['color']);
+
 			$page_data = array(
 				"ID" => intval($ar['id']),
 				"NID" => intval($ar['nid']),
 				"NEW" => $new,
-				"LOGIN" => $this->db->HSC($ar['login']),
+				"LOGIN" => $this->core->colorize($login, $color),
 				"UID" => intval($ar['uid']),
 				"TIME_CREATE" => date("d.m.Y в H:i", $ar['time']),
 				"STATUS_CLASS" => $status_class
@@ -68,12 +90,18 @@ class submodule{
 
 	private function views_list(){
 
+		$page = "?mode=admin&do=news_views";
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
+		}
+
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_news_views`");
 
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news_views'], "?mode=admin&do=news_views&pid=", $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news_views'], $page."&pid=", $ar[0]),
 			"VIEWS" => $this->views_array()
 		);
 

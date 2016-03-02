@@ -28,10 +28,23 @@ class submodule{
 		$end		= $this->config->pagin['adm_menu']; // Set end pagination
 
 		$where		= "";
+		$sort		= "`m`.id";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE `m`.title LIKE '%$search%'";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'title': $sort = "`m`.title"; break;
+				case 'parent': $sort = "`p`.title"; break;
+			}
 		}
 
 		$query = $this->db->query("SELECT `m`.id, `m`.title, `m`.`parent`, `m`.`url`, `m`.`target`, `p`.title AS `ptitle`
@@ -39,7 +52,7 @@ class submodule{
 									LEFT JOIN `mcr_menu` AS `p`
 										ON `p`.id=`m`.`parent`
 									$where
-									ORDER BY `m`.id ASC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/menu/menu-none.html"); }
@@ -68,13 +81,17 @@ class submodule{
 	private function menu_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_menu`";
-		$page = "?mode=admin&do=menu&pid=";
+		$page = "?mode=admin&do=menu";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_menu` WHERE title LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=menu&search=$search&pid=";
+			$page = "?mode=admin&do=menu&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -84,7 +101,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu'], $page.'&pid=', $ar[0]),
 			"MENU" => $this->menu_array()
 		);
 
@@ -106,7 +123,7 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		if(!$this->db->remove_fast("mcr_menu", "id IN ($list) AND `parent` IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu'); }
+		if(!$this->db->remove_fast("mcr_menu", "id IN ($list) OR `parent` IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu'); }
 
 		$count = $this->db->affected_rows();
 

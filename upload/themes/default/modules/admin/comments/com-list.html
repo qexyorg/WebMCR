@@ -10,9 +10,10 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>#</th>
-					<th><?php echo $this->lng_m['com_col_comment']; ?></th>
-					<th><?php echo $this->lng_m['com_col_news']; ?></th>
+					<th><a href="#" class="sort-trigger" data-field="id" data-order="desc">#</a></th>
+					<th><a href="#" class="sort-trigger" data-field="user" data-order="desc"><?php echo $this->lng_m['com_col_user']; ?></a></th>
+					<th><a href="#" class="sort-trigger" data-field="comment" data-order="desc"><?php echo $this->lng_m['com_col_comment']; ?></a></th>
+					<th><a href="#" class="sort-trigger" data-field="news" data-order="desc"><?php echo $this->lng_m['com_col_news']; ?></a></th>
 					<th class="action"><?php echo $this->lng_m['action']; ?> <input type="checkbox" class="check-all" data-for="check-input"></th>
 				</tr>
 			</thead>

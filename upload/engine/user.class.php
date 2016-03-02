@@ -5,7 +5,7 @@ class user{
 	private $core, $db, $config, $lng;
 
 	// Set default user vars
-	public $email, $login, $group, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
+	public $email, $login, $login_v2, $group, $group_v2, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
 
 	public $id = 0;
 
@@ -56,8 +56,9 @@ class user{
 		$uid	= intval($cookie[0]);
 		$hash	= $cookie[1];
 
-		$query = $this->db->query("SELECT `u`.gid, `u`.login, `u`.email, `u`.password, `u`.`salt`, `u`.`tmp`, `u`.ip_create, `u`.`data`, `u`.`is_skin`, `u`.`is_cloak`,
-											`g`.title, `g`.`description`, `g`.`permissions`, `i`.`money`, `i`.realmoney, `i`.bank
+		$query = $this->db->query("SELECT `u`.gid, `u`.login, `u`.email, `u`.password, `u`.`salt`, `u`.`tmp`, `u`.ip_create, `u`.`data`, `u`.`is_skin`, `u`.`is_cloak`, `u`.`color`,
+											`g`.title, `g`.`description`, `g`.`permissions`, `g`.`color` AS `gcolor`,
+											`i`.`money`, `i`.realmoney, `i`.bank
 									FROM `mcr_users` AS `u`
 									INNER JOIN `mcr_groups` AS `g`
 										ON `g`.id=`u`.gid
@@ -79,6 +80,14 @@ class user{
 		// Check security auth
 		if($_COOKIE['mcr_user'] !== $ar_hash){ $this->set_unauth(); $this->core->notify(); }
 
+		$login				= $this->db->HSC($ar['login']);
+
+		$color				= (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+
+		$group				= $this->db->HSC($ar['title']);
+
+		$gcolor				= $this->db->HSC($ar['gcolor']);
+
 		// Identificator
 		$this->id			= $uid;
 
@@ -86,7 +95,10 @@ class user{
 		$this->gid			= intval($ar['gid']);
 
 		// Username
-		$this->login		= $this->db->HSC($ar['login']);
+		$this->login		= $login;
+
+		// Username
+		$this->login_v2		= $this->core->colorize($login, $color);
 
 		// E-Mail
 		$this->email		= $this->db->HSC($ar['email']);
@@ -107,7 +119,10 @@ class user{
 		$this->data			= json_decode($ar['data']);
 
 		// Group title
-		$this->group		= $this->db->HSC($ar['title']);
+		$this->group		= $group;
+
+		// Group title with colorize
+		$this->group_v2		= $this->core->colorize($group, $gcolor);
 
 		// Group description
 		$this->group_desc	= $this->db->HSC($ar['description']);

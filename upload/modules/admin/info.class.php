@@ -25,7 +25,7 @@ class submodule{
 	private function main(){
 
 		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-main.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/info-main.js"></script>';
+		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/info-main.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/main.html");
 	}
@@ -98,7 +98,7 @@ class submodule{
 
 	private function extensions(){
 		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-extensions.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/info-extensions.js"></script>';
+		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/info-extensions.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/extensions.html");
 	}

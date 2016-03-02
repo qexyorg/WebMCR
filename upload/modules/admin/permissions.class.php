@@ -28,16 +28,29 @@ class submodule{
 		$end		= $this->config->pagin['adm_groups']; // Set end pagination
 
 		$where		= "";
+		$sort		= "id";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE title LIKE '%$search%'";
 		}
 
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'title': $sort = "title"; break;
+				case 'value': $sort = "`value`"; break;
+			}
+		}
+
 		$query = $this->db->query("SELECT id, title, description, `value`, `system`, `data`
 									FROM `mcr_permissions`
 									$where
-									ORDER BY `value` ASC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		
@@ -68,13 +81,17 @@ class submodule{
 	private function permissions_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_permissions`";
-		$page = "?mode=admin&do=permissions&pid=";
+		$page = "?mode=admin&do=permissions";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_permissions` WHERE title LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=permissions&search=$search&pid=";
+			$page = "?mode=admin&do=permissions&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -84,7 +101,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page.'&pid=', $ar[0]),
 			"PERMISSIONS" => $this->permissions_array()
 		);
 
@@ -421,7 +438,7 @@ class submodule{
 		$op = (isset($_GET['op'])) ? $_GET['op'] : 'list';
 
 		$this->core->header .= '<script src="'.LANG_URL.'js/modules/permissions.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/admin/permissions.js"></script>';
+		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/permissions.js"></script>';
 
 		switch($op){
 			case 'add':		$content = $this->add(); break;

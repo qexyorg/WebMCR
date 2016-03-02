@@ -38,6 +38,13 @@
 		</div>
 
 		<div class="control-group">
+			<label class="control-label" for="inputColor"><?php echo $this->lng['color']; ?></label>
+			<div class="controls">
+				<input type="text" name="color" value="<?php echo $data['COLOR']; ?>" id="inputColor" placeholder="<?php echo $this->lng['color']; ?>">
+			</div>
+		</div>
+
+		<div class="control-group">
 			<label class="control-label" for="inputFName"><?php echo $this->lng['firstname']; ?></label>
 			<div class="controls">
 				<input type="text" name="firstname" pattern="^[а-яА-ЯёЁa-zA-Z]+$" value="<?php echo $data['FIRSTNAME']; ?>" id="inputFName" placeholder="<?php echo $this->lng['firstname']; ?>">

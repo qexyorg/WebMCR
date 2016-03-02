@@ -90,6 +90,7 @@ $lng = array(
 	"email" => "E-Mail",
 	"pass" => "Пароль",
 	"group" => "Группа",
+	"color" => "Цвет",
 	"firstname" => "Имя",
 	"lastname" => "Фамилия",
 	"date_reg" => "Дата регистрации",

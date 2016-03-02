@@ -1,7 +1,7 @@
 <tr class="<?php echo $data['STATUS_CLASS']; ?>">
 	<td><?php echo $data['ID']; ?></td>
 	<td><a href="<?php echo BASE_URL; ?>?mode=news&id=<?php echo $data['NID']; ?>" target="_blank"><i class="icon-share-alt"></i></a> <?php echo $data['NEW']; ?></td>
-	<td><a href="#"><?php echo $data['LOGIN']; ?></a></td>
+	<td><?php echo $data['LOGIN']; ?></td>
 	<td><?php echo $data['TIME_CREATE']; ?></td>
 	<td class="action"><input type="checkbox"  name="id[]" class="check-input" value="<?php echo $data['ID']; ?>"></td>
 </tr>

@@ -15,6 +15,13 @@
 		</div>
 
 		<div class="control-group">
+			<label class="control-label" for="inputColor">Цвет группы</label>
+			<div class="controls">
+				<input type="text" name="color" class="span8" value="<?php echo $data['COLOR']; ?>" placeholder="#000000 | #000" id="inputColor">
+			</div>
+		</div>
+
+		<div class="control-group">
 			<label class="control-label" for="textareaText"><?php echo $this->lng_m['grp_field_desc']; ?></label>
 			<div class="controls">
 				<textarea name="text" class="span8" placeholder="<?php echo $this->lng_m['grp_field_desc']; ?>" rows="8" maxlength="255" id="textareaText"><?php echo $data['TEXT']; ?></textarea>

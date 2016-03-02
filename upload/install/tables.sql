@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `mcr_groups` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `title` varchar(32) NOT NULL,
   `description` varchar(255) NOT NULL,
+  `color` varchar(24) NOT NULL,
   `permissions` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
@@ -362,6 +363,7 @@ CREATE TABLE IF NOT EXISTS `mcr_users` (
   `is_cloak` tinyint(1) NOT NULL DEFAULT '0',
   `ip_create` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
   `ip_last` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
+  `color` varchar(24) NOT NULL,
   `data` text NOT NULL,
   `ban_server` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),

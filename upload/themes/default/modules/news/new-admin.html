@@ -2,7 +2,7 @@
 	
 	<a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 
-	<ul class="dropdown-menu">
+	<ul class="dropdown-menu pull-right">
 		<li><a href="#" class="news-attach" data-id="<?php echo $data['ID']; ?>"><?php echo $data['ATTACH']; ?></a></li>
 		<li><a href="<?php echo BASE_URL; ?>?mode=admin&do=news&op=edit&id=<?php echo $data['ID']; ?>"><?php echo $this->lng_m['com_edit']; ?></a></li>
 		<li><a href="#" class="news-delete" data-id="<?php echo $data['ID']; ?>"><?php echo $this->lng_m['com_delete']; ?></a></li>

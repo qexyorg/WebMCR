@@ -28,10 +28,23 @@ class submodule{
 		$end		= $this->config->pagin['adm_menu_adm']; // Set end pagination
 
 		$where		= "";
+		$sort		= "`m`.`id`";
+		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE `m`.title LIKE '%$search%'";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'title': $sort = "`m`.title"; break;
+				case 'group': $sort = "`g`.title"; break;
+			}
 		}
 
 		$query = $this->db->query("SELECT `m`.id, `m`.gid, `m`.title, `m`.`url`, `m`.`target`, `g`.title AS `group`
@@ -39,7 +52,7 @@ class submodule{
 									LEFT JOIN `mcr_menu_adm_groups` AS `g`
 										ON `g`.id=`m`.gid
 									$where
-									ORDER BY `m`.`priority` ASC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/menu_adm/menu-none.html"); }
@@ -66,13 +79,17 @@ class submodule{
 	private function menu_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_menu_adm`";
-		$page = "?mode=admin&do=menu_adm&pid=";
+		$page = "?mode=admin&do=menu_adm";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_menu_adm` WHERE title LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=menu_adm&search=$search&pid=";
+			$page = "?mode=admin&do=menu_adm&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -80,7 +97,7 @@ class submodule{
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], $page.'&pid=', $ar[0]),
 			"MENU" => $this->menu_array()
 		);
 

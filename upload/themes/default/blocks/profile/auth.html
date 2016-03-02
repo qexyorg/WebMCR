@@ -8,8 +8,8 @@
 		<form class="block-profile" method="post" action="<?php echo BASE_URL; ?>?mode=logout">
 			<div class="avatar"><img src="<?php echo BASE_URL; ?>uploads/skins/interface/<?php echo $this->user->skin; ?>_mini.png?<?php echo mt_rand(1000,9999); ?>" class="img-polaroid"></div>
 			<ul class="info">
-				<li><i class="icon-user"></i> <b><?php echo $this->lng_b['login']; ?>:</b> <?php echo $this->user->login; ?></li>
-				<li><i class="icon-list-alt"></i> <b><?php echo $this->lng_b['group']; ?>:</b> <?php echo $this->user->group; ?></li>
+				<li><i class="icon-user"></i> <b><?php echo $this->lng_b['login']; ?>:</b> <?php echo $this->user->login_v2; ?></li>
+				<li><i class="icon-list-alt"></i> <b><?php echo $this->lng_b['group']; ?>:</b> <?php echo $this->user->group_v2; ?></li>
 				<li><i class="icon-shopping-cart"></i> <b><?php echo $this->lng_b['balance']; ?>:</b> <?php echo $this->user->money; ?> <?php echo $this->lng_b['cur_game']; ?></li>
 				<li><a href="<?php echo BASE_URL; ?>?mode=profile" class="btn btn-block btn-small"><?php echo $this->lng_b['settings']; ?></a></li>
 				<li><button type="submit" name="logout" value="1" class="btn btn-block btn-small"><?php echo $this->lng_b['logout']; ?></button></li>

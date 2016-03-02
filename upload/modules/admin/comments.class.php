@@ -28,18 +28,37 @@ class submodule{
 		$end		= $this->config->pagin['adm_comments']; // Set end pagination
 
 		$where		= "";
+		$sort		= "`c`.id";
+		$sortby		= "DESC";
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$expl = explode(' ', $_GET['sort']);
+
+			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
+
+			switch(@$expl[1]){
+				case 'comment': $sort = "`c`.text_html"; break;
+				case 'news': $sort = "`n`.title"; break;
+				case 'user': $sort = "`u`.login"; break;
+			}
+		}
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$where = "WHERE `c`.text_html LIKE '%$search%'";
 		}
 
-		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.text_html, `n`.title AS `new`
+		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.text_html, `n`.title AS `new`,
+											`u`.login, `u`.`color`, `g`.`color` AS `gcolor`
 									FROM `mcr_comments` AS `c`
 									LEFT JOIN `mcr_news` AS `n`
 										ON `n`.id=`c`.nid
+									LEFT JOIN `mcr_users` AS `u`
+										ON `u`.id=`c`.uid
+									LEFT JOIN `mcr_groups` AS `g`
+										ON `g`.id=`u`.gid
 									$where
-									ORDER BY `c`.id DESC
+									ORDER BY $sort $sortby
 									LIMIT $start, $end");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/comments/com-none.html"); }
@@ -54,11 +73,16 @@ class submodule{
 
 			$new = (empty($ar['new'])) ? 'Новость удалена' : $this->db->HSC($ar['new']);
 
+			$login = (is_null($ar['login'])) ? 'Пользователь удален' : $this->db->HSC($ar['login']);
+
+			$color = (empty($ar['color'])) ? $this->db->HSC($ar['gcolor']) : $this->db->HSC($ar['color']);
+
 			$page_data = array(
 				"ID" => intval($ar['id']),
 				"NID" => intval($ar['nid']),
 				"NEW" => $new,
-				"TEXT" => $text
+				"TEXT" => $text,
+				"LOGIN" => $this->core->colorize($login, $color),
 			);
 		
 			echo $this->core->sp(MCR_THEME_MOD."admin/comments/com-id.html", $page_data);
@@ -70,13 +94,17 @@ class submodule{
 	private function comment_list(){
 
 		$sql = "SELECT COUNT(*) FROM `mcr_comments`";
-		$page = "?mode=admin&do=comments&pid=";
+		$page = "?mode=admin&do=comments";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			$sql = "SELECT COUNT(*) FROM `mcr_comments` WHERE text_html LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
-			$page = "?mode=admin&do=comments&search=$search&pid=";
+			$page = "?mode=admin&do=comments&search=$search";
+		}
+
+		if(isset($_GET['sort']) && !empty($_GET['sort'])){
+			$page .= '&sort='.$this->db->HSC(urlencode($_GET['sort']));
 		}
 
 		$query = $this->db->query($sql);
@@ -86,7 +114,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_comments'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_comments'], $page.'&pid=', $ar[0]),
 			"COMMENTS" => $this->comment_array()
 		);
 
