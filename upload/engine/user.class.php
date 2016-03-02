@@ -5,7 +5,7 @@ class user{
 	private $core, $db, $config, $lng;
 
 	// Set default user vars
-	public $email, $login, $login_v2, $group, $group_v2, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
+	public $email, $login, $login_v2, $group, $group_v2, $uuid, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
 
 	public $id = 0;
 
@@ -56,7 +56,7 @@ class user{
 		$uid	= intval($cookie[0]);
 		$hash	= $cookie[1];
 
-		$query = $this->db->query("SELECT `u`.gid, `u`.login, `u`.email, `u`.password, `u`.`salt`, `u`.`tmp`, `u`.ip_create, `u`.`data`, `u`.`is_skin`, `u`.`is_cloak`, `u`.`color`,
+		$query = $this->db->query("SELECT `u`.gid, `u`.login, `u`.email, `u`.password, `u`.`salt`, `u`.`tmp`, `u`.ip_create, `u`.`data`, `u`.`is_skin`, `u`.`is_cloak`, `u`.`color`, `u`.`uuid`,
 											`g`.title, `g`.`description`, `g`.`permissions`, `g`.`color` AS `gcolor`,
 											`i`.`money`, `i`.realmoney, `i`.bank
 									FROM `mcr_users` AS `u`
@@ -102,6 +102,9 @@ class user{
 
 		// E-Mail
 		$this->email		= $this->db->HSC($ar['email']);
+
+		// UUID
+		$this->uuid			= $this->db->HSC($ar['uuid']);
 
 		// Password hash
 		$this->password		= $password;
