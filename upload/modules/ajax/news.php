@@ -109,7 +109,7 @@ class submodule{
 			"TEXT"				=> $text_html,
 			"UID"				=> $this->user->id,
 			"DATA"				=> $newdata,
-			"LOGIN"				=> $this->db->HSC($this->user->login),
+			"LOGIN"				=> $this->user->login_v2,
 			"ACTION_DELETE"		=> $act_del,
 			"ACTION_EDIT"		=> $act_edt,
 			"ACTION_QUOTE"		=> $act_get
