@@ -75,7 +75,7 @@ class module{
 		setcookie("mcr_user", $new_hash, $safetime, '/');
 
 		// Лог действия
-		$this->db->actlog($this->lng['log_auth'], $this->user->id);
+		$this->db->actlog($this->lng['log_auth'], $uid);
 
 		$this->core->notify($this->core->lng['e_success'], $this->lng['e_success'], 3);
 	}
