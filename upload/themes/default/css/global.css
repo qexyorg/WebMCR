@@ -720,6 +720,10 @@ table.table td.action input[type="checkbox"] { margin-top: 0px; margin-left: 10p
 	color: #b97676;
 }
 
+.qxbb-iframe {
+	max-width: 100%;
+}
+
 .qxbb-left { text-align: left; }
 .qxbb-center { text-align: center; }
 .qxbb-right { text-align: right; }
