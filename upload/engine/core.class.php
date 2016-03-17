@@ -142,11 +142,9 @@ class core{
 	 */
 	public function notify($title='', $text='', $type=2, $url='', $out=false){
 
-		$new_url = (!$out) ? $this->base_url().$url : $url;
+		$url = (!$out) ? $this->base_url().$url : $url;
 
-		if($url === true){ $new_url = $_SERVER['REQUEST_URI']; }
-
-		if($out || (empty($title) && empty($text))){ header("Location: ".$new_url); exit; }
+		if($out || (empty($title) && empty($text))){ header("Location: ".$url); exit; }
 
 		switch($type){
 			case 2: $_SESSION['notify_type'] = 'alert-error'; break;
@@ -160,7 +158,7 @@ class core{
 		$_SESSION['notify_title'] = $title;
 		$_SESSION['notify_msg'] = $text;
 
-		header("Location: ".$new_url);
+		header("Location: ".$url);
 
 		exit;
 	}
