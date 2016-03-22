@@ -8,7 +8,7 @@
 
 	<div class="block-footer">
 		<div class="date" rel="tooltip" title="<?php echo $this->lng_m['date_create']; ?>"><?php echo date("d.m.Y", $data['DATA']['time_create']); ?></div>
-		<div class="time" rel="tooltip" title="<?php echo $this->lng_m['time_create']; ?>"><?php echo date("H:i", $data['DATA']['time_create']); ?></div>
+		<div class="time" rel="tooltip" title="<?php echo $this->lng_m['time_create']; ?>"><?php echo date("H:i:s", $data['DATA']['time_create']); ?></div>
 		<div class="login"><?php echo $data['LOGIN']; ?></div>
 		<?php echo $data['ACTION_DELETE']; ?>
 		<?php echo $data['ACTION_EDIT']; ?>
