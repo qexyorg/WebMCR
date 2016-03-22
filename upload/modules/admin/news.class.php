@@ -236,8 +236,8 @@ class submodule{
 			$safe_text_bb			= $this->db->safesql($text_bb);
 			$safe_text_bb_short		= $this->db->safesql($text_bb_short);
 
-			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
-			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img>"));
+			$text_html_strip		= trim(strip_tags($text_html, "<img><hr><iframe>"));
+			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img><hr><iframe>"));
 
 			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=add'); }
 			if(empty($text_html_short_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=add'); }
@@ -364,8 +364,8 @@ class submodule{
 			$safe_text_bb			= $this->db->safesql($text_bb);
 			$safe_text_bb_short		= $this->db->safesql($text_bb_short);
 
-			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
-			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img>"));
+			$text_html_strip		= trim(strip_tags($text_html, "<img><hr><iframe>"));
+			$text_html_short_strip	= trim(strip_tags($text_html_short, "<img><hr><iframe>"));
 
 			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_desc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }
 			if(empty($text_html_short_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['news_e_sdesc'], 2, '?mode=admin&do=news&op=edit&id='.$id); }

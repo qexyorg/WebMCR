@@ -117,7 +117,7 @@ $(function(){
 
 				if(!data._type){ return mcr.notify(data._title, data._message); }
 
-				$('textarea[name="message"]')[0].value += '[quote]'+data._data+'[/quote]';
+				$('textarea[name="message"]')[0].value += '[quote="'+data._data.login+' | '+data._data.create+'"]'+data._data.text+'[/quote]';
 
 				mcr.loading(false);
 			}
@@ -155,7 +155,7 @@ $(function(){
 
 				if(!data._type){ return mcr.notify(data._title, data._message); }
 
-				$(".comment-id#"+id+" .comment-id-content").html('<textarea class="edit-from" id="edit-from-'+id+'">'+data._data+'</textarea><a href="#" class="btn btn-primary edt-save" id="'+id+'">'+lng.save+'</a>');
+				$(".comment-id#"+id+" .comment-id-content").html('<textarea class="edit-from" id="edit-from-'+id+'">'+data._data.text+'</textarea><a href="#" class="btn btn-primary edt-save" id="'+id+'">'+lng.save+'</a>');
 				
 				mcr.loading(false);
 			}

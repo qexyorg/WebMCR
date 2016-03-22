@@ -90,7 +90,7 @@ class bbcode{
 		),
 		
 		'spoiler' => array(
-			'left_tag' => '<div class="qxbb-spoiler"><button type="button" class="qxbb-spoiler-btn">Спойлер</button><div class="qxbb-spoiler-body">',
+			'left_tag' => '<div class="qxbb-spoiler"><button type="button" class="btn qxbb-spoiler-btn">Спойлер</button><div class="qxbb-spoiler-body">',
 			'right_tag' => '</div></div>'
 		),
 		
@@ -118,7 +118,7 @@ class bbcode{
 	// Шаблоны ББ-кодов с опциями и тонкими настройками регулярок (рекурсивные)
 	private $codes_options = array(
 		'quote' => array(
-			'pattern' => '/\[(quote)\=\"(([\w]+) \| (\d{2}\.\d{2}\.\d{2} \- \d{2}\:\d{2}\:\d{2}))\"\]((?:[^[]|(?R))*)\[\/quote\]/Usi',
+			'pattern' => '/\[(quote)\=\"((\w+) \| (\d{2}\.\d{2}\.\d{4} - \d{2}\:\d{2}\:\d{2}))\"\]((?:[^[]|(?R))*)\[\/quote\]/Usi',
 			'replace' => '<div class="qxbb-quote"><div class="qxbb-quote-info">{2}</div>{5}</div>',
 			'values' => array(1,2,5),
 			'escapes' => false,
@@ -168,7 +168,7 @@ class bbcode{
 
 		'spoiler' => array(
 			'pattern' => '/\[(spoiler)\=\"([\w\s\-\.\:\;\+\|\,]{1,32})\"\]((?:[^[]|(?R))*)\[\/spoiler\]/Usui',
-			'replace' => '<div class="qxbb-spoiler"><button type="button" class="qxbb-spoiler-btn">{2}</button><div class="qxbb-spoiler-body">{3}</div></div>',
+			'replace' => '<div class="qxbb-spoiler"><button type="button" class="btn qxbb-spoiler-btn">{2}</button><div class="qxbb-spoiler-body">{3}</div></div>',
 			'values' => array(1,2,3),
 			'escapes' => false,
 		),
@@ -322,7 +322,7 @@ class bbcode{
 
 		foreach($this->codes_video as $name => $value){
 			$pattern[] = '/\[video\=\"'.$name.'\"\]http(s)?\:\/\/(www\.)?'.$value['pattern'].'\[\/video\]/Usi';
-			$replace[] = '<iframe width="854" class="qxbb-iframe" height="480" src="'.$value['replace'].'" frameborder="0"></iframe>';
+			$replace[] = '<div class="qxbb-iframe-wrapper"><iframe class="qxbb-iframe" src="'.$value['replace'].'" frameborder="0"></iframe></div>';
 		}
 
 		return preg_replace($pattern, $replace, $text);

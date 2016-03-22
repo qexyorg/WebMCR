@@ -58,7 +58,7 @@ class submodule{
 
 		$text_bb		= $this->db->safesql($message);
 
-		$message_strip = trim(strip_tags($text_html, "<img>"));
+		$message_strip = trim(strip_tags($text_html, "<img><hr><iframe>"));
 
 		if(empty($message_strip)){ $this->core->js_notify($this->lng['com_msg_incorrect']); }
 
@@ -157,7 +157,7 @@ class submodule{
 
 		$text_bb		= $this->db->safesql($message);
 
-		$message_strip = trim(strip_tags($text_html, "<img><hr>"));
+		$message_strip = trim(strip_tags($text_html, "<img><hr><iframe>"));
 
 		if(empty($message_strip)){ $this->core->js_notify($this->lng['com_msg_incorrect']); }
 
@@ -243,15 +243,27 @@ class submodule{
 
 		$nid = intval(@$_POST['nid']);
 
-		$query = $this->db->query("SELECT text_bb FROM `mcr_comments` WHERE nid='$nid' AND id='$id'");
+		$query = $this->db->query("SELECT `c`.text_bb, `c`.`data`, `u`.login
+									FROM `mcr_comments` AS `c`
+									LEFT JOIN `mcr_users` AS `u`
+										ON `c`.uid=`u`.id
+									WHERE `c`.nid='$nid' AND `c`.id='$id'");
 
 		if(!$query){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 
 		if($this->db->num_rows($query)<=0){ $this->core->js_notify($this->core->lng['e_hack']); }
 
 		$ar = $this->db->fetch_assoc($query);
+		
+		$data = json_decode($ar['data'], true);
 
-		$this->core->js_notify($this->lng['com_load_success'], $this->core->lng['e_success'], true, $ar['text_bb']);
+		$json = array(
+			'create' => date("d.m.Y - H:i:s", $data['time_create']),
+			'login' => $this->db->HSC($ar['login']),
+			'text' => $this->db->HSC($ar['text_bb']),
+		);
+
+		$this->core->js_notify($this->lng['com_load_success'], $this->core->lng['e_success'], true, $json);
 	}
 
 	private function like(){

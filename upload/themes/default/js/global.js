@@ -335,6 +335,8 @@ $(function(){
 	// Обработчик клика по ББ-кодам
 	$("body").on("click", ".bb-panel .bb", function(){
 
+		if($(this).hasClass('bb-modal')){ return true; }
+
 		// Получает идентификатор панели ББ-кодов и поля ввода
 		var panel_id = $(this).closest(".bb-panel").attr("id");
 
@@ -362,6 +364,80 @@ $(function(){
 		return false;
 	});
 
+	$("body").on("click", ".bb-panel .bb.bb-modal", function(){
+
+		// Получает идентификатор панели ББ-кодов и поля ввода
+		var panel_id = $(this).closest(".bb-panel").attr("id");
+
+		// Получаем поле ввода
+		var panel_obj = $('textarea[data-for="'+panel_id+'"]')[0];
+
+		var modal_id = $(this).attr('href');
+
+		// Фокусируем поле ввода
+		panel_obj.focus();
+
+		// Получаем позиции курсора
+		var pos1 = panel_obj.selectionStart, pos2 = panel_obj.selectionEnd;
+
+		// Получаем выделенный текст
+		var copy = panel_obj.value.substring(pos1, pos2);
+
+		if($(this).attr('data-paste').length>0){
+			var insert = parseInt($(this).attr('data-paste'));
+			// Вставляем выделенный текст в поле модального окна
+			$(modal_id+' .bb-input').eq(insert).val(copy);
+		}
+
+	});
+
+	$("body").on("click", ".bb-panel .bb-insert-input", function(){
+
+		// Получает идентификатор панели ББ-кодов и поля ввода
+		var panel_id = $(this).closest(".bb-panel").attr("id");
+
+		// Получаем поле ввода
+		var panel_obj = $('textarea[data-for="'+panel_id+'"]')[0];
+
+		// Фокусируем поле ввода
+		panel_obj.focus();
+
+		// Получаем позиции курсора
+		var pos1 = panel_obj.selectionStart;
+		var pos2 = panel_obj.selectionEnd;
+
+		var modal = $(this).closest('.modal');
+
+		var inputs = modal.find('.bb-input');
+		var code = modal.find('.data-code');
+		var leftcode = code.attr('data-left');
+		var rightcode = code.attr('data-right');
+		var centercode = code.attr('data-center');
+
+		$.each(inputs, function(key, elem){
+
+			leftcode = leftcode.replace('*'+key+'*', elem.value);
+			rightcode = rightcode.replace('*'+key+'*', elem.value);
+			centercode = centercode.replace('*'+key+'*', elem.value);
+		});
+
+		code = leftcode + centercode + rightcode;
+
+		var val = panel_obj.value;
+
+		// Вставка ББ-кода в содержимое поля ввода на места выделения
+		panel_obj.value = val.substr(0,pos1) + code + val.substr(pos2,val.length);
+
+		$('#'+modal.attr('id')).modal('hide');
+
+		pos1 = pos1+leftcode.length;
+		pos2 = pos1+centercode.length;
+
+		panel_obj.setSelectionRange(pos1,pos2);
+
+		return false;
+	});
+
 	// Обработчик клика по очистке формы от ББ-Кодов
 	$('body').on('click', '.bb-panel .bb-clear', function(){
 
@@ -375,12 +451,18 @@ $(function(){
 
 		elements.each(function(){
 
-			var left = $(this).attr('data-left'), right = $(this).attr('data-right'), reg = new RegExp('\\[(\\w+)(="")?\\]', 'ig');
-			var find = reg.exec(left);
+			var left = $(this).attr('data-left');
+			if($(this).closest('.bb-smiles').length<=0){
+				var reg = new RegExp('\\[(\\w+)(="\\*(\\d+)\\*")?\\]', 'ig');
+				var find = reg.exec(left);
+			}else{
+				var find = null;
+				new_val = new_val.replace(left, '');
+			}
 
 			if(find!==null){
 
-				var repl = new RegExp('\\[(\\/)?'+find[1]+'(="([\\w\\s\\-\\.\\:\\;\\+\\|\\,]+)?")?\\]', 'ig');
+				var repl = new RegExp('\\[(\\/)?'+find[1]+'(="([\\w\\s\\-\\.\\:\\;\\+\\|\\,\\?\\&\\=\\/\\*]+)?")?\\]', 'ig');
 				new_val = new_val.replace(repl, '');
 			}
 		});
@@ -465,6 +547,19 @@ $(function(){
 			
 			Cookies.set('spl_items', mcr.spl_items, { expires: 365 });
 		});
+
+		return false;
+	});
+
+	$('body').on('click', '.qxbb-spoiler > .qxbb-spoiler-btn', function(){
+
+		var body = $(this).closest('.qxbb-spoiler').find('.qxbb-spoiler-body');
+
+		if(body.is(':visible')){
+			body.fadeOut('fast');
+		}else{
+			body.fadeIn('normal');
+		}
 
 		return false;
 	});
@@ -643,4 +738,6 @@ $(function(){
 
 		return false;
 	});
+
+	$('.cpp').minicolors();;
 });

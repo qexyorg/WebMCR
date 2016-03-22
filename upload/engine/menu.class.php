@@ -4,10 +4,11 @@ class menu{
 	private $core, $db; // , $user, $lng
 
 	public function __construct($core){
-		$this->core	= $core;
-		$this->db	= $core->db;
-		$this->user = $core->user;
-		//$this->lng = $core->lng;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->user		= $core->user;
+		$this->config	= $core->config;
+		//$this->lng	= $core->lng;
 	}
 
 	private function generate_sub_menu($tree){
@@ -17,10 +18,15 @@ class menu{
 			$id = intval($ar['id']);
 			$parent = intval($ar['parent']);
 
+			$url = $ar['url'];
+
+			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
+
 			$data = array(
 				"TITLE"		=> $this->db->HSC($ar['title']),
-				"URL"		=> $this->db->HSC($ar['url']),
+				"URL"		=> $this->db->HSC($url),
 				"TARGET"	=> $this->db->HSC($ar['target']),
+				"ACTIVE"	=> $active,
 				"SUB_MENU"	=> (!empty($ar['sons'])) ? $this->generate_sub_menu($ar['sons']) : "",
 			);
 
@@ -35,7 +41,29 @@ class menu{
 		return ob_get_clean();
 	}
 
+	private function get_url(){
+		$protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS']=='on')) ? 'https://' : 'http://';
+		return $protocol.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+	}
+
+	private function is_active($url){
+
+		if($this->config->main['s_root']==$url || $this->config->main['s_root_full']==$url){
+			if(!isset($_GET['mode']) || @$_GET['mode']==$this->config->main['s_dpage']){
+				return true;
+			}
+		}else{
+			if(strripos($this->request_url, $url)!==false){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private function generate_menu($array){
+		$this->request_url = $this->get_url();
+
 		ob_start();
 
 		$tree = $this->create_tree($array);
@@ -45,10 +73,15 @@ class menu{
 			$id = intval($ar['id']);
 			$parent = intval($ar['parent']);
 
+			$url = $ar['url'];
+
+			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
+
 			$data = array(
 				"TITLE"		=> $this->db->HSC($ar['title']),
-				"URL"		=> $this->db->HSC($ar['url']),
+				"URL"		=> $this->db->HSC($url),
 				"TARGET"	=> $this->db->HSC($ar['target']),
+				"ACTIVE"	=> $active,
 				"SUB_MENU"	=> (!empty($ar['sons'])) ? $this->generate_sub_menu($ar['sons']) : "",
 			);
 

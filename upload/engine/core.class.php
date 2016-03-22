@@ -13,7 +13,7 @@ class core{
 
 	public $lng, $lng_m, $lng_b = array();
 
-	public $csrf_time	= 1800;
+	public $csrf_time	= 3600;
 
 	public $captcha		= array(
 		0 => "---",

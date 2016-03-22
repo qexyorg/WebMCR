@@ -175,7 +175,7 @@ class submodule{
 			$safe_text_html			= $this->db->safesql($text_html); // in base
 			$safe_text_bb			= $this->db->safesql($text_bb); // in base
 
-			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
+			$text_html_strip		= trim(strip_tags($text_html, "<img><hr><iframe>"));
 
 			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_incorrect'], 2, '?mode=admin&do=statics&op=add'); }
 			// Обработка описания -
@@ -288,7 +288,7 @@ class submodule{
 			$safe_text_html			= $this->db->safesql($text_html); // in base
 			$safe_text_bb			= $this->db->safesql($text_bb); // in base
 
-			$text_html_strip		= trim(strip_tags($text_html, "<img>"));
+			$text_html_strip		= trim(strip_tags($text_html, "<img><hr><iframe>"));
 
 			if(empty($text_html_strip)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['stc_e_text_incorrect'], 2, '?mode=admin&do=statics&op=add'); }
 			// Обработка описания -
