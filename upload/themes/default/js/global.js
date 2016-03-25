@@ -49,16 +49,16 @@ var mcr = {
 
 		$('html, body').animate({ scrollTop: $('#js-notify').offset().top-50}, 'fast');
 
-		setTimeout(function(){ that.notify_close(); }, 2500);
+		if(typeof timeout != 'undefined'){ clearTimeout(timeout); }
+
+		timeout = setTimeout(function(){ that.notify_close(); }, 2500);
 
 		return (result===true) ? true : false;
 	},
 
 	// Скрывает оповещение и очищает его содержимое
 	notify_close: function(){
-		$('#js-notify').fadeOut(500, function(){
-			$('#js-notify > #title, #js-notify > #message').empty();
-		});
+		$('#js-notify').fadeOut(500);
 	},
 
 	// Логгер ошибок в консоль
@@ -740,4 +740,8 @@ $(function(){
 	});
 
 	$('.cpp').minicolors();;
+
+	$('body').on('click', '.is_auth_user', function(){
+		if(!mcr.meta_data.is_auth){ mcr.notify(lng.error, lng.e_auth, false); return false; }
+	});
 });

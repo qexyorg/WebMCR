@@ -8,7 +8,7 @@ ini_set("post_max_size", "50M");
 
 // System constants
 define('PROGNAME', 'WebMCR Reloaded'. MCR);
-define('VERSION', 'WebMCR Beta 1.3.3');
+define('VERSION', 'WebMCR Beta 1.3.4');
 define('FEEDBACK', '<a href="http://webmcr.com" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy'); 
 define('MCR_ROOT', dirname(__FILE__).'/');
 define('MCR_MODE_PATH', MCR_ROOT.'modules/');
@@ -47,6 +47,7 @@ $meta_json_data = array(
 	'theme_url' => STYLE_URL,
 	'upload_url' => UPLOAD_URL,
 	'server_time' => time(),
+	'is_auth' => $core->user->is_auth,
 );
 
 define('META_JSON_DATA', json_encode($meta_json_data));
