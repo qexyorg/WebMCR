@@ -42,7 +42,7 @@ class module{
 
 		setcookie("mcr_user", "", time()-3600, '/');
 
-		$this->core->notify('', $this->lng['e_success'], 1);
+		$this->core->notify('', '', 1);
 	}
 
 }

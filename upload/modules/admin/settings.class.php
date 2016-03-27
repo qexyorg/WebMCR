@@ -308,6 +308,8 @@ class submodule{
 
 	private function functions(){
 
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/settings/header.html");
+
 		$cfg = $this->config->func;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
@@ -315,6 +317,10 @@ class submodule{
 			$cfg['advice'] = (intval(@$_POST['advice'])===1) ? true : false;
 
 			$cfg['breadcrumbs'] = (intval(@$_POST['breadcrumbs'])===1) ? true : false;
+
+			$cfg['close'] = (intval(@$_POST['close'])===1) ? true : false;
+
+			$cfg['close_time'] = (@$_POST['close_time']=='') ? 0 : intval(strtotime(@$_POST['close_time']));
 
 			if(!$this->config->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=functions'); }
 
@@ -330,6 +336,8 @@ class submodule{
 		$data = array(
 			"ADVICE" => ($cfg['advice']) ? 'selected' : '',
 			"BREADCRUMBS" => ($cfg['breadcrumbs']) ? 'selected' : '',
+			"CLOSE" => ($cfg['close']) ? 'selected' : '',
+			'CLOSE_TIME' => (intval($cfg['close_time'])<=0) ? '' : date("d.m.Y H:i:s", $cfg['close_time']),
 		);
 
 		return $this->core->sp(MCR_THEME_MOD."admin/settings/functions.html", $data);

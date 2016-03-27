@@ -33,12 +33,29 @@
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="input_breadcrumbs">Выводить хлебные крошки</label>
+						<label class="control-label" for="input_breadcrumbs"><?php echo $this->lng_m['set_funt_bc']; ?></label>
 						<div class="controls">
 							<select name="breadcrumbs" class="span10" id="input_breadcrumbs">
-								<option value="0">php echo $this->lng['no']; ?></option>
+								<option value="0"><?php echo $this->lng['no']; ?></option>
 								<option value="1" <?php echo $data['BREADCRUMBS']; ?>><?php echo $this->lng['yes']; ?></option>
 							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_close"><?php echo $this->lng_m['set_funt_close']; ?></label>
+						<div class="controls">
+							<select name="close" class="span10" id="input_close">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['CLOSE']; ?>><?php echo $this->lng['yes']; ?></option>
+							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="input_close_time"><?php echo $this->lng_m['set_funt_close_time']; ?></label>
+						<div class="controls">
+							<input type="text" name="close_time" class="span10" id="input_close_time" value="<?php echo $data['CLOSE_TIME']; ?>">
 						</div>
 					</div>
 
@@ -55,3 +72,12 @@
 	</div>
 		
 </div>
+
+<script>
+	$('#input_close_time').datetimepicker({
+		lang:'ru',
+		timepicker:true,
+		value:'',
+		format:'d.m.Y H:i:s'
+	});
+</script>

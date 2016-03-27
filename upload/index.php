@@ -10,6 +10,12 @@ $mode = (isset($_GET['mode'])) ? $_GET['mode'] : $core->config->main['s_dpage'];
 
 if($core->config->main['install']){ $core->notify($core->lng['e_attention'], $core->lng['e_install'], 4, 'install/'); }
 
+if($core->config->func['close'] && !$core->is_access('sys_adm_main')){
+	if($core->config->func['close_time']<=0 || $core->config->func['close_time']>time()){
+		$mode = ($mode=='auth') ? 'auth' : 'close';
+	}
+}
+
 switch($mode){
 	case 'news':
 	case 'search':
@@ -19,7 +25,8 @@ switch($mode){
 	case 'file':
 	case 'restore':
 	case 'ajax':
-	case 'statics':	
+	case 'statics':
+	case 'close':
 		$content = $core->load_def_mode($mode);
 	break;
 

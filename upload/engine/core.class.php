@@ -11,7 +11,7 @@ class core{
 
 	public $db, $user, $config = false;
 
-	public $lng, $lng_m, $lng_b = array();
+	public $lng, $lng_m, $lng_b, $cfg_m = array();
 
 	public $csrf_time	= 3600;
 
@@ -433,6 +433,8 @@ class core{
 
 		$this->lng_m = $this->load_language($mode);
 
+		$this->cfg_m = $cfg;
+
 		$module = new module($this);
 
 		@$module->cfg = $cfg;
@@ -512,6 +514,8 @@ class core{
 		if(!$cfg['MOD_ENABLE']){ return $this->sp(MCR_THEME_PATH."default_sp/mod_disable.html"); }
 
 		$this->lng_m = $lng;
+
+		$this->cfg_m = $cfg;
 
 		$module = new module($this);
 
