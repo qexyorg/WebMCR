@@ -23,7 +23,7 @@ class bbcode{
 
 	public function __construct($core){
 		$this->core		= $core;
-		$this->smiles_url = MCR_ROOT.'qx_upload/smiles/';
+		$this->smiles_url = BASE_URL.'uploads/smiles/';
 	}
 
 	public function get_smiles_bb(){
