@@ -22,7 +22,7 @@ class module{
 
 	public function content(){
 
-		if(!isset($_GET['id']) || empty($_GET['id'])){ $this->core->notify($this->core->lng['403'], $this->lng['e_403']); }
+		if(!isset($_GET['id']) || empty($_GET['id'])){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$uniq = $this->db->safesql(@$_GET['id']);
 
