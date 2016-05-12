@@ -355,7 +355,7 @@ CREATE TABLE IF NOT EXISTS `mcr_users` (
   `gid` int(11) NOT NULL DEFAULT '1',
   `login` varchar(32) CHARACTER SET latin1 NOT NULL,
   `email` varchar(64) CHARACTER SET latin1 NOT NULL,
-  `password` varchar(64) CHARACTER SET latin1 NOT NULL,
+  `password` varchar(255) CHARACTER SET latin1 NOT NULL,
   `uuid` varchar(64) NOT NULL,
   `salt` varchar(10) NOT NULL,
   `tmp` varchar(32) CHARACTER SET latin1 NOT NULL,
