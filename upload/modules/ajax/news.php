@@ -10,7 +10,7 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->lng	= $core->load_language('news');
 	}
 
 	private function is_discus($nid=1){

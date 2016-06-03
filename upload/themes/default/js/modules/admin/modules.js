@@ -16,11 +16,21 @@ $(function(){
 
 		items = items.substr(0, items.length-1);
 
+		var formData = new FormData();
+
+		formData.append('mcr_secure', mcr.meta_data.secure);
+		formData.append('act', status);
+		formData.append('ids', items);
+
 		$.ajax({
 			url: "index.php?mode=ajax&do=admin_modules_status",
 			dataType: "json",
-			type: 'POST',
-			data: {act:status, ids:items, mcr_secure:mcr.meta_data.secure},
+			type: "POST",
+			async: true,
+			cache: false,
+			contentType: false,
+			processData: false,
+			data: formData,
 			error: function(data){
 				mcr.logger(data);
 				mcr.notify(lng.error, lng_mod.e_change_status);

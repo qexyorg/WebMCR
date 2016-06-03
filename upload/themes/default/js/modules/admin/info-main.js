@@ -2,8 +2,13 @@ function load_last_version(){
 
 	$.ajax({
 		url: "http://api.webmcr.com/?do=versions&limit=1",
-		beforeSend: function(){ $("#api-engine-version").html(mcr.loader); },
 		dataType: "json",
+		type: "GET",
+		async: true,
+		cache: false,
+		contentType: false,
+		processData: false,
+		beforeSend: function(){ $("#api-engine-version").html(mcr.loader); },
 		success: function(json){
 			data = json.data[0];
 			if(json.type=='success'){
@@ -21,8 +26,13 @@ function load_last_news(){
 		url: "http://api.webmcr.com/?do=news&limit=1",
 		beforeSend: function(){ $("#api-engine-news").html(mcr.loader); },
 		dataType: "json",
+		type: "GET",
+		async: true,
+		cache: false,
+		contentType: false,
+		processData: false,
 		error: function(data){
-			console.log(data);
+			mcr.logger(data);
 		},
 		success: function(json){
 			data = json.data[0];

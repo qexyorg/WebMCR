@@ -176,18 +176,6 @@ class submodule{
 
 		$count = $this->db->affected_rows();
 
-		if(!$this->db->remove_fast("mcr_news_votes", "uid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
-
-		$count1 = $this->db->affected_rows();
-
-		if(!$this->db->remove_fast("mcr_news_views", "uid IN ($list)")){ $this->core->notify($this->lng["e_msg"], $this->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
-
-		$count2 = $this->db->affected_rows();
-
-		if(!$this->db->remove_fast("mcr_comments", "uid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
-
-		$count3 = $this->db->affected_rows();
-
 		foreach($logins as $key => $value){
 			if(file_exists(MCR_SKIN_PATH.$value.'.png')){ @unlink(MCR_SKIN_PATH.$value.'.png'); }
 			if(file_exists(MCR_SKIN_PATH.'interface/'.$value.'.png')){ @unlink(MCR_SKIN_PATH.'interface/'.$value.'.png'); }
@@ -201,7 +189,7 @@ class submodule{
 		// Лог действия
 		$this->db->actlog($this->lng['log_del_user']." $list ".$this->lng['log_user'], $this->user->id);
 
-		$this->core->notify($this->core->lng["e_success"], $this->lng['user_del_elements']." $count, ".$this->lng['user_del_elements2']." $count3, ".$this->lng['user_del_elements3']." $count1, ".$this->lng['user_del_elements4']." $count2", 3, '?mode=admin&do=users');
+		$this->core->notify($this->core->lng["e_success"], $this->lng['user_del_elements']." $count", 3, '?mode=admin&do=users');
 
 	}
 

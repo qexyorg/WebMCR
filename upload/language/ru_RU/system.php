@@ -101,8 +101,6 @@ $lng = array(
 	"birthday" => "Дата рождения",
 	"money" => "Игровой баланс",
 	"realmoney" => "Реальный баланс",
-	'cur_game' => 'майн.',
-	'cur_real' => 'руб.',
 
 	// Placeholder формы поиска
 	"ph_search" => "Введите запрос",

@@ -32,7 +32,7 @@ class core{
 		if(!file_exists(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php')){ exit("Language path not found"); }
 
 		// Load language package
-		require_once(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php');
+		require(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php');
 
 		// Set language var
 		$this->lng = $lng;
@@ -444,7 +444,7 @@ class core{
 		return $module->content();
 	}
 
-	private function load_language($mod){
+	public function load_language($mod){
 		if(!file_exists(MCR_LANG_DIR.$mod.'.php')){
 			return array();
 		}

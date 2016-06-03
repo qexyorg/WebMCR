@@ -22,7 +22,7 @@ class module{
 
 	public function content(){
 
-		if(!isset($_GET['id']) || empty($_GET['id'])){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
+		if(!isset($_GET['id']) || empty($_GET['id'])){ $this->core->notify($this->core->lng['403'], $this->lng['e_403']); }
 
 		$uniq = $this->db->safesql(@$_GET['id']);
 
@@ -32,11 +32,11 @@ class module{
 									LEFT JOIN `mcr_users` AS `u`
 										ON `u`.id=`s`.uid
 									WHERE `s`.`uniq`='$uniq'");
-		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
+		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['403'], $this->lng['e_403']); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		if(!$this->core->is_access($ar['permissions'])){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
+		if(!$this->core->is_access($ar['permissions'])){ $this->core->notify($this->core->lng['403'], $this->lng['e_403']); }
 
 		$uniq = $this->db->HSC($uniq);
 		$title = $this->db->HSC($ar['title']);

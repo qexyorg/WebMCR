@@ -27,7 +27,11 @@ class submodule{
 		$array = $data = array();
 
 		while($r = $this->db->fetch_assoc($query)){
-			if((intval($r['last_update'])+intval($r['updater']))>$time){ continue; }
+
+			$last = intval($r['last_update']);
+			$next = $last+intval($r['updater']);
+
+			if($next>$time){ continue; }
 
 			$array[] = array(
 				'id' => intval($r['id']),
@@ -51,7 +55,7 @@ class submodule{
 				$mon = $m->loading($ar['type']);
 			}
 
-			$mon->connect($ar['ip'], $ar['port']);
+			$connect = $mon->connect($ar['ip'], $ar['port']);
 
 			$id = intval($ar['id']);
 
@@ -61,10 +65,13 @@ class submodule{
 			$plugins	= $this->db->safesql($mon->plugins);
 			$map		= $this->db->safesql($mon->map);
 			$error		= $this->db->safesql($mon->error);
+			$online		= intval($mon->online);
+			$status		= intval($mon->status);
+			$slots		= intval($mon->slots);
 
 			$update = $this->db->query("UPDATE `mcr_monitoring`
-										SET `status`='{$mon->status}', `version`='$version', online='{$mon->online}',
-											slots='{$mon->slots}', players='$players', motd='$motd', map='$map',
+										SET `status`='$status', `version`='$version', online='$online',
+											slots='$slots', players='$players', motd='$motd', map='$map',
 											plugins='$plugins', last_error='$error', last_update='$time'
 										WHERE id='$id'");
 

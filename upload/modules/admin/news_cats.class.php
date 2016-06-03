@@ -119,37 +119,13 @@ class submodule{
 
 		$count = $this->db->affected_rows();
 
-		$query = $this->db->query("SELECT id FROM `mcr_news` WHERE id IN ($list)");
-
-		if(!$query || $this->db->num_rows($query)<=0){
-			$this->core->notify($this->core->lng["e_success"], $this->lng['cn_del_elements4']." ($count)", 3, '?mode=admin&do=news_cats');
-		}
-
-		$elem = array();
-
-		while($ar = $this->db->fetch_assoc($query)){ $elem[] = intval($ar['id']); }
-
-		$elements = implode(", ", $elem);
-
-		if(!$this->db->remove_fast("mcr_news", "id IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
-
-		$count2 = $this->db->affected_rows();
-
-		if(!$this->db->remove_fast("mcr_news_views", "nid IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
-
-		$count3 = $this->db->affected_rows();
-
-		if(!$this->db->remove_fast("mcr_news_votes", "nid IN ($elements)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news_cats'); }
-
-		$count4 = $this->db->affected_rows();
-
 		// Последнее обновление пользователя
 		$this->db->update_user($this->user);
 
 		// Лог действия
 		$this->db->actlog($this->lng['log_del_cn']." $list ".$this->lng['log_cn'], $this->user->id);
 
-		$this->core->notify($this->core->lng["e_success"], $this->lng['cn_del_elements']." $count, ".$this->lng['cn_del_elements2']." $count2, ".$this->lng['cn_del_elements3']." $count3, ".$this->lng['cn_del_elements5']." $count4", 3, '?mode=admin&do=news_cats');
+		$this->core->notify($this->core->lng["e_success"], $this->lng['cn_del_elements']." $count", 3, '?mode=admin&do=news_cats');
 
 	}
 

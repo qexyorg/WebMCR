@@ -153,9 +153,9 @@ class submodule{
 			if(!file_exists(MCR_MON_PATH.$type.'.php')){ $type = 'MineToolsAPIPing'; }
 
 			$insert = $this->db->query("INSERT INTO `mcr_monitoring`
-											(title, `text`, ip, `port`, `type`, updater)
+											(title, `text`, ip, `port`, `players`, `motd`, `plugins`, last_error, `type`, updater)
 										VALUES
-											('$title', '$text', '$ip', '$port', '$type', '$updater')");
+											('$title', '$text', '$ip', '$port', '', '', '', '', '$type', '$updater')");
 			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=monitoring'); }
 
 			$id = $this->db->insert_id();

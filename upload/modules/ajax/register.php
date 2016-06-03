@@ -10,26 +10,26 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->lng	= $core->load_language('register');
 	}
 
 	public function content(){
 
 		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->js_notify($this->core->lng['e_hack']); }
 		
-		if($this->user->is_auth){ $this->core->js_notify($this->lng['reg_e_already']); }
+		if($this->user->is_auth){ $this->core->js_notify($this->lng['e_already']); }
 
 		$login = $this->db->safesql(@$_POST['login']);
 		$email = $this->db->safesql(@$_POST['email']);
 		$uuid = $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 		$password = @$_POST['password'];
 
-		if(intval($_POST['rules'])!==1){ $this->core->js_notify($this->lng['reg_e_rules']); }
+		if(intval($_POST['rules'])!==1){ $this->core->js_notify($this->lng['e_rules']); }
 
-		if(!preg_match("/^[\w\-]{3,}$/i", $login)){ $this->core->js_notify($this->lng['reg_e_login_regexp']); }
-		if(!filter_var($email, FILTER_VALIDATE_EMAIL)){ $this->core->js_notify($this->lng['reg_e_email_regexp']); }
+		if(!preg_match("/^[\w\-]{3,}$/i", $login)){ $this->core->js_notify($this->lng['e_login_regexp']); }
+		if(!filter_var($email, FILTER_VALIDATE_EMAIL)){ $this->core->js_notify($this->lng['e_email_regexp']); }
 
-		if($login=='default'){ $this->core->js_notify($this->lng['reg_e_exist']); }
+		if($login=='default'){ $this->core->js_notify($this->lng['e_exist']); }
 
 		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_users` WHERE login='$login' OR email='$email'");
 
@@ -37,11 +37,11 @@ class submodule{
 
 		$ar = $this->db->fetch_array($query);
 
-		if($ar[0]>0){ $this->core->js_notify($this->lng['reg_e_exist']); }
+		if($ar[0]>0){ $this->core->js_notify($this->lng['e_exist']); }
 
-		if(mb_strlen($password, "UTF-8")<6){ $this->core->js_notify($this->lng['reg_e_pass_length']); }
+		if(mb_strlen($password, "UTF-8")<6){ $this->core->js_notify($this->lng['e_pass_length']); }
 
-		if($password !== @$_POST['repassword']){ $this->core->js_notify($this->lng['reg_e_pass_match']); }
+		if($password !== @$_POST['repassword']){ $this->core->js_notify($this->lng['e_pass_match']); }
 
 		if(!$this->core->captcha_check()){ $this->core->js_notify($this->core->lng['e_captcha']); }
 
@@ -99,12 +99,12 @@ class submodule{
 
 			$message = $this->core->sp(MCR_THEME_PATH."modules/register/body.mail.html", $data_mail);
 				
-			if(!$this->core->send_mail($email, $this->lng['reg_title'], $message)){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
+			if(!$this->core->send_mail($email, $this->lng['msg_title'], $message)){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 
-			$this->core->js_notify($this->lng['reg_e_success_mail'], $this->core->lng['e_success'], true);
+			$this->core->js_notify($this->lng['e_success_mail'], $this->core->lng['e_success'], true);
 		}
 
-		$this->core->js_notify($this->lng['reg_e_success'], $this->core->lng['e_success'], true);
+		$this->core->js_notify($this->lng['e_success'], $this->core->lng['e_success'], true);
 	}
 
 }

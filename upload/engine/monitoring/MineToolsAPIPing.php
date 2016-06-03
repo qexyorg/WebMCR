@@ -19,6 +19,8 @@ class MineToolsAPIPing{
 	public $error		= '';
 
 	public function connect($ip='127.0.0.1', $port=25565){
+		$this->status = $this->online = $this->slots = 0;
+		$this->version = $this->players = $this->motd = $this->plugins = $this->map = $this->error = '';
 		$this->ip = $ip;
 		$this->port = $port;
 

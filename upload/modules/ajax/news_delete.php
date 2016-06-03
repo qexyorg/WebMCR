@@ -10,7 +10,7 @@ class submodule{
 		$this->db	= $core->db;
 		$this->config = $core->config;
 		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->lng	= $core->load_language('news');
 	}
 
 	public function content(){
@@ -21,14 +21,7 @@ class submodule{
 
 		$id = intval(@$_POST['id']);
 
-		$delete = $this->db->query("DELETE FROM `mcr_news` WHERE id='$id'");
-		if(!$delete){ $this->core->js_notify($this->core->lng['e_sql_critical'].' #'.__LINE__); }
-
-		$delete = $this->db->query("DELETE FROM `mcr_news_views` WHERE nid='$id'");
-		if(!$delete){ $this->core->js_notify($this->core->lng['e_sql_critical'].' #'.__LINE__); }
-
-		$delete = $this->db->query("DELETE FROM `mcr_news_votes` WHERE id='$id'");
-		if(!$delete){ $this->core->js_notify($this->core->lng['e_sql_critical'].' #'.__LINE__); }
+		if(!$this->db->remove_fast("mcr_news", "id='$id'")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_sql_critical'].' #'.__LINE__, 2, '?mode=admin&do=menu'); }
 
 		// Последнее обновление пользователя
 		$this->db->update_user($this->user);

@@ -124,17 +124,13 @@ class submodule{
 
 		$count = $this->db->affected_rows();
 
-		if(!$this->db->remove_fast("mcr_menu_adm", "gid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu_groups'); }
-
-		$count1 = $this->db->affected_rows();
-
 		// Последнее обновление пользователя
 		$this->db->update_user($this->user);
 
 		// Лог действия
 		$this->db->actlog($this->lng['log_del_mgrp']." $list ".$this->lng['log_mgrp'], $this->user->id);
 
-		$this->core->notify($this->core->lng["e_success"], $this->lng['mgrp_del_elements']." $count, ".$this->lng['mgrp_del_elements1']." $count1", 3, '?mode=admin&do=menu_groups');
+		$this->core->notify($this->core->lng["e_success"], $this->lng['mgrp_del_elements']." $count", 3, '?mode=admin&do=menu_groups');
 
 	}
 

@@ -782,6 +782,10 @@ table.table td.action input[type="checkbox"] { margin-top: 0px; margin-left: 10p
 	margin-bottom: 5px;
 }
 
+.adm-info-modules .thumbnails .thumbnail > img {
+	max-height: 130px;
+}
+
 .adm-info-modules .thumbnails .title {
 	margin: 8px 0px;
 }

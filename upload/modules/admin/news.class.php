@@ -123,21 +123,13 @@ class submodule{
 
 		$count1 = $this->db->affected_rows();
 
-		if(!$this->db->remove_fast("mcr_news_views", "nid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
-
-		$count2 = $this->db->affected_rows();
-
-		if(!$this->db->remove_fast("mcr_news_votes", "nid IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=news'); }
-
-		$count3 = $this->db->affected_rows();
-
 		// Последнее обновление пользователя
 		$this->db->update_user($this->user);
 
 		// Лог действия
 		$this->db->actlog($this->lng['log_del_news']." $list ".$this->lng['log_news'], $this->user->id);
 
-		$this->core->notify($this->core->lng["e_success"], $this->lng['news_del_elements']." $count1, ".$this->lng['news_del_elements2']." $count2, ".$this->lng['news_del_elements3']." $count3", 3, '?mode=admin&do=news');
+		$this->core->notify($this->core->lng["e_success"], $this->lng['news_del_elements']." $count1", 3, '?mode=admin&do=news');
 
 	}
 
