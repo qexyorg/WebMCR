@@ -2,7 +2,7 @@
 define("DEBUG_PLT", microtime(true));
 define('MCR', '');
 
-require_once("system.php");
+require_once("./system.php");
 
 $core->def_header = $core->sp(MCR_THEME_PATH."header.html");
 
