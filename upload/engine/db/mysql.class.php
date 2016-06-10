@@ -12,6 +12,8 @@ class db{
 
 	public function __construct($config){
 
+		$this->config = $config;
+
 		$this->obj = @mysql_connect($config->db['host'].':'.$config->db['port'], $config->db['user'], $config->db['pass']);
 
 		if(!@mysql_select_db($config->db['base'], $this->obj)){ return; }
