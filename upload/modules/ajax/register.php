@@ -99,7 +99,7 @@ class submodule{
 
 			$message = $this->core->sp(MCR_THEME_PATH."modules/register/body.mail.html", $data_mail);
 				
-			if(!$this->core->send_mail($email, $this->lng['msg_title'], $message)){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
+			if(!$this->core->send_mail($email, $this->lng['msg_title'], $message)){ $this->core->js_notify($this->core->lng['e_mail_send']); }
 
 			$this->core->js_notify($this->lng['e_success_mail'], $this->core->lng['e_success'], true);
 		}
