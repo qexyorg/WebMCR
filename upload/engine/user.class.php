@@ -1,8 +1,10 @@
 <?php
 
+if(!defined("MCR")){ exit("Hacking Attempt!"); }
+
 class user{
 	// Set default system vars
-	private $core, $db, $config, $lng;
+	private $core, $db, $cfg, $lng;
 
 	// Set default user vars
 	public $email, $login, $login_v2, $group, $group_v2, $uuid, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
@@ -30,7 +32,7 @@ class user{
 	public function __construct($core){
 		$this->core			= $core;
 		$this->db			= $core->db;
-		$this->config		= $core->config;
+		$this->cfg			= $core->cfg;
 		$this->lng			= $core->lng;
 
 		$this->login		= $this->lng['u_group_def'];
@@ -56,35 +58,43 @@ class user{
 		$uid	= intval($cookie[0]);
 		$hash	= $cookie[1];
 
-		$query = $this->db->query("SELECT `u`.gid, `u`.login, `u`.email, `u`.password, `u`.`salt`, `u`.`tmp`, `u`.ip_create, `u`.`data`, `u`.`is_skin`, `u`.`is_cloak`, `u`.`color`, `u`.`uuid`,
-											`g`.title, `g`.`description`, `g`.`permissions`, `g`.`color` AS `gcolor`,
-											`i`.`money`, `i`.realmoney, `i`.bank
-									FROM `mcr_users` AS `u`
-									INNER JOIN `mcr_groups` AS `g`
-										ON `g`.id=`u`.gid
-									LEFT JOIN `mcr_iconomy` AS `i`
-										ON `i`.login=`u`.login
-									WHERE `u`.id='$uid'");
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f	= $ctables['ugroups']['fields'];
+		$us_f	= $ctables['users']['fields'];
+		$ic_f	= $ctables['iconomy']['fields'];
+
+		$query = $this->db->query("SELECT `u`.`{$us_f['group']}`, `u`.`{$us_f['login']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['pass']}`,
+											`u`.`{$us_f['salt']}`, `u`.`{$us_f['tmp']}`, `u`.`{$us_f['ip_create']}`, `u`.`{$us_f['data']}`,
+											`u`.`{$us_f['is_skin']}`, `u`.`{$us_f['is_cloak']}`, `u`.`{$us_f['color']}`, `u`.`{$us_f['uuid']}`,
+											`g`.`{$ug_f['title']}`, `g`.`{$ug_f['text']}`, `g`.`{$ug_f['perm']}`, `g`.`{$ug_f['color']}` AS `gcolor`,
+											`i`.`{$ic_f['money']}`, `i`.`{$ic_f['rm']}`, `i`.`{$ic_f['bank']}`
+									FROM `{$this->cfg->tabname('users')}` AS `u`
+									INNER JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
+										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
+									LEFT JOIN `{$this->cfg->tabname('iconomy')}` AS `i`
+										ON `i`.`{$ic_f['login']}`=`u`.`{$us_f['login']}`
+									WHERE `u`.`{$us_f['id']}`='$uid'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->set_unauth(); $this->core->notify(); }
 
 		$ar			= $this->db->fetch_assoc($query);
 
-		$tmp		= $this->db->HSC($ar['tmp']);
-		$password	= $this->db->HSC($ar['password']);
+		$tmp		= $this->db->HSC($ar[$us_f['tmp']]);
+		$password	= $this->db->HSC($ar[$us_f['pass']]);
 
-		$new_hash	= $uid.$tmp.$this->ip.md5($this->config->main['mcr_secury']);
+		$new_hash	= $uid.$tmp.$this->ip.md5($this->cfg->main['mcr_secury']);
 
 		$ar_hash	= $uid.'_'.md5($new_hash);
 
 		// Check security auth
 		if($_COOKIE['mcr_user'] !== $ar_hash){ $this->set_unauth(); $this->core->notify(); }
 
-		$login				= $this->db->HSC($ar['login']);
+		$login				= $this->db->HSC($ar[$us_f['login']]);
 
-		$color				= (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+		$color				= (!empty($ar[$us_f['color']])) ? $this->db->HSC($ar[$us_f['color']]) : $this->db->HSC($ar['gcolor']);
 
-		$group				= $this->db->HSC($ar['title']);
+		$group				= $this->db->HSC($ar[$ug_f['title']]);
 
 		$gcolor				= $this->db->HSC($ar['gcolor']);
 
@@ -92,7 +102,7 @@ class user{
 		$this->id			= $uid;
 
 		// Group identificator
-		$this->gid			= intval($ar['gid']);
+		$this->gid			= intval($ar[$us_f['group']]);
 
 		// Username
 		$this->login		= $login;
@@ -101,25 +111,25 @@ class user{
 		$this->login_v2		= $this->core->colorize($login, $color);
 
 		// E-Mail
-		$this->email		= $this->db->HSC($ar['email']);
+		$this->email		= $this->db->HSC($ar[$us_f['email']]);
 
 		// UUID
-		$this->uuid			= $this->db->HSC($ar['uuid']);
+		$this->uuid			= $this->db->HSC($ar[$us_f['uuid']]);
 
 		// Password hash
 		$this->password		= $password;
 
 		// Salt of password
-		$this->salt			= $ar['salt'];
+		$this->salt			= $ar[$us_f['salt']];
 
 		// Temp hash
 		$this->tmp			= $tmp;
 
 		// Register ip
-		$this->ip_create	= $this->db->HSC($ar['ip_create']);
+		$this->ip_create	= $this->db->HSC($ar[$us_f['ip_create']]);
 
 		// Other information
-		$this->data			= json_decode($ar['data']);
+		$this->data			= json_decode($ar[$us_f['data']]);
 
 		// Group title
 		$this->group		= $group;
@@ -128,22 +138,22 @@ class user{
 		$this->group_v2		= $this->core->colorize($group, $gcolor);
 
 		// Group description
-		$this->group_desc	= $this->db->HSC($ar['description']);
+		$this->group_desc	= $this->db->HSC($ar[$ug_f['text']]);
 
 		// Permissions
-		$this->permissions	= @json_decode($ar['permissions']);
+		$this->permissions	= @json_decode($ar[$ug_f['perm']]);
 
 		// Permissions
-		$this->permissions_v2	= @json_decode($ar['permissions'], true);
+		$this->permissions_v2	= @json_decode($ar[$ug_f['perm']], true);
 
 		// Is auth status
 		$this->is_auth		= true;
 
 		// Is default skin
-		$this->is_skin		= (intval($ar['is_skin'])==1) ? true : false;
+		$this->is_skin		= (intval($ar[$us_f['is_skin']])==1) ? true : false;
 
 		// Is isset cloak
-		$this->is_cloak		= (intval($ar['is_cloak'])==1) ? true : false;
+		$this->is_cloak		= (intval($ar[$us_f['is_cloak']])==1) ? true : false;
 
 		$this->skin			= ($this->is_skin || $this->is_cloak) ? $this->login : 'default';
 
@@ -153,13 +163,13 @@ class user{
 		$this->gender		= (intval($this->data->gender)==1) ? $this->lng['gender_w'] : $this->lng['gender_m'];
 
 		// Game money balance
-		$this->money		= floatval($ar['money']);
+		$this->money		= floatval($ar[$ic_f['money']]);
 
 		// Real money balance
-		$this->realmoney	= floatval($ar['realmoney']);
+		$this->realmoney	= floatval($ar[$ic_f['rm']]);
 
 		// Bank money balance (for plugins)
-		$this->bank			= floatval($ar['bank']);
+		$this->bank			= floatval($ar[$ic_f['bank']]);
 
 	}
 

@@ -3,14 +3,14 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 	}
 
 	private function change_status($act){
@@ -31,7 +31,7 @@ class submodule{
 
 			$cfg['MOD_ENABLE'] = $status;
 
-			if(!$this->config->savecfg($cfg, 'modules/'.$mod.'.php', 'cfg')){ continue; }
+			if(!$this->cfg->savecfg($cfg, 'modules/'.$mod.'.php', 'cfg')){ continue; }
 		}
 
 		// Последнее обновление пользователя

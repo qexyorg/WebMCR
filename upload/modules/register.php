@@ -3,14 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $lng, $user;
-	public $cfg = array();
+	private $core, $db, $cfg, $lng, $user;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng_m;
 
 		$bc = array(
@@ -43,7 +42,10 @@ class module{
 
 		$key = $array[1];
 
-		$query = $this->db->query("SELECT `salt`, `data` FROM `mcr_users` WHERE id='$uid' AND gid='1'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `{$us_f['salt']}`, `{$us_f['data']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid' AND `{$us_f['group']}`='1'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=register"); }
 
@@ -64,9 +66,9 @@ class module{
 
 		$newdata = $this->db->safesql(json_encode($newdata));
 
-		$update = $this->db->query("UPDATE `mcr_users`
-									SET gid='2', ip_last='{$this->user->ip}', `data`='$newdata'
-									WHERE id='$uid' AND gid='1'");
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
+									SET `{$us_f['group']}`='2', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+									WHERE `{$us_f['id']}`='$uid' AND `{$us_f['group']}`='1'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=register"); }
 

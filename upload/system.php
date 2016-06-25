@@ -8,7 +8,7 @@ ini_set("post_max_size", "50M");
 
 // System constants
 define('PROGNAME', 'WebMCR Reloaded'. MCR);
-define('VERSION', 'WebMCR Beta 1.3.6');
+define('VERSION', 'WebMCR Beta 1.3.7');
 define('FEEDBACK', '<a href="http://webmcr.com" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy'); 
 define('MCR_ROOT', dirname(__FILE__).'/');
 define('MCR_MODE_PATH', MCR_ROOT.'modules/');
@@ -19,8 +19,6 @@ define('MCR_SIDE_PATH', MCR_ROOT.'blocks/');
 define('MCR_LANG_PATH', MCR_ROOT.'language/');
 define('MCR_CONF_PATH', MCR_ROOT.'configs/');
 define('MCR_UPL_PATH', MCR_ROOT.'uploads/');
-define('MCR_SKIN_PATH', MCR_UPL_PATH.'skins/');
-define('MCR_CLOAK_PATH', MCR_UPL_PATH.'cloaks/');
 define('MCR_CACHE_PATH', MCR_ROOT.'cache/');
 
 session_save_path(MCR_UPL_PATH.'tmp');
@@ -36,8 +34,8 @@ require_once(MCR_TOOL_PATH.'core.class.php');
 $core = new core();
 
 // Debug
-ini_set("display_errors", $core->config->main['debug']);
-$warn_type = ($core->config->main['debug']) ? E_ALL : 0;
+ini_set("display_errors", $core->cfg->main['debug']);
+$warn_type = ($core->cfg->main['debug']) ? E_ALL : 0;
 error_reporting($warn_type);
 
 $meta_json_data = array(

@@ -12,7 +12,7 @@ $(function(){
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news_attach",
+			url: "index.php?mode=ajax&do=modules|news|news_attach",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -47,7 +47,7 @@ $(function(){
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news_delete",
+			url: "index.php?mode=ajax&do=modules|news|news_delete",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,

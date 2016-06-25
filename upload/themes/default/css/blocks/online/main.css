@@ -1,0 +1,25 @@
+.block-online > .title {
+	border-bottom: 1px solid #eee;
+	margin-bottom: 5px;
+	font-weight: bold;
+	color: #888;
+}
+
+.block-online > #onl_list {
+	border-bottom: 1px solid #eee;
+	padding-bottom: 5px;
+	color: #aaa;
+}
+
+.block-online > #onl_count {
+	color: #888;
+	font-weight: bold;
+}
+
+.block-online > #onl_count p {
+	margin: 0px;
+}
+
+.block-online > #onl_count span {
+	margin-left: 3px;
+}

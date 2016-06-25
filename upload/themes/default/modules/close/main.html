@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title><?php echo $this->config->main['s_name']; ?> — Тех. работы</title>
+	<title><?php echo $this->cfg->main['s_name']; ?> — Тех. работы</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<meta name="description" content="<?php echo $this->config->main['s_about']; ?>">
-	<meta name="keywords" content="<?php echo $this->config->main['s_keywords']; ?>">
+	<meta name="description" content="<?php echo $this->cfg->main['s_about']; ?>">
+	<meta name="keywords" content="<?php echo $this->cfg->main['s_keywords']; ?>">
 	<meta name="author" content="NC22 &amp; Qexy.org">
 	<meta name='data' content='<?php echo META_JSON_DATA; ?>'>
 	<base href="<?php echo BASE_URL ?>">
@@ -20,7 +20,7 @@
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="span9">
-					<h1><?php echo $this->config->main['s_name']; ?></h1>
+					<h1><?php echo $this->cfg->main['s_name']; ?></h1>
 					<p class="lead">На сайте ведутся технические работы. Вход только для администрации.</p>
 				</div>
 			</div>
@@ -80,7 +80,7 @@
 <div class="navbar navbar-fixed-bottom">
 	<div class="navbar-inner">
 		<div class="footer-block">
-			<div class="left-side"><?php echo $this->lng['copy_pre']; ?> <?php echo $this->config->main['s_name']; ?> <?php echo $this->lng['copy_app']; ?></div>
+			<div class="left-side"><?php echo $this->lng['copy_pre']; ?> <?php echo $this->cfg->main['s_name']; ?> <?php echo $this->lng['copy_app']; ?></div>
 			<div class="right-side"><?php echo FEEDBACK; ?> | <?php echo VERSION; ?></div>
 		</div>
 	</div>

@@ -1,5 +1,7 @@
 <?php
 
+if(!defined("MCR")){ exit("Hacking Attempt!"); }
+
 class config{
 	public $main	= array();
 	public $db		= array();
@@ -10,12 +12,12 @@ class config{
 
 	public function __construct(){
 		// Load main config
-		require_once(MCR_ROOT.'configs/main.php');
-		require_once(MCR_ROOT.'configs/mail.php');
-		require_once(MCR_ROOT.'configs/db.php');
-		require_once(MCR_ROOT.'configs/functions.php');
-		require_once(MCR_ROOT.'configs/pagin.php');
-		require_once(MCR_ROOT.'configs/search.php');
+		require_once(MCR_CONF_PATH.'main.php');
+		require_once(MCR_CONF_PATH.'mail.php');
+		require_once(MCR_CONF_PATH.'db.php');
+		require_once(MCR_CONF_PATH.'functions.php');
+		require_once(MCR_CONF_PATH.'pagin.php');
+		require_once(MCR_CONF_PATH.'search.php');
 
 		$this->main		= $main;
 		$this->mail		= $mail;
@@ -24,12 +26,16 @@ class config{
 		$this->pagin	= $pagin;
 		$this->search	= $search;
 	}
+
+	public function tabname($name){
+		return $this->db['tables'][$name]['name'];
+	}
 	
 	public function savecfg($cfg=array(), $file='main.php', $var='main'){
 
 		if(!is_array($cfg) || empty($cfg)){ return false; }
 
-		$filename = MCR_ROOT."configs/".$file;
+		$filename = MCR_CONF_PATH.$file;
 
 		$txt  = '<?php'.PHP_EOL;
 		$txt .= '$'.$var.' = '.var_export($cfg, true).';'.PHP_EOL;

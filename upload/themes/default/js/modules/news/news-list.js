@@ -1,5 +1,5 @@
 $(function(){
-	$("body").on("click", ".like, .dislike", function(){
+	$("body").on("click", ".new-id .like, .new-id .dislike", function(){
 
 		mcr.loading();
 
@@ -8,12 +8,11 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('mcr_secure', mcr.meta_data.secure);
-		formdata.append('act', 'like');
 		formdata.append('value', value);
 		formdata.append('nid', nid);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|news_like",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -23,6 +22,7 @@ $(function(){
 				mcr.logger(data);
 				mcr.notify(lng.error, lng_nl.e_vote);
 			},
+			
 			success: function(data){
 
 				if(!data._type){ return mcr.notify(data._title, data._message); }

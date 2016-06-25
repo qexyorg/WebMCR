@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_modules')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['modules'] => BASE_URL."?mode=admin&do=modules"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['modules'] => ADMIN_URL."&do=modules"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -108,9 +108,9 @@ class submodule{
 		}
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['modules'] => BASE_URL."?mode=admin&do=modules",
-			$this->lng['mod_edit'] => BASE_URL."?mode=admin&do=modules&op=edit&id=$name"
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['modules'] => ADMIN_URL."&do=modules",
+			$this->lng['mod_edit'] => ADMIN_URL."&do=modules&op=edit&id=$name"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -120,7 +120,7 @@ class submodule{
 			$cfg['MOD_CHECK_UPDATE'] = (intval(@$_POST['updates'])==1) ? true : false;
 			$cfg['MOD_URL_UPDATE'] = $this->core->safestr(@$_POST['update_url']);
 
-			if(!$this->config->savecfg($cfg, 'modules/'.$name.'.php', 'cfg')){
+			if(!$this->cfg->savecfg($cfg, 'modules/'.$name.'.php', 'cfg')){
 				$this->core->notify($this->core->lng["e_msg"], $this->lng['mod_cfg_unsave'], 3, '?mode=admin&do=modules');
 			}
 

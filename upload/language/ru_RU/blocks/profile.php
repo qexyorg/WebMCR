@@ -3,6 +3,7 @@
 $lng = array(
 	'miniprofile' => 'Мини-профиль',
 	'login' => 'Логин',
+	'login_or_email' => 'Логин или E-Mail',
 	'password' => 'Пароль',
 	'group' => 'Группа',
 	'balance' => 'Баланс',

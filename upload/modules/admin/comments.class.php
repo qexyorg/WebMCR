@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_comments')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['comments'] => ADMIN_URL."&do=comments"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,12 +24,17 @@ class submodule{
 
 	private function comment_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_comments'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_comments']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_comments'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_comments']; // Set end pagination
 
 		$where		= "";
 		$sort		= "`c`.id";
 		$sortby		= "DESC";
+
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f		= $ctables['ugroups']['fields'];
+		$us_f		= $ctables['users']['fields'];
 
 		if(isset($_GET['sort']) && !empty($_GET['sort'])){
 			$expl = explode(' ', $_GET['sort']);
@@ -39,7 +44,7 @@ class submodule{
 			switch(@$expl[1]){
 				case 'comment': $sort = "`c`.text_html"; break;
 				case 'news': $sort = "`n`.title"; break;
-				case 'user': $sort = "`u`.login"; break;
+				case 'user': $sort = "`u`.`{$us_f['login']}`"; break;
 			}
 		}
 
@@ -49,14 +54,14 @@ class submodule{
 		}
 
 		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.text_html, `n`.title AS `new`,
-											`u`.login, `u`.`color`, `g`.`color` AS `gcolor`
+											`u`.`{$us_f['login']}`, `u`.`{$us_f['color']}`, `g`.`{$ug_f['color']}` AS `gcolor`
 									FROM `mcr_comments` AS `c`
 									LEFT JOIN `mcr_news` AS `n`
 										ON `n`.id=`c`.nid
-									LEFT JOIN `mcr_users` AS `u`
-										ON `u`.id=`c`.uid
-									LEFT JOIN `mcr_groups` AS `g`
-										ON `g`.id=`u`.gid
+									LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
+										ON `u`.`{$us_f['id']}`=`c`.uid
+									LEFT JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
+										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
 									$where
 									ORDER BY $sort $sortby
 									LIMIT $start, $end");
@@ -73,9 +78,9 @@ class submodule{
 
 			$new = (empty($ar['new'])) ? 'Новость удалена' : $this->db->HSC($ar['new']);
 
-			$login = (is_null($ar['login'])) ? 'Пользователь удален' : $this->db->HSC($ar['login']);
+			$login = (is_null($ar[$us_f['login']])) ? 'Пользователь удален' : $this->db->HSC($ar[$us_f['login']]);
 
-			$color = (empty($ar['color'])) ? $this->db->HSC($ar['gcolor']) : $this->db->HSC($ar['color']);
+			$color = (empty($ar[$us_f['color']])) ? $this->db->HSC($ar['gcolor']) : $this->db->HSC($ar[$us_f['color']]);
 
 			$page_data = array(
 				"ID" => intval($ar['id']),
@@ -114,7 +119,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_comments'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_comments'], $page.'&pid=', $ar[0]),
 			"COMMENTS" => $this->comment_array()
 		);
 
@@ -186,9 +191,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_comments_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=comments'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments",
-			$this->lng['com_add'] => BASE_URL."?mode=admin&do=comments&op=add",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['comments'] => ADMIN_URL."&do=comments",
+			$this->lng['com_add'] => ADMIN_URL."&do=comments&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -272,9 +277,9 @@ class submodule{
 		$data = json_decode($ar['data']);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['comments'] => BASE_URL."?mode=admin&do=comments",
-			$this->lng['com_edit'] => BASE_URL."?mode=admin&do=comments&op=edit&id=$id"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['comments'] => ADMIN_URL."&do=comments",
+			$this->lng['com_edit'] => ADMIN_URL."&do=comments&op=edit&id=$id"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

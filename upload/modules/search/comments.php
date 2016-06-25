@@ -3,12 +3,12 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
@@ -22,17 +22,20 @@ class submodule{
 
 	private function results_array($value){
 
-		$start		= $this->core->pagination($this->config->pagin['search_comments'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['search_comments']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['search_comments'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['search_comments']; // Set end pagination
 		
 		//, `n`.cid, `c`.title AS `category`
 
-		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.uid, `c`.text_html, `c`.`data`, `n`.title, `u`.login
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `c`.id, `c`.nid, `c`.uid, `c`.text_html, `c`.`data`, `n`.title, `u`.`{$us_f['login']}`
 									FROM `mcr_comments` AS `c`
 									LEFT JOIN `mcr_news` AS `n`
 										ON `n`.id=`c`.nid
-									LEFT JOIN `mcr_users` AS `u`
-										ON `u`.id=`c`.uid
+									LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
+										ON `u`.`{$us_f['id']}`=`c`.uid
 									WHERE `c`.text_bb LIKE '%$value%'
 									LIMIT $start, $end");
 
@@ -57,7 +60,7 @@ class submodule{
 				"NID"			=> intval($ar['nid']),
 				"UID"			=> intval($ar['uid']),
 				"TITLE"			=> $this->db->HSC($ar['title']),
-				"LOGIN"			=> $this->db->HSC($ar['login']),
+				"LOGIN"			=> $this->db->HSC($ar[$us_f['login']]),
 				"TIME_CREATE"	=> date("d.m.Y в H:i", $data->time_create),
 				//"CID"		=> intval($ar['cid']),
 				//"CATEGORY"	=> $this->db->HSC($ar['category']),
@@ -94,7 +97,7 @@ class submodule{
 		$page = "?mode=search&type=comments&value=$html_value&pid=";
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['search_comments'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['search_comments'], $page, $ar[0]),
 			"RESULT" => $this->results_array($safe_value),
 			"QUERY" => $html_value,
 			"QUERY_COUNT" => intval($ar[0])

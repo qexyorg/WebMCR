@@ -1,5 +1,4 @@
 $(function(){
-	
 	$("body").on("click", "#add_comment", function(){
 
 		mcr.loading();
@@ -9,12 +8,11 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('id', nid);
-		formdata.append('act', 'add_comment');
 		formdata.append('message', message.value);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|add_comment",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -46,6 +44,8 @@ $(function(){
 
 	$("body").on("click", ".del_comment", function(){
 
+		var that = $(this);
+
 		if(!confirm(lng_nf.del_confirm_comment)){ return false; }
 		
 		mcr.loading();
@@ -55,12 +55,11 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('id', id);
-		formdata.append('act', 'del_comment');
 		formdata.append('nid', nid);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|delete_comment",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -74,7 +73,7 @@ $(function(){
 
 				if(!data._type){ return mcr.notify(data._title, data._message); }
 
-				$(".comment-id#"+id).fadeOut(400, function(){
+				that.closest('.comment-id').fadeOut(400, function(){
 
 					$(this).remove();
 
@@ -98,12 +97,11 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('id', id);
-		formdata.append('act', 'get_comment');
 		formdata.append('nid', nid);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|get_comment",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -136,12 +134,11 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('id', id);
-		formdata.append('act', 'get_comment');
 		formdata.append('nid', nid);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|get_comment",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -176,13 +173,12 @@ $(function(){
 		var formdata = new FormData();
 		
 		formdata.append('id', id);
-		formdata.append('act', 'edt_comment');
 		formdata.append('nid', nid);
 		formdata.append('message', message.value);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|edit_comment",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,
@@ -217,13 +213,12 @@ $(function(){
 
 		var formdata = new FormData();
 
-		formdata.append('act', 'like');
 		formdata.append('nid', nid);
 		formdata.append('value', value);
 		formdata.append('mcr_secure', mcr.meta_data.secure);
 
 		$.ajax({
-			url: "index.php?mode=ajax&do=news",
+			url: "index.php?mode=ajax&do=modules|news|news_like",
 			dataType: "json",
 			type: 'POST',
 			contentType: false,

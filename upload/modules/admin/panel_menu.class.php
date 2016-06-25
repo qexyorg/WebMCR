@@ -3,17 +3,17 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin"
+			$this->lng['mod_name'] => ADMIN_URL
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

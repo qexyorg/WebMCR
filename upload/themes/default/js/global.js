@@ -6,10 +6,17 @@ var mcr = {
 
 	// Функция показа/скрытия информации о загрузке
 	loading: function(status){
-		if(status===false){
-			$('#js-loader').fadeOut(300);
+
+		if(status!==false){
+			if(!$('#js-loader').hasClass('runclose') && !$('#js-loader').hasClass('runopen')){
+				$('#js-loader').addClass('runopen').fadeIn(300, function(){
+					$(this).removeClass('runopen');
+				});
+			}
 		}else{
-			$('#js-loader').fadeIn(300);
+			$('#js-loader').addClass('runclose').fadeOut(300, function(){
+				$(this).removeClass('runclose');
+			});
 		}
 	},
 
@@ -82,7 +89,7 @@ var mcr = {
 
 		string = decodeURIComponent(string);
 
-		if(string==undefined){ return result; }
+		if(string==undefined || string=='undefined'){ return result; }
 
 		$.each(string.split('&'), function(key, val){
 			expl = val.split('=');
@@ -156,7 +163,7 @@ var mcr = {
 
 		var formdata = new FormData();
 		
-		formdata.append('mcr_secure', mcr.meta_data.secure);
+		formdata.append('mcr_secure', that.meta_data.secure);
 
 		$.ajax({
 			url: "index.php?mode=ajax&do=monitoring",
@@ -166,15 +173,15 @@ var mcr = {
 			processData: false,
 			data: formdata,
 			error: function(data){
-				mcr.logger(data);
-				mcr.notify(lng.error, lng.e_monitor);
+				that.logger(data);
+				that.notify(lng.error, lng.e_monitor);
 			},
 
 			success: function(data){
 
-				if(!data._type){ return mcr.notify(data._title, data._message); }
+				if(!data._type){ return that.notify(data._title, data._message); }
 
-				if(data._data.length<=0){ return mcr.loading(false); }
+				if(data._data.length<=0){ return that.loading(false); }
 
 				$.each(data._data, function(key, ar){
 					$('.monitor-id#'+ar.id+' .bar').css('width', ar.progress+'%');
@@ -189,7 +196,7 @@ var mcr = {
 					}
 				});
 				
-				mcr.loading(false);
+				that.loading(false);
 			}
 		});
 	},
@@ -203,7 +210,7 @@ var mcr = {
 
 		var formdata = new FormData();
 		
-		formdata.append('mcr_secure', mcr.meta_data.secure);
+		formdata.append('mcr_secure', that.meta_data.secure);
 		formdata.append('page', loadpage);
 
 		$.ajax({
@@ -214,8 +221,8 @@ var mcr = {
 			processData: false,
 			data: formdata,
 			error: function(data){
-				mcr.logger(data);
-				mcr.notify(lng.error, lng.e_filemanager);
+				that.logger(data);
+				that.notify(lng.error, lng.e_filemanager);
 			},
 
 			success: function(data){
@@ -739,7 +746,7 @@ $(function(){
 		return false;
 	});
 
-	$('.cpp').minicolors();;
+	$('.cpp').minicolors();
 
 	$('body').on('click', '.is_auth_user', function(){
 		if(!mcr.meta_data.is_auth){ mcr.notify(lng.error, lng.e_auth, false); return false; }

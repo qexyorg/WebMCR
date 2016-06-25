@@ -3,15 +3,14 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $user, $lng;
-	public $cfg = array();
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
 			$this->lng['mod_name'] => BASE_URL."?mode=profile"
@@ -37,8 +36,11 @@ class module{
 			require_once(MCR_TOOL_PATH.'cloak.class.php');
 			$cloak = new cloak($this->core, $cloak);
 		}
+
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
 		
-		$update = $this->db->query("UPDATE `mcr_users` SET is_skin='0' WHERE id='{$this->user->id}'");
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['is_skin']}`='0' WHERE `{$us_f['id']}`='{$this->user->id}'");
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
 		// Лог действия
@@ -69,8 +71,11 @@ class module{
 
 			$skin = new skin($this->core, $skin);
 		}
+
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
 		
-		$update = $this->db->query("UPDATE `mcr_users` SET is_cloak='0' WHERE id='{$this->user->id}'");
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['is_cloak']}`='0' WHERE `{$us_f['id']}`='{$this->user->id}'");
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
 		// Лог действия
@@ -95,7 +100,10 @@ class module{
 			$cloak = new cloak($this->core, $cloak);
 		}
 
-		$update = $this->db->query("UPDATE `mcr_users` SET is_skin='1' WHERE id='{$this->user->id}'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['is_skin']}`='1' WHERE `{$us_f['id']}`='{$this->user->id}'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
@@ -109,7 +117,10 @@ class module{
 		require_once(MCR_TOOL_PATH.'cloak.class.php');
 		$cloak = new cloak($this->core, $_FILES['cloak']); // create new cloak in folder
 
-		$update = $this->db->query("UPDATE `mcr_users` SET is_cloak='1' WHERE id='{$this->user->id}'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['is_cloak']}`='1' WHERE `{$us_f['id']}`='{$this->user->id}'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
@@ -156,9 +167,12 @@ class module{
 
 		$newdata = $this->db->safesql(json_encode($newdata));
 
-		$update = $this->db->query("UPDATE `mcr_users`
-									SET `password`='$newpass', `salt`='$newsalt', ip_last='{$this->user->ip}', `data`='$newdata'
-									WHERE id='{$this->user->id}'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
+									SET `{$us_f['pass']}`='$newpass', `{$us_f['salt']}`='$newsalt', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+									WHERE `{$us_f['id']}`='{$this->user->id}'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 2, '?mode=profile'); }
 

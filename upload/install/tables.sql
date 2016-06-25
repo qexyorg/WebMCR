@@ -22,37 +22,37 @@ CREATE TABLE IF NOT EXISTS `mcr_files` (
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
-CREATE TABLE IF NOT EXISTS `mcr_groups` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `title` varchar(32) NOT NULL DEFAULT '',
-  `description` varchar(255) NOT NULL DEFAULT '',
-  `color` varchar(24) NOT NULL DEFAULT '',
-  `permissions` text NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `~ug~` (
+  `~ug_id~` int(10) NOT NULL AUTO_INCREMENT,
+  `~ug_title~` varchar(32) NOT NULL DEFAULT '',
+  `~ug_text~` varchar(255) NOT NULL DEFAULT '',
+  `~ug_color~` varchar(24) NOT NULL DEFAULT '',
+  `~ug_perm~` text NOT NULL,
+  PRIMARY KEY (`~ug_id~`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 #line
-INSERT INTO `mcr_groups` (`id`, `title`, `description`, `color`, `permissions`) VALUES
-(0, 'Заблокированный', 'Группа заблокированных пользователей', '', '{"sys_debug":false,"sys_max_file_size":0,"sys_max_ratio":0,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":false,"sys_profile_del_cloak":false,"sys_profile_skin":false,"sys_profile_cloak":false,"sys_profile_settings":false,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":false,"sys_comment_add":false,"sys_comment_edt":false,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":false,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":false,"sys_search_comments":false,"sys_news_like":false,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false}'),
-(1, 'Непроверенный', 'Группа непроверенных пользователей', '', '{"sys_debug":false,"sys_max_file_size":1024,"sys_max_ratio":0,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":false,"sys_profile_del_cloak":false,"sys_profile_skin":false,"sys_profile_cloak":false,"sys_profile_settings":false,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":false,"sys_comment_edt":false,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":true,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":true,"sys_search_comments":false,"sys_news_like":false,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false}'),
-(2, 'Пользователь', 'Зарегистрированные и проверенные пользователи', '', '{"sys_debug":false,"sys_max_file_size":1024,"sys_max_ratio":1,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":true,"sys_profile_del_cloak":true,"sys_profile_skin":true,"sys_profile_cloak":true,"sys_profile_settings":true,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":true,"sys_comment_edt":true,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":true,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":true,"sys_search_comments":true,"sys_news_like":true,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false}'),
-(3, 'Администратор', 'Группа администрации', '', '{"sys_debug":true,"sys_max_file_size":4096,"sys_max_ratio":32,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":true,"sys_profile_del_cloak":true,"sys_profile_skin":true,"sys_profile_cloak":true,"sys_profile_settings":true,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":true,"sys_comment_edt":true,"sys_comment_edt_all":true,"sys_comment_del":true,"sys_comment_del_all":true,"sys_auth":true,"sys_adm_main":true,"sys_adm_news":true,"sys_adm_news_cats":true,"sys_adm_news_views":true,"sys_adm_news_votes":true,"sys_adm_comments":true,"sys_adm_menu":true,"sys_adm_menu_adm":true,"sys_adm_menu_groups":true,"sys_adm_menu_icons":true,"sys_adm_users":true,"sys_adm_groups":true,"sys_adm_permissions":true,"sys_adm_statics":true,"sys_adm_info":true,"sys_adm_settings":true,"sys_adm_monitoring":true,"sys_adm_modules":true,"sys_search_news":true,"sys_search_comments":true,"sys_news_like":true,"sys_adm_m_g_main":true,"sys_adm_m_g_news":true,"sys_adm_m_g_users":true,"sys_adm_m_g_menu":true,"sys_adm_m_g_settings":true,"sys_adm_m_i_news":true,"sys_adm_m_i_news_cats":true,"sys_adm_m_i_comments":true,"sys_adm_m_i_news_views":true,"sys_adm_m_i_news_votes":true,"sys_adm_m_i_users":true,"sys_adm_m_i_groups":true,"sys_adm_m_i_permissions":true,"sys_adm_m_i_menu":true,"sys_adm_m_i_menu_adm":true,"sys_adm_m_i_menu_groups_adm":true,"sys_adm_m_i_icons":true,"sys_adm_m_i_statics":true,"sys_adm_m_i_settings":true,"sys_adm_m_i_monitor":true,"sys_adm_m_i_info":true,"sys_adm_m_i_modules":true,"sys_adm_m_i_logs":true,"sys_adm_manager":true,"sys_adm_logs":true,"sys_adm_permissions_add":true,"sys_adm_permissions_edit":true,"sys_adm_permissions_delete":true,"sys_adm_comments_add":true,"sys_adm_comments_edit":true,"sys_adm_comments_delete":true,"sys_adm_groups_add":true,"sys_adm_groups_edit":true,"sys_adm_groups_delete":true,"sys_adm_menu_add":true,"sys_adm_menu_edit":true,"sys_adm_menu_delete":true,"sys_adm_menu_adm_add":true,"sys_adm_menu_adm_edit":true,"sys_adm_menu_adm_delete":true,"sys_adm_menu_groups_add":true,"sys_adm_menu_groups_edit":true,"sys_adm_menu_groups_delete":true,"sys_adm_menu_icons_add":true,"sys_adm_menu_icons_edit":true,"sys_adm_menu_icons_delete":true,"sys_adm_monitoring_add":true,"sys_adm_monitoring_edit":true,"sys_adm_monitoring_delete":true,"sys_adm_news_add":true,"sys_adm_news_edit":true,"sys_adm_news_delete":true,"sys_adm_news_cats_add":true,"sys_adm_news_cats_edit":true,"sys_adm_news_cats_delete":true,"sys_adm_statics_add":true,"sys_adm_statics_edit":true,"sys_adm_statics_delete":true,"sys_adm_users_add":true,"sys_adm_users_edit":true,"sys_adm_users_delete":true,"sys_adm_users_ban":true,"sys_adm_modules_edit":true,"sys_adm_news_views_delete":true,"sys_adm_news_votes_delete":true}');
+INSERT INTO `~ug~` (`~ug_id~`, `~ug_title~`, `~ug_text~`, `~ug_color~`, `~ug_perm~`) VALUES
+(0, 'Заблокированный', 'Группа заблокированных пользователей', '', '{"color":0,"sys_debug":false,"sys_max_file_size":0,"sys_max_ratio":0,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":false,"sys_profile_del_cloak":false,"sys_profile_skin":false,"sys_profile_cloak":false,"sys_profile_settings":false,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":false,"sys_comment_add":false,"sys_comment_edt":false,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":false,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":false,"sys_search_comments":false,"sys_news_like":false,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false,"sys_adm_blocks":false,"sys_adm_m_i_blocks":false,"sys_adm_blocks_edit":false,"block_online":false,"block_banner":false}'),
+(1, 'Непроверенный', 'Группа непроверенных пользователей', '', '{"color":0,"sys_debug":false,"sys_max_file_size":1024,"sys_max_ratio":0,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":false,"sys_profile_del_cloak":false,"sys_profile_skin":false,"sys_profile_cloak":false,"sys_profile_settings":false,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":false,"sys_comment_edt":false,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":true,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":true,"sys_search_comments":false,"sys_news_like":false,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false,"sys_adm_blocks":false,"sys_adm_m_i_blocks":false,"sys_adm_blocks_edit":false,"block_online":true,"block_banner":false}'),
+(2, 'Пользователь', 'Зарегистрированные и проверенные пользователи', '', '{"color":0,"sys_debug":false,"sys_max_file_size":1024,"sys_max_ratio":1,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":true,"sys_profile_del_cloak":true,"sys_profile_skin":true,"sys_profile_cloak":true,"sys_profile_settings":true,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":true,"sys_comment_edt":true,"sys_comment_edt_all":false,"sys_comment_del":false,"sys_comment_del_all":false,"sys_auth":true,"sys_adm_main":false,"sys_adm_news":false,"sys_adm_news_cats":false,"sys_adm_news_views":false,"sys_adm_news_votes":false,"sys_adm_comments":false,"sys_adm_menu":false,"sys_adm_menu_adm":false,"sys_adm_menu_groups":false,"sys_adm_menu_icons":false,"sys_adm_users":false,"sys_adm_groups":false,"sys_adm_permissions":false,"sys_adm_statics":false,"sys_adm_info":false,"sys_adm_settings":false,"sys_adm_monitoring":false,"sys_adm_modules":false,"sys_search_news":true,"sys_search_comments":true,"sys_news_like":true,"sys_adm_m_g_main":false,"sys_adm_m_g_news":false,"sys_adm_m_g_users":false,"sys_adm_m_g_menu":false,"sys_adm_m_g_settings":false,"sys_adm_m_i_news":false,"sys_adm_m_i_news_cats":false,"sys_adm_m_i_comments":false,"sys_adm_m_i_news_views":false,"sys_adm_m_i_news_votes":false,"sys_adm_m_i_users":false,"sys_adm_m_i_groups":false,"sys_adm_m_i_permissions":false,"sys_adm_m_i_menu":false,"sys_adm_m_i_menu_adm":false,"sys_adm_m_i_menu_groups_adm":false,"sys_adm_m_i_icons":false,"sys_adm_m_i_statics":false,"sys_adm_m_i_settings":false,"sys_adm_m_i_monitor":false,"sys_adm_m_i_info":false,"sys_adm_m_i_modules":false,"sys_adm_m_i_logs":false,"sys_adm_manager":false,"sys_adm_logs":false,"sys_adm_permissions_add":false,"sys_adm_permissions_edit":false,"sys_adm_permissions_delete":false,"sys_adm_comments_add":false,"sys_adm_comments_edit":false,"sys_adm_comments_delete":false,"sys_adm_groups_add":false,"sys_adm_groups_edit":false,"sys_adm_groups_delete":false,"sys_adm_menu_add":false,"sys_adm_menu_edit":false,"sys_adm_menu_delete":false,"sys_adm_menu_adm_add":false,"sys_adm_menu_adm_edit":false,"sys_adm_menu_adm_delete":false,"sys_adm_menu_groups_add":false,"sys_adm_menu_groups_edit":false,"sys_adm_menu_groups_delete":false,"sys_adm_menu_icons_add":false,"sys_adm_menu_icons_edit":false,"sys_adm_menu_icons_delete":false,"sys_adm_monitoring_add":false,"sys_adm_monitoring_edit":false,"sys_adm_monitoring_delete":false,"sys_adm_news_add":false,"sys_adm_news_edit":false,"sys_adm_news_delete":false,"sys_adm_news_cats_add":false,"sys_adm_news_cats_edit":false,"sys_adm_news_cats_delete":false,"sys_adm_statics_add":false,"sys_adm_statics_edit":false,"sys_adm_statics_delete":false,"sys_adm_users_add":false,"sys_adm_users_edit":false,"sys_adm_users_delete":false,"sys_adm_users_ban":false,"sys_adm_modules_edit":false,"sys_adm_news_views_delete":false,"sys_adm_news_votes_delete":false,"sys_adm_blocks":false,"sys_adm_m_i_blocks":false,"sys_adm_blocks_edit":false,"block_online":true,"block_banner":false}'),
+(3, 'Администратор', 'Группа администрации', '', '{"color":0,"sys_debug":true,"sys_max_file_size":4096,"sys_max_ratio":32,"sys_monitoring":true,"sys_share":true,"sys_search":true,"sys_restore":true,"sys_register":true,"sys_profile":true,"sys_profile_del_skin":true,"sys_profile_del_cloak":true,"sys_profile_skin":true,"sys_profile_cloak":true,"sys_profile_settings":true,"sys_news_list":true,"sys_news_full":true,"sys_comment_list":true,"sys_comment_add":true,"sys_comment_edt":true,"sys_comment_edt_all":true,"sys_comment_del":true,"sys_comment_del_all":true,"sys_auth":true,"sys_adm_main":true,"sys_adm_news":true,"sys_adm_news_cats":true,"sys_adm_news_views":true,"sys_adm_news_votes":true,"sys_adm_comments":true,"sys_adm_menu":true,"sys_adm_menu_adm":true,"sys_adm_menu_groups":true,"sys_adm_menu_icons":true,"sys_adm_users":true,"sys_adm_groups":true,"sys_adm_permissions":true,"sys_adm_statics":true,"sys_adm_info":true,"sys_adm_settings":true,"sys_adm_monitoring":true,"sys_adm_modules":true,"sys_search_news":true,"sys_search_comments":true,"sys_news_like":true,"sys_adm_m_g_main":true,"sys_adm_m_g_news":true,"sys_adm_m_g_users":true,"sys_adm_m_g_menu":true,"sys_adm_m_g_settings":true,"sys_adm_m_i_news":true,"sys_adm_m_i_news_cats":true,"sys_adm_m_i_comments":true,"sys_adm_m_i_news_views":true,"sys_adm_m_i_news_votes":true,"sys_adm_m_i_users":true,"sys_adm_m_i_groups":true,"sys_adm_m_i_permissions":true,"sys_adm_m_i_menu":true,"sys_adm_m_i_menu_adm":true,"sys_adm_m_i_menu_groups_adm":true,"sys_adm_m_i_icons":true,"sys_adm_m_i_statics":true,"sys_adm_m_i_settings":true,"sys_adm_m_i_monitor":true,"sys_adm_m_i_info":true,"sys_adm_m_i_modules":true,"sys_adm_m_i_logs":true,"sys_adm_manager":true,"sys_adm_logs":true,"sys_adm_permissions_add":true,"sys_adm_permissions_edit":true,"sys_adm_permissions_delete":true,"sys_adm_comments_add":true,"sys_adm_comments_edit":true,"sys_adm_comments_delete":true,"sys_adm_groups_add":true,"sys_adm_groups_edit":true,"sys_adm_groups_delete":true,"sys_adm_menu_add":true,"sys_adm_menu_edit":true,"sys_adm_menu_delete":true,"sys_adm_menu_adm_add":true,"sys_adm_menu_adm_edit":true,"sys_adm_menu_adm_delete":true,"sys_adm_menu_groups_add":true,"sys_adm_menu_groups_edit":true,"sys_adm_menu_groups_delete":true,"sys_adm_menu_icons_add":true,"sys_adm_menu_icons_edit":true,"sys_adm_menu_icons_delete":true,"sys_adm_monitoring_add":true,"sys_adm_monitoring_edit":true,"sys_adm_monitoring_delete":true,"sys_adm_news_add":true,"sys_adm_news_edit":true,"sys_adm_news_delete":true,"sys_adm_news_cats_add":true,"sys_adm_news_cats_edit":true,"sys_adm_news_cats_delete":true,"sys_adm_statics_add":true,"sys_adm_statics_edit":true,"sys_adm_statics_delete":true,"sys_adm_users_add":true,"sys_adm_users_edit":true,"sys_adm_users_delete":true,"sys_adm_users_ban":true,"sys_adm_modules_edit":true,"sys_adm_news_views_delete":true,"sys_adm_news_votes_delete":true,"sys_adm_blocks":true,"sys_adm_m_i_blocks":true,"sys_adm_blocks_edit":true,"block_online":true,"block_banner":true}');
 #line
-CREATE TABLE IF NOT EXISTS `mcr_iconomy` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `login` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
-  `money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `realmoney` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `bank` decimal(10,2) NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`id`),
-  KEY `login` (`login`)
+CREATE TABLE IF NOT EXISTS `~ic~` (
+  `~ic_id~` int(10) NOT NULL AUTO_INCREMENT,
+  `~ic_login~` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `~ic_money~` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `~ic_rc~` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `~ic_bank~` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`~ic_id~`),
+  KEY `~ic_login~` (`~ic_login~`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
-CREATE TABLE IF NOT EXISTS `mcr_logs` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `uid` int(10) NOT NULL DEFAULT '0',
-  `message` varchar(255) NOT NULL DEFAULT '',
-  `date` int(10) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `~logs~` (
+  `~logs_id~` int(10) NOT NULL AUTO_INCREMENT,
+  `~logs_uid~` int(10) NOT NULL DEFAULT '0',
+  `~logs_msg~` varchar(255) NOT NULL DEFAULT '',
+  `~logs_date~` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`~logs_id~`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
 CREATE TABLE IF NOT EXISTS `mcr_menu` (
@@ -64,6 +64,15 @@ CREATE TABLE IF NOT EXISTS `mcr_menu` (
   `permissions` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+#line
+CREATE TABLE IF NOT EXISTS `mcr_online` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(16) NOT NULL DEFAULT '127.0.0.1',
+  `online` tinyint(1) NOT NULL DEFAULT '0',
+  `date_create` int(10) NOT NULL DEFAULT '0',
+  `date_update` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
 INSERT INTO `mcr_menu` (`id`, `title`, `parent`, `url`, `target`, `permissions`) VALUES
 (1, 'Главная', 0, '/', '_self', 'sys_share'),
@@ -94,14 +103,15 @@ INSERT INTO `mcr_menu_adm` (`id`, `gid`, `title`, `text`, `url`, `target`, `acce
 (8, 3, 'Группы', 'Управление группами пользователей и их привилегиями', '/?mode=admin&do=groups', '_self', 'sys_adm_m_i_groups', 2, 15),
 (9, 3, 'Привилегии', 'Управление доступными привилегиями', '/?mode=admin&do=permissions', '_self', 'sys_adm_m_i_permissions', 3, 17),
 (10, 4, 'Меню сайта', 'Управление пунктами основного меню', '/?mode=admin&do=menu', '_self', 'sys_adm_m_i_menu', 1, 7),
-(11, 4, 'Меню ПУ', 'Управление пунктами меню панели управления', '/?mode=admin&do=menu_adm', '_self', 'sys_adm_m_i_menu_adm', 2, 18),
+(11, 4, 'Меню ПУ', 'Управление пунктами меню панели управления', '/?mode=admin&do=menu_adm', '_self', 'sys_adm_m_i_menu_adm', 2, 24),
 (12, 4, 'Группы меню ПУ', 'Управление группами меню панели управления', '/?mode=admin&do=menu_groups', '_self', 'sys_adm_m_i_menu_groups_adm', 3, 11),
 (13, 4, 'Иконки', 'Управление иконками пунктов меню панели управления', '/?mode=admin&do=menu_icons', '_self', 'sys_adm_m_i_icons', 4, 19),
 (14, 1, 'Статические страницы', 'Управление статическими страницами ', '/?mode=admin&do=statics', '_self', 'sys_adm_m_i_statics', 2, 20),
 (15, 5, 'Настройки сайта', 'Основные настройки сайта', '/?mode=admin&do=settings', '_self', 'sys_adm_m_i_settings', 1, 6),
 (16, 1, 'Мониторинг серверов', 'Управление серверами мониторинга', '/?mode=admin&do=monitoring', '_self', 'sys_adm_m_i_monitor', 3, 21),
 (17, 1, 'Модули', 'Управление модулями', '/?mode=admin&do=modules', '_self', 'sys_adm_m_i_modules', 4, 22),
-(18, 1, 'Лог действий', 'Журнал действий пользователей', '/?mode=admin&do=logs', '_self', 'sys_adm_m_i_logs', 5, 23);
+(18, 1, 'Лог действий', 'Журнал действий пользователей', '/?mode=admin&do=logs', '_self', 'sys_adm_m_i_logs', 5, 23),
+(19, 1, 'Блоки', 'Управление Блоками', '/?mode=admin&do=blocks', '_self', 'sys_adm_m_i_blocks', 6, 18);
 #line
 CREATE TABLE IF NOT EXISTS `mcr_menu_adm_groups` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -149,7 +159,8 @@ INSERT INTO `mcr_menu_adm_icons` (`id`, `title`, `img`) VALUES
 (20, 'Два листа', 'pages.png'),
 (21, 'Монитор', 'monitor.png'),
 (22, 'Сеть', 'network.png'),
-(23, 'Открытая книга', 'logs.png');
+(23, 'Открытая книга', 'logs.png'),
+(24, 'Пустое древо', 'gealogy.png');
 #line
 CREATE TABLE IF NOT EXISTS `mcr_monitoring` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -352,7 +363,12 @@ INSERT INTO `mcr_permissions` (`id`, `title`, `description`, `value`, `system`, 
 (106, 'Бан/разбан пользователей', 'Доступ к банам и разбанам пользователей', 'sys_adm_users_ban', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
 (107, 'Редактирование модулей', 'Доступ к редактированию модулей', 'sys_adm_modules_edit', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
 (108, 'Удаление просмотров', 'Доступ к удалению просмотров новостей', 'sys_adm_news_views_delete', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
-(109, 'Удаление голосов', 'Доступ к удалению голосов новостей', 'sys_adm_news_votes_delete', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}');
+(109, 'Удаление голосов', 'Доступ к удалению голосов новостей', 'sys_adm_news_votes_delete', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
+(110, 'Управление блоками', 'Доступ к управлению блоками', 'sys_adm_blocks', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
+(111, 'Пункт меню "Блоки"', 'Доступ к пункту меню "Блоки" в панели управления.', 'sys_adm_m_i_blocks', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
+(112, 'Редактирование блоков', 'Доступ к редактированию блоков', 'sys_adm_blocks_edit', 1, 'boolean', 'false', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
+(113, 'Доступ к блоку онлайна', 'Дает доступ к просмотру блока онлайн статистики', 'block_online', 0, 'boolean', 'true', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}'),
+(114, 'Доступ к блоку баннера', 'Дает доступ к просмотру блока баннера', 'block_banner', 1, 'boolean', 'true', '{"time_create":1005553535,"time_last":1005553535,"login_create":"admin","login_last":"admin"}');
 #line
 CREATE TABLE IF NOT EXISTS `mcr_statics` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -368,56 +384,56 @@ CREATE TABLE IF NOT EXISTS `mcr_statics` (
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
-CREATE TABLE IF NOT EXISTS `mcr_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `gid` int(11) NOT NULL DEFAULT '1',
-  `login` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
-  `email` varchar(64) CHARACTER SET latin1 NOT NULL DEFAULT '',
-  `password` varchar(128) CHARACTER SET latin1 NOT NULL DEFAULT '',
-  `uuid` varchar(64) NOT NULL DEFAULT '',
-  `salt` varchar(10) NOT NULL DEFAULT '',
-  `tmp` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
-  `is_skin` tinyint(1) NOT NULL DEFAULT '0',
-  `is_cloak` tinyint(1) NOT NULL DEFAULT '0',
-  `ip_create` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
-  `ip_last` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
-  `color` varchar(24) NOT NULL DEFAULT '',
-  `data` text NOT NULL,
-  `ban_server` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `login` (`login`,`email`),
-  KEY `gid` (`gid`),
-  KEY `login_2` (`login`)
+CREATE TABLE IF NOT EXISTS `~us~` (
+  `~us_id~` int(11) NOT NULL AUTO_INCREMENT,
+  `~us_gid~` int(11) NOT NULL DEFAULT '1',
+  `~us_login~` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `~us_email~` varchar(64) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `~us_pass~` varchar(128) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `~us_uuid~` varchar(64) NOT NULL DEFAULT '',
+  `~us_salt~` varchar(10) NOT NULL DEFAULT '',
+  `~us_tmp~` varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `~us_is_skin~` tinyint(1) NOT NULL DEFAULT '0',
+  `~us_is_cloak~` tinyint(1) NOT NULL DEFAULT '0',
+  `~us_ip_create~` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
+  `~us_ip_last~` varchar(15) CHARACTER SET latin1 NOT NULL DEFAULT '127.0.0.1',
+  `~us_color~` varchar(24) NOT NULL DEFAULT '',
+  `~us_data~` text NOT NULL,
+  `~us_ban_server~` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`~us_id~`),
+  UNIQUE KEY `~us_login~` (`~us_login~`,`~us_email~`),
+  KEY `~us_gid~` (`~us_gid~`),
+  KEY `~us_login~_2` (`~us_login~`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
 ALTER TABLE `mcr_comments`
-  ADD CONSTRAINT `mcr_comments_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `mcr_comments_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `mcr_comments_ibfk_1` FOREIGN KEY (`nid`) REFERENCES `mcr_news` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_files`
-  ADD CONSTRAINT `mcr_files_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `mcr_files_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_iconomy`
-  ADD CONSTRAINT `mcr_iconomy_ibfk_1` FOREIGN KEY (`login`) REFERENCES `mcr_users` (`login`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `mcr_iconomy_ibfk_1` FOREIGN KEY (`login`) REFERENCES `~us~` (`~us_login~`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_menu_adm`
   ADD CONSTRAINT `mcr_menu_adm_ibfk_1` FOREIGN KEY (`gid`) REFERENCES `mcr_menu_adm_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_news`
   ADD CONSTRAINT `mcr_news_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `mcr_news_cats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `mcr_news_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `mcr_news_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_news_views`
-  ADD CONSTRAINT `mcr_news_views_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `mcr_news_views_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `mcr_news_views_ibfk_1` FOREIGN KEY (`nid`) REFERENCES `mcr_news` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
 ALTER TABLE `mcr_news_votes`
-  ADD CONSTRAINT `mcr_news_votes_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `mcr_news_votes_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `mcr_news_votes_ibfk_1` FOREIGN KEY (`nid`) REFERENCES `mcr_news` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `mcr_statics`
-  ADD CONSTRAINT `mcr_statics_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `mcr_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line
-ALTER TABLE `mcr_users`
-  ADD CONSTRAINT `mcr_users_ibfk_1` FOREIGN KEY (`gid`) REFERENCES `mcr_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `mcr_statics`
+  ADD CONSTRAINT `mcr_statics_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `~us~` (`~us_id~`) ON DELETE CASCADE ON UPDATE CASCADE;
+#line
+ALTER TABLE `~us~`
+  ADD CONSTRAINT `~us~_ibfk_1` FOREIGN KEY (`~us_gid~`) REFERENCES `~ug~` (`~ug_id~`) ON DELETE CASCADE ON UPDATE CASCADE;
 #line

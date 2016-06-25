@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_settings')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['settings'] => BASE_URL."?mode=admin&do=settings"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['settings'] => ADMIN_URL."&do=settings"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -105,7 +105,7 @@ class submodule{
 
 	private function main(){
 
-		$cfg = $this->config->main;
+		$cfg = $this->cfg->main;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$cfg['s_name']		= $this->core->safestr(@$_POST['s_name']);
@@ -139,7 +139,7 @@ class submodule{
 
 			$cfg['kc_private']	= $this->core->safestr(@$_POST['kc_private']);
 
-			if(!$this->config->savecfg($cfg)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings'); }
+			if(!$this->cfg->savecfg($cfg)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -165,7 +165,7 @@ class submodule{
 	private function to_int_keys($array=array()){
 		if(empty($array)){ return false; }
 
-		$cfg = $this->config->pagin;
+		$cfg = $this->cfg->pagin;
 
 		foreach($array as $key => $value){
 			$cfg[$key] = (intval($value)<=0) ? 1 : intval($value);
@@ -176,7 +176,7 @@ class submodule{
 
 	private function pagin(){
 
-		$cfg = $this->config->pagin;
+		$cfg = $this->cfg->pagin;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$post = $_POST;
@@ -194,7 +194,7 @@ class submodule{
 
 			$cfg = $this->to_int_keys($post);
 
-			if(!$this->config->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=pagin'); }
+			if(!$this->cfg->savecfg($cfg, 'pagin.php', 'pagin')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=pagin'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -214,7 +214,7 @@ class submodule{
 
 	private function _mail(){
 
-		$cfg = $this->config->mail;
+		$cfg = $this->cfg->mail;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
@@ -234,7 +234,7 @@ class submodule{
 
 			$cfg['smtp_pass']		= $this->core->safestr(@$_POST['smtp_pass']);
 
-			if(!$this->config->savecfg($cfg, 'mail.php', 'mail')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=mail'); }
+			if(!$this->cfg->savecfg($cfg, 'mail.php', 'mail')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=mail'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -273,7 +273,7 @@ class submodule{
 
 	private function search(){
 
-		$cfg = $this->config->search;
+		$cfg = $this->cfg->search;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
@@ -288,7 +288,7 @@ class submodule{
 				"permissions" => $this->core->safestr(@$_POST['permissions']),
 			);
 
-			if(!$this->config->savecfg($cfg, 'search.php', 'search')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=search'); }
+			if(!$this->cfg->savecfg($cfg, 'search.php', 'search')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=search'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -310,7 +310,7 @@ class submodule{
 
 		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/settings/header.html");
 
-		$cfg = $this->config->func;
+		$cfg = $this->cfg->func;
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
@@ -322,7 +322,7 @@ class submodule{
 
 			$cfg['close_time'] = (@$_POST['close_time']=='') ? 0 : intval(strtotime(@$_POST['close_time']));
 
-			if(!$this->config->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=functions'); }
+			if(!$this->cfg->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=functions'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -361,7 +361,7 @@ class submodule{
 			
 			$db['port'] = intval(@$_POST['port']);
 
-			if(!$this->config->savecfg($db, 'db.php', 'db')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=base'); }
+			if(!$this->cfg->savecfg($db, 'db.php', 'db')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=base'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);

@@ -1,0 +1,36 @@
+<?php
+
+$lng = array(
+	'mod_name' => 'Панель управления',
+	'menu' => 'Меню сайта',
+	'menu_top_lvl' => 'Верхний уровень',
+	'menu_not_selected' => 'Не выбрано ни одного пункта',
+	'menu_del_elements' => 'Удалено элементов: ',
+	'menu_add' => 'Добавление',
+	'menu_edit' => 'Редактирование',
+	'menu_edit_btn' => 'Сохранить',
+	'menu_add_btn' => 'Добавить',
+	'menu_perm_not_exist' => 'Привилегия не существует',
+	'menu_add_success' => 'Пункт меню успешно добавлен',
+	'menu_edit_success' => 'Пункт меню успешно изменен',
+	'menu_add_page_name' => 'Добавление меню',
+	'menu_edit_page_name' => 'Редактирование меню',
+	'menu_field_name' => 'Название',
+	'menu_field_link' => 'Ссылка',
+	'menu_field_pos' => 'Позиция',
+	'menu_field_parent' => 'Родитель',
+	'menu_field_action' => 'Действие',
+	'menu_field_action2' => 'Действие с меню',
+	'menu_field_target' => 'Открытие',
+	'menu_target_self' => 'В текущей вкладке',
+	'menu_target_blank' => 'В новой вкладке',
+	'menu_field_access' => 'Уровень доступа',
+	'menu_accept' => 'Удаление пунктов меню приведет к удалению всех входящих в них пунктов. Вы уверены, что хотите удалить выбранные элементы?',
+	'menu_empty' => 'Нет доступных пунктов меню',
+	'log_add_menu' => 'Добавление пунктов меню сайта',
+	'log_del_menu' => 'Удаление пунктов меню сайта',
+	'log_edit_menu' => 'Редактирование пунктов меню сайта',
+	'log_menu' => 'в ПУ',
+);
+
+?>

@@ -3,13 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $lng, $lng_m, $user;
+	private $core, $db, $cfg, $lng, $lng_m, $user;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng;
 		$this->lng_m	= $core->lng_m;
 
@@ -65,13 +65,13 @@ class module{
 
 			if(!is_writable(MCR_ROOT.'uploads') || !is_readable(MCR_ROOT.'uploads')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_uploads'], 2, 'install/?mode=step_1'); }
 
-			if(!is_writable(MCR_ROOT.'uploads/cloaks') || !is_readable(MCR_ROOT.'uploads/cloaks')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_cloaks'], 2, 'install/?mode=step_1'); }
+			if(!is_writable(MCR_ROOT.$this->cfg->main['cloak_path']) || !is_readable(MCR_ROOT.$this->cfg->main['cloak_path'])){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_cloaks'], 2, 'install/?mode=step_1'); }
 
 			if(!is_writable(MCR_ROOT.'uploads/panel-icons') || !is_readable(MCR_ROOT.'uploads/panel-icons')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_icons'], 2, 'install/?mode=step_1'); }
 
-			if(!is_writable(MCR_ROOT.'uploads/skins') || !is_readable(MCR_ROOT.'uploads/skins')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_skins'], 2, 'install/?mode=step_1'); }
+			if(!is_writable(MCR_ROOT.$this->cfg->main['skin_path']) || !is_readable(MCR_ROOT.$this->cfg->main['skin_path'])){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_skins'], 2, 'install/?mode=step_1'); }
 
-			if(!is_writable(MCR_ROOT.'uploads/skins/interface') || !is_readable(MCR_ROOT.'uploads/skins/interface')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_intf'], 2, 'install/?mode=step_1'); }
+			if(!is_writable(MCR_ROOT.$this->cfg->main['skin_path'].'interface') || !is_readable(MCR_ROOT.$this->cfg->main['skin_path'].'interface')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_intf'], 2, 'install/?mode=step_1'); }
 
 			if(!is_writable(MCR_ROOT.'uploads/smiles') || !is_readable(MCR_ROOT.'uploads/smiles')){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_perm_smiles'], 2, 'install/?mode=step_1'); }
 
@@ -97,13 +97,13 @@ class module{
 
 			"FOLDER_UPLOADS" => (is_writable(MCR_ROOT.'uploads') && is_readable(MCR_ROOT.'uploads')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
 
-			"FOLDER_CLOAKS" => (is_writable(MCR_ROOT.'uploads/cloaks') && is_readable(MCR_ROOT.'uploads/cloaks')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
+			"FOLDER_CLOAKS" => (is_writable(MCR_ROOT.$this->cfg->main['cloak_path']) && is_readable(MCR_ROOT.$this->cfg->main['cloak_path'])) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
+
+			"FOLDER_SKINS" => (is_writable(MCR_ROOT.$this->cfg->main['skin_path']) && is_readable(MCR_ROOT.$this->cfg->main['skin_path'])) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
 
 			"FOLDER_ICONS" => (is_writable(MCR_ROOT.'uploads/panel-icons') && is_readable(MCR_ROOT.'uploads/panel-icons')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
 
-			"FOLDER_SKINS" => (is_writable(MCR_ROOT.'uploads/skins') && is_readable(MCR_ROOT.'uploads/skins')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
-
-			"FOLDER_INTERF" => (is_writable(MCR_ROOT.'uploads/skins/interface') && is_readable(MCR_ROOT.'uploads/skins')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
+			"FOLDER_INTERF" => (is_writable(MCR_ROOT.$this->cfg->main['skin_path'].'interface') && is_readable(MCR_ROOT.$this->cfg->main['skin_path'])) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
 
 			"FOLDER_SMILES" => (is_writable(MCR_ROOT.'uploads/smiles') && is_readable(MCR_ROOT.'uploads/smiles')) ? '<b class="text-success">'.$this->lng['yes'].'</b>' : '<b class="text-error">'.$this->lng['no'].'</b>',
 		);

@@ -46,8 +46,8 @@ if ( !class_exists('KeyCAPTCHA_CLASS') )
 		function __construct($a_js_code='', $core=false)
 		{
 			$this->core = $core;
-			$this->p_kc_user_id = $core->config->main['kc_public'];
-			$this->p_kc_private_key = $core->config->main['kc_private'];
+			$this->p_kc_user_id = $core->cfg->main['kc_public'];
+			$this->p_kc_private_key = $core->cfg->main['kc_private'];
 
 			if ( $a_js_code != '' ) {
 				$this->p_kc_js_code = $a_js_code;

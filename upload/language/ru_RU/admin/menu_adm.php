@@ -1,0 +1,38 @@
+<?php
+
+$lng = array(
+	'mod_name' => 'Панель управления',
+	'manucp' => 'Меню ПУ',
+	'mcp_not_selected' => 'Не выбрано ни одного пункта',
+	'mcp_del_elements' => 'Удалено элементов: ',
+	'mcp_add' => 'Добавление',
+	'mcp_edit' => 'Редактирование',
+	'mcp_perm_not_exist' => 'Привилегия не существует',
+	'mcp_add_success' => 'Пункт меню успешно добавлен',
+	'mcp_edit_success' => 'Пункт меню успешно изменен',
+	'mcp_add_page_name' => 'Добавление меню',
+	'mcp_edit_page_name' => 'Редактирование меню',
+	'mcp_edit_btn' => 'Сохранить',
+	'mcp_add_btn' => 'Добавить',
+	'mcp_top_lvl' => 'Верхний уровень',
+	'mcp_field_name' => 'Название',
+	'mcp_field_group' => 'Группа',
+	'mcp_field_link' => 'Ссылка',
+	'mcp_field_desc' => 'Описание',
+	'mcp_field_priority' => 'Приоритет',
+	'mcp_field_icon' => 'Иконка',
+	'mcp_field_action' => 'Действие',
+	'mcp_field_action2' => 'Действие с меню',
+	'mcp_field_target' => 'Открытие',
+	'mcp_target_self' => 'В текущей вкладке',
+	'mcp_target_blank' => 'В новой вкладке',
+	'mcp_field_access' => 'Уровень доступа',
+	'mcp_accept' => 'Вы уверены, что хотите удалить выбранные элементы?',
+	'mcp_empty' => 'Нет доступных пунктов меню',
+	'log_add_mcp' => 'Добавление пункта меню панели управления',
+	'log_del_mcp' => 'Удаление пунктов меню панели управления',
+	'log_edit_mcp' => 'Редактирование пункта меню в панели управления',
+	'log_mcp' => 'в ПУ',
+);
+
+?>

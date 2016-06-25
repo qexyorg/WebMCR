@@ -1,5 +1,7 @@
 <?php
 
+if(!defined("MCR")){ exit("Hacking Attempt!"); }
+
 $smiles = array(
 	"[:)]"			=> "1.gif",
 	"[:(]"			=> "2.gif",

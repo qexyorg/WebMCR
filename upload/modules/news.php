@@ -3,13 +3,12 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $user, $lng;
-	public $cfg = array();
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
@@ -55,8 +54,8 @@ class module{
 
 	private function news_array($cid=false){
 
-		$start		= $this->core->pagination($this->config->pagin['news'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['news']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['news'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['news']; // Set end pagination
 
 		$where		= "";
 
@@ -140,7 +139,7 @@ class module{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['news'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['news'], $page, $ar[0]),
 			"NEWS" => $this->news_array($cid)
 		);
 
@@ -154,17 +153,21 @@ class module{
 			return $this->core->sp(MCR_THEME_MOD."news/comments/comment-access.html");
 		}
 
-		$start		= $this->core->pagination($this->config->pagin['comments'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['comments']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['comments'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['comments']; // Set end pagination
+
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+		$us_f		= $ctables['users']['fields'];
 
 		$query = $this->db->query("SELECT `c`.id, `c`.text_html, `c`.uid, `c`.`data`,
-										`u`.login, `u`.`color`,
-										`g`.`color` AS `gcolor`
+										`u`.`{$us_f['login']}`, `u`.`{$us_f['color']}`,
+										`g`.`{$ug_f['color']}` AS `gcolor`
 									FROM `mcr_comments` AS `c`
-									LEFT JOIN `mcr_users` AS `u`
-										ON `u`.id=`c`.uid
-									LEFT JOIN `mcr_groups` AS `g`
-										ON `g`.id=`u`.gid
+									LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
+										ON `u`.`{$us_f['id']}`=`c`.uid
+									LEFT JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
+										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
 									WHERE `c`.nid='$nid'
 									ORDER BY `c`.id DESC
 									LIMIT $start, $end");
@@ -198,9 +201,9 @@ class module{
 				$act_get = $this->core->sp(MCR_THEME_MOD."news/comments/comment-act-get.html", $data);
 			}
 
-			$login = (is_null($ar['login'])) ? 'Пользователь удален' : $this->db->HSC($ar['login']);
+			$login = (is_null($ar[$us_f['login']])) ? 'Пользователь удален' : $this->db->HSC($ar[$us_f['login']]);
 
-			$color = (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+			$color = (!empty($ar[$us_f['color']])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar[$us_f['color']]);
 
 			$com_data	= array(
 				"ID"				=> $id,
@@ -246,7 +249,7 @@ class module{
 		$count = intval($ar[0]);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['comments'], $page, $count),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['comments'], $page, $count),
 			"COMMENTS" => $this->comments_array($nid),
 			"COUNT" => $count,
 			"COMMENTS_FORM"	=> $this->get_comment_form()

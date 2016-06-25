@@ -3,13 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $lng, $lng_m, $user;
+	private $core, $db, $cfg, $lng, $lng_m, $user;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng;
 		$this->lng_m	= $core->lng_m;
 
@@ -59,29 +59,64 @@ class module{
 				$this->core->notify($this->lng['e_msg'], $this->lng_m['e_email_format'], 2, 'install/?mode=step_3');
 			}
 
-			$login = $this->db->safesql(@$_POST['login']);
-			$email = $this->db->safesql(@$_POST['email']);
+			$login		= $this->db->safesql(@$_POST['login']);
+			$email		= $this->db->safesql(@$_POST['email']);
 
-			$salt = $this->db->safesql($this->core->random());
-			$password = $this->core->gen_password(@$_POST['password'], $salt, $method);
-			$password = $this->db->safesql($password);
-			$uuid = $this->db->safesql($this->user->logintouuid(@$_POST['login']));
-			$ip = $this->user->ip;
+			$salt		= $this->db->safesql($this->core->random());
+			$password	= $this->core->gen_password(@$_POST['password'], $salt, $method);
+			$password	= $this->db->safesql($password);
+			$uuid		= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
+			$ip			= $this->user->ip;
 
 			$data = array(
-				"time_create" => time(),
-				"time_last" => time(),
-				"firstname" => "",
-				"lastname" => "",
-				"gender" => 0,
-				"birthday" => 0
+				"time_create"	=> time(),
+				"time_last"		=> time(),
+				"firstname"		=> "",
+				"lastname"		=> "",
+				"gender"		=> 0,
+				"birthday"		=> 0
 			);
 
 			$data = $this->db->safesql(json_encode($data));
 
 			$tables = file(MCR_ROOT.'install/tables.sql');
 
+			$ctables	= $this->cfg->db['tables'];
+
+			$ug_f		= $ctables['ugroups']['fields'];
+			$ic_f		= $ctables['iconomy']['fields'];
+			$logs_f		= $ctables['logs']['fields'];
+			$us_f		= $ctables['users']['fields'];
+
 			$string = "";
+
+			$search = array(
+				'~ug~',
+				'~ug_id~', '~ug_title~', '~ug_text~', '~ug_color~', '~ug_perm~',
+
+				'~ic~',
+				'~ic_id~', '~ic_login~', '~ic_money~', '~ic_rc~', '~ic_bank~',
+
+				'~logs~',
+				'~logs_id~', '~logs_uid~', '~logs_msg~', '~logs_date~',
+
+				'~us~',
+				'~us_id~', '~us_gid~', '~us_login~', '~us_email~', '~us_pass~', '~us_uuid~', '~us_salt~', '~us_tmp~', '~us_is_skin~', '~us_is_cloak~', '~us_ip_create~', '~us_ip_last~', '~us_color~', '~us_data~', '~us_ban_server~',
+			);
+
+			$replace = array(
+				$this->cfg->tabname('ugroups'),
+				$ug_f['id'], $ug_f['title'], $ug_f['text'], $ug_f['color'], $ug_f['perm'],
+
+				$this->cfg->tabname('iconomy'),
+				$ic_f['id'], $ic_f['login'], $ic_f['money'], $ic_f['rm'], $ic_f['bank'],
+
+				$this->cfg->tabname('logs'),
+				$logs_f['id'], $logs_f['uid'], $logs_f['msg'], $logs_f['date'],
+
+				$this->cfg->tabname('users'),
+				$us_f['id'], $us_f['group'], $us_f['login'], $us_f['email'], $us_f['pass'], $us_f['uuid'], $us_f['salt'], $us_f['tmp'], $us_f['is_skin'], $us_f['is_cloak'], $us_f['ip_create'], $us_f['ip_last'], $us_f['color'], $us_f['data'], $us_f['ban_server'],
+			);
 
 			foreach($tables as $key => $value){
 
@@ -96,12 +131,14 @@ class module{
 					continue;
 				}
 
+				$value = str_replace($search, $replace, $value);
+
 				$string .= $value;
 
 			}
 
-			$sql1 = $this->db->query("INSERT INTO `mcr_users`
-											(`gid`, `login`, `email`, `password`, `uuid`, `salt`, `ip_create`, `ip_last`, `data`)
+			$sql1 = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
+											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['data']}`)
 										VALUES
 											('3', '$login', '$email', '$password', '$uuid', '$salt', '$ip', '$ip', '$data')");
 
@@ -109,24 +146,24 @@ class module{
 
 			$url = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'install'));
 
-			$sql2 = $this->db->query("INSERT INTO `mcr_iconomy`
-										(`login`, `money`, `realmoney`, `bank`)
+			$sql2 = $this->db->query("INSERT INTO `{$this->cfg->tabname('iconomy')}`
+										(`{$ic_f['login']}`, `{$ic_f['money']}`, `{$ic_f['rm']}`, `{$ic_f['bank']}`)
 									VALUES
 										('$login', 0, 0, 0)");
 
 			if(!$sql2){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_add_economy'], 2, 'install/?mode=step_3'); }
 			
-			$sql9 = $this->db->query("UPDATE `mcr_groups` SET id='0' WHERE id='4'");
+			$sql9 = $this->db->query("UPDATE `{$this->cfg->tabname('ugroups')}` SET `{$ug_f['id']}`='0' WHERE `{$ug_f['id']}`='4'");
 
 			if(!$sql9){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_upd_group'], 2, 'install/?mode=step_3'); }
 
-			$sql10 = $this->db->query("ALTER TABLE `mcr_groups` AUTO_INCREMENT=0");
+			$sql10 = $this->db->query("ALTER TABLE `{$this->cfg->tabname('ugroups')}` AUTO_INCREMENT=0");
 
 			if(!$sql10){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_upd_group'], 2, 'install/?mode=step_3'); }
 
-			$this->config->main['crypt'] = $method;
+			$this->cfg->main['crypt'] = $method;
 
-			if(!$this->config->savecfg($this->config->main, 'main.php', 'main')){
+			if(!$this->cfg->savecfg($this->cfg->main, 'main.php', 'main')){
 				$this->core->notify($this->lng['e_msg'], $this->lng_m['e_settings'], 2, 'install/?mode=step_3');
 			}
 

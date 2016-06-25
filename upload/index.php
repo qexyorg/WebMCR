@@ -6,12 +6,12 @@ require_once("./system.php");
 
 $core->def_header = $core->sp(MCR_THEME_PATH."header.html");
 
-$mode = (isset($_GET['mode'])) ? $_GET['mode'] : $core->config->main['s_dpage'];
+$mode = (isset($_GET['mode'])) ? $_GET['mode'] : $core->cfg->main['s_dpage'];
 
-if($core->config->main['install']){ $core->notify($core->lng['e_attention'], $core->lng['e_install'], 4, 'install/'); }
+if($core->cfg->main['install']){ $core->notify($core->lng['e_attention'], $core->lng['e_install'], 4, 'install/'); }
 
-if($core->config->func['close'] && !$core->is_access('sys_adm_main')){
-	if($core->config->func['close_time']<=0 || $core->config->func['close_time']>time()){
+if($core->cfg->func['close'] && !$core->is_access('sys_adm_main')){
+	if($core->cfg->func['close_time']<=0 || $core->cfg->func['close_time']>time()){
 		$mode = ($mode=='auth') ? 'auth' : 'close';
 	}
 }
@@ -46,7 +46,7 @@ $data_global = array(
 	"L_BLOCKS"		=> $core->load_def_blocks(),
 	"HEADER"		=> $core->header,
 	"DEF_HEADER"	=> $core->def_header,
-	"CFG"			=> $core->config->main,
+	"CFG"			=> $core->cfg->main,
 	"ADVICE"		=> $core->advice(),
 	"MENU"			=> $core->menu->_list(),
 	"BREADCRUMBS"	=> $core->bc,
@@ -56,7 +56,7 @@ $data_global = array(
 // Write global template
 echo $core->sp(MCR_THEME_PATH."global.html", $data_global);
 
-if(!$core->config->main['debug'] || !@$core->user->permissions->sys_debug){ exit; }
+if(!$core->cfg->main['debug'] || !@$core->user->permissions->sys_debug){ exit; }
 
 $data_debug = array(
 	"PLT" => number_format(microtime(true)-DEBUG_PLT,3),

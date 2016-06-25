@@ -1,0 +1,5 @@
+.form-block .block-content .block-profile { text-align: center; /* border: 1px solid; */ }
+.form-block .block-content .block-profile .avatar { display: inline-block; vertical-align: top; }
+.form-block .block-content .block-profile .avatar img { width: 128px; height: 128px; }
+.form-block .block-content .block-profile .info { text-align: left; display: inline-block; vertical-align: top; list-style: none; margin: 0px; margin-left: 20px; width: 50%; }
+.form-block .block-content .block-profile .info li { margin-bottom: 6px; }

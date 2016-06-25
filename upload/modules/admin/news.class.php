@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core = $core;
 		$this->db	= $core->db;
-		$this->config = $core->config;
+		$this->cfg	= $core->cfg;
 		$this->user	= $core->user;
 		$this->lng	= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_news')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['news'] => BASE_URL."?mode=admin&do=news"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['news'] => ADMIN_URL."&do=news"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,8 @@ class submodule{
 
 	private function news_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_news'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_news']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_news'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_news']; // Set end pagination
 
 		$where		= "";
 		$sort		= "`n`.id";
@@ -97,7 +97,7 @@ class submodule{
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_news'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_news'], $page.'&pid=', $ar[0]),
 			"NEWS" => $this->news_array()
 		);
 
@@ -179,9 +179,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_news_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=news'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['news'] => BASE_URL."?mode=admin&do=news",
-			$this->lng['news_add'] => BASE_URL."?mode=admin&do=news&op=add",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['news'] => ADMIN_URL."&do=news",
+			$this->lng['news_add'] => ADMIN_URL."&do=news&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -316,9 +316,9 @@ class submodule{
 		$data = json_decode($ar['data']);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['news'] => BASE_URL."?mode=admin&do=news",
-			$this->lng['news_edit'] => BASE_URL."?mode=admin&do=news&op=edit&id=$id"
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['news'] => ADMIN_URL."&do=news",
+			$this->lng['news_edit'] => ADMIN_URL."&do=news&op=edit&id=$id"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

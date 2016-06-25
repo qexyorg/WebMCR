@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_monitoring')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['monitoring'] => ADMIN_URL."&do=monitoring"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,8 @@ class submodule{
 
 	private function monitor_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_monitoring'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_monitoring']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_monitoring'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_monitoring']; // Set end pagination
 
 		$where		= "";
 		$sort		= "id";
@@ -95,7 +95,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_monitoring'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_monitoring'], $page.'&pid=', $ar[0]),
 			"SERVERS" => $this->monitor_array()
 		);
 
@@ -135,9 +135,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_monitoring_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=monitoring'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring",
-			$this->lng['mon_add'] => BASE_URL."?mode=admin&do=monitoring&op=add",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['monitoring'] => ADMIN_URL."&do=monitoring",
+			$this->lng['mon_add'] => ADMIN_URL."&do=monitoring&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -173,10 +173,10 @@ class submodule{
 			"PAGE"		=> $this->lng['mon_add_page_name'],
 			"TITLE"		=> "",
 			"TEXT"		=> "",
-			"IP"		=> "localhost",
+			"IP"		=> "127.0.0.1",
 			"PORT"		=> "25565",
 			"TYPES"		=> $this->types(),
-			"CACHE"		=> intval($ar['updater']),
+			"CACHE"		=> 60,
 			"ERROR"		=> "",
 			"BUTTON"	=> $this->lng['mon_add_btn']
 		);
@@ -198,9 +198,9 @@ class submodule{
 		$ar = $this->db->fetch_assoc($query);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['monitoring'] => BASE_URL."?mode=admin&do=monitoring",
-			$this->lng['mon_edit'] => BASE_URL."?mode=admin&do=monitoring&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['monitoring'] => ADMIN_URL."&do=monitoring",
+			$this->lng['mon_edit'] => ADMIN_URL."&do=monitoring&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

@@ -1,13 +1,15 @@
 <?php
 
+if(!defined("MCR")){ exit("Hacking Attempt!"); }
+
 class menu{
-	private $core, $db; // , $user, $lng
+	private $core, $db, $user, $cfg;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		//$this->lng	= $core->lng;
 	}
 
@@ -48,8 +50,8 @@ class menu{
 
 	private function is_active($url){
 
-		if($this->config->main['s_root']==$url || $this->config->main['s_root_full']==$url){
-			if(!isset($_GET['mode']) || @$_GET['mode']==$this->config->main['s_dpage']){
+		if($this->cfg->main['s_root']==$url || $this->cfg->main['s_root_full']==$url){
+			if(!isset($_GET['mode']) || @$_GET['mode']==$this->cfg->main['s_dpage']){
 				return true;
 			}
 		}else{

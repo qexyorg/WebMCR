@@ -1,22 +1,24 @@
 <?php
 
+if(!defined("MCR")){ exit("Hacking Attempt!"); }
+
 class db{
 	public $obj = false;
 
 	public $result = false;
 
-	private $config;
+	private $cfg;
 
 	public $count_queries = 0;
 	public $count_queries_real = 0;
 
-	public function __construct($config){
+	public function __construct($cfg){
 
-		$this->config = $config;
+		$this->cfg = $cfg;
 
-		$this->obj = @mysql_connect($config->db['host'].':'.$config->db['port'], $config->db['user'], $config->db['pass']);
+		$this->obj = @mysql_connect($cfg->db['host'].':'.$cfg->db['port'], $cfg->db['user'], $cfg->db['pass']);
 
-		if(!@mysql_select_db($config->db['base'], $this->obj)){ return; }
+		if(!@mysql_select_db($cfg->db['base'], $this->obj)){ return; }
 
 		@mysql_set_charset("UTF8", $this->obj);
 
@@ -77,14 +79,17 @@ class db{
 	}
 
 	public function actlog($msg='', $uid=0){
-		if(!$this->config->db['log']){ return false; }
+		if(!$this->cfg->db['log']){ return false; }
 
 		$uid = intval($uid);
 		$msg = $this->safesql($msg);
 		$date = time();
 
-		$insert = $this->query("INSERT INTO `mcr_logs`
-										(uid, `message`, `date`)
+		$ctables	= $this->cfg->db['tables'];
+		$logs_f		= $ctables['logs']['fields'];
+
+		$insert = $this->query("INSERT INTO `{$this->cfg->tabname('logs')}`
+										(`{$logs_f['uid']}`, `{$logs_f['msg']}`, `{$logs_f['date']}`)
 									VALUES
 										('$uid', '$msg', '$date')");
 
@@ -107,7 +112,12 @@ class db{
 
 		$data = $this->safesql(json_encode($data));
 
-		$update = $this->query("UPDATE `mcr_users` SET `ip_last`='{$user->ip}', `data`='$data' WHERE id='{$user->id}'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->query("UPDATE `{$this->cfg->tabname('users')}`
+								SET `{$us_f['ip_last']}`='{$user->ip}', `{$us_f['data']}`='$data'
+								WHERE `{$us_f['id']}`='{$user->id}'");
 
 		if(!$update){ return false; }
 

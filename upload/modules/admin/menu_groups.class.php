@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_menu_groups')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['menugrp'] => ADMIN_URL."&do=menu_groups"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,8 @@ class submodule{
 
 	private function group_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_menu_groups'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_menu_groups']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_menu_groups'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_menu_groups']; // Set end pagination
 
 		$where		= "";
 		$sort		= "`g`.`id`";
@@ -98,7 +98,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_groups'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_menu_groups'], $page.'&pid=', $ar[0]),
 			"GROUPS" => $this->group_array()
 		);
 
@@ -138,9 +138,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_menu_groups_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_groups'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups",
-			$this->lng['mgrp_add'] => BASE_URL."?mode=admin&do=menu_groups&op=add",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['menugrp'] => ADMIN_URL."&do=menu_groups",
+			$this->lng['mgrp_add'] => ADMIN_URL."&do=menu_groups&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -197,9 +197,9 @@ class submodule{
 		$ar = $this->db->fetch_assoc($query);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['menugrp'] => BASE_URL."?mode=admin&do=menu_groups",
-			$this->lng['mgrp_edit'] => BASE_URL."?mode=admin&do=menu_groups&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['menugrp'] => ADMIN_URL."&do=menu_groups",
+			$this->lng['mgrp_edit'] => ADMIN_URL."&do=menu_groups&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

@@ -9,9 +9,9 @@ class core{
 
 	public $def_header	= '';
 
-	public $db, $user, $config = false;
+	public $db, $user, $cfg = false;
 
-	public $lng, $lng_m, $lng_b, $cfg_m = array();
+	public $lng, $lng_m, $lng_b, $cfg_m, $cfg_b = array();
 
 	public $csrf_time	= 3600;
 
@@ -23,16 +23,16 @@ class core{
 
 	public function __construct(){
 
-		// Load class config
-		require_once(MCR_TOOL_PATH.'config.class.php');
+		// Load class cfg
+		require(MCR_TOOL_PATH.'config.class.php');
 
-		// Create & set new object of config
-		$this->config = new config();
+		// Create & set new object of cfg
+		$this->cfg = new config();
 
-		if(!file_exists(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php')){ exit("Language path not found"); }
+		if(!file_exists(MCR_LANG_PATH.$this->cfg->main['s_lang'].'/system.php')){ exit("Language path not found"); }
 
 		// Load language package
-		require(MCR_LANG_PATH.$this->config->main['s_lang'].'/system.php');
+		require(MCR_LANG_PATH.$this->cfg->main['s_lang'].'/system.php');
 
 		// Set language var
 		$this->lng = $lng;
@@ -40,10 +40,10 @@ class core{
 		$this->title = $lng['t_main'];
 
 		// Load database class
-		require_once(MCR_TOOL_PATH.'db/'.$this->config->db['backend'].'.class.php');
+		require(MCR_TOOL_PATH.'db/'.$this->cfg->db['backend'].'.class.php');
 
 		// Create & set new object of database
-		$this->db = new db($this->config);
+		$this->db = new db($this->cfg);
 
 		// Load user class
 		require_once(MCR_TOOL_PATH.'user.class.php');
@@ -57,20 +57,25 @@ class core{
 		// Create & set new object of menu
 		$this->menu = new menu($this);
 
-		$base_url = ($this->config->main['install']) ? $this->base_url() : $this->config->main['s_root'];
+		$base_url = ($this->cfg->main['install']) ? $this->base_url() : $this->cfg->main['s_root'];
 
 		// Generate CSRF Secure key
 		define("MCR_SECURE_KEY", $this->gen_csrf_secure());// System constants
-		define('MCR_LANG', $this->config->main['s_lang']);
+		define('MCR_LANG', $this->cfg->main['s_lang']);
 		define('MCR_LANG_DIR', MCR_LANG_PATH.MCR_LANG.'/');
-		define('MCR_THEME_PATH', MCR_ROOT.'themes/'.$this->config->main['s_theme'].'/');
+		define('MCR_THEME_PATH', MCR_ROOT.'themes/'.$this->cfg->main['s_theme'].'/');
 		define('MCR_THEME_MOD', MCR_THEME_PATH.'modules/');
 		define('MCR_THEME_BLOCK', MCR_THEME_PATH.'blocks/');
 		define('BASE_URL', $base_url);
-		define('ADMIN_URL', BASE_URL.'?mode=admin');
-		define('STYLE_URL', BASE_URL.'themes/'.$this->config->main['s_theme'].'/');
+		define('ADMIN_MOD', 'mode=admin');
+		define('ADMIN_URL', BASE_URL.'?'.ADMIN_MOD);
+		define('STYLE_URL', BASE_URL.'themes/'.$this->cfg->main['s_theme'].'/');
 		define('UPLOAD_URL', BASE_URL.'uploads/');
+		define('SKIN_URL', BASE_URL.$this->cfg->main['skin_path']);
+		define('CLOAK_URL', BASE_URL.$this->cfg->main['cloak_path']);
 		define('LANG_URL', BASE_URL.'language/'.MCR_LANG.'/');
+		define('MCR_SKIN_PATH', MCR_ROOT.$this->cfg->main['skin_path']);
+		define('MCR_CLOAK_PATH', MCR_ROOT.$this->cfg->main['cloak_path']);
 
 		$bc = array(
 			$this->lng['e_msg'] => BASE_URL,
@@ -87,7 +92,7 @@ class core{
 
 		$time = time();
 
-		$new_key = $time.'_'.md5($this->user->ip.$this->config->main['mcr_secury'].$time);
+		$new_key = $time.'_'.md5($this->user->ip.$this->cfg->main['mcr_secury'].$time);
 
 		if(!isset($_COOKIE['mcr_secure'])){
 			setcookie("mcr_secure", $new_key, time()+$this->csrf_time, '/');
@@ -98,7 +103,7 @@ class core{
 
 		$old_time = intval($cookie[0]);
 
-		$old_key = md5($this->user->ip.$this->config->main['mcr_secury'].$old_time);
+		$old_key = md5($this->user->ip.$this->cfg->main['mcr_secury'].$old_time);
 
 		if(!isset($cookie[1]) || $cookie[1] !== $old_key || ($old_time+$this->csrf_time)<$time){
 			setcookie("mcr_secure", $new_key, time()+$this->csrf_time, '/');
@@ -224,7 +229,7 @@ class core{
 			// Prev pages +
 			$page_prev = '';
 
-			for($pp = $this->config->pagin['arrows']; $pp > 0; $pp--){
+			for($pp = $this->cfg->pagin['arrows']; $pp > 0; $pp--){
 
 				if($pid-$pp <= 0){ continue; }
 
@@ -249,7 +254,7 @@ class core{
 			// Next pages +
 			$page_next = '';
 
-			for($np = 1; $np <= $this->config->pagin['arrows']; $np++){
+			for($np = 1; $np <= $this->cfg->pagin['arrows']; $np++){
 
 				if($pid+$np > $max){ continue; }
 
@@ -313,7 +318,7 @@ class core{
 
 			$secure_var = $secure_key[1];
 			
-			$mcr_secure = $secure_time.'_'.md5($this->user->ip.$this->config->main['mcr_secury'].$secure_time);
+			$mcr_secure = $secure_time.'_'.md5($this->user->ip.$this->cfg->main['mcr_secury'].$secure_time);
 
 			if($mcr_secure!==$_POST['mcr_secure']){ $this->notify($this->lng['e_hack']); }
 		}
@@ -380,13 +385,14 @@ class core{
 
 		$data['LIST'] = $this->gen_bc_list($array);
 
-		if(!$this->config->func['breadcrumbs']){ return false; }
+		if(!$this->cfg->func['breadcrumbs']){ return false; }
 
 		return $this->sp(MCR_THEME_PATH."breadcrumbs/list.html", $data);
 	}
 
 	public function check_cfg($cfg){
-		$validator = array('MOD_ENABLE',
+		$validator = array(
+			'MOD_ENABLE',
 			'MOD_TITLE',
 			'MOD_DESC',
 			'MOD_AUTHOR',
@@ -400,6 +406,29 @@ class core{
 		$result = true;
 
 		foreach($validator as $key => $val){
+			if(!isset($cfg[$val])){ $result = false; }
+		}
+
+		return $result;
+	}
+
+	public function check_cfg_block($cfg){
+		$format = array(
+			'ENABLE',
+			'POSITION',
+			'TITLE',
+			'DESC',
+			'AUTHOR',
+			'SITE',
+			'EMAIL',
+			'VERSION',
+			'UPDATES',
+			'UPDATER'
+		);
+
+		$result = true;
+
+		foreach($format as $key => $val){
 			if(!isset($cfg[$val])){ $result = false; }
 		}
 
@@ -436,8 +465,6 @@ class core{
 		$this->cfg_m = $cfg;
 
 		$module = new module($this);
-
-		@$module->cfg = $cfg;
 		
 		if(!method_exists($module, "content")){ return $this->lng['e_mode_method']; }
 
@@ -462,7 +489,7 @@ class core{
 	 * @return String
 	 */
 	public function gen_password($string='', $salt='', $crypt=false){
-		if($crypt===false){ $crypt = $this->config->main['crypt']; }
+		if($crypt===false){ $crypt = $this->cfg->main['crypt']; }
 
 		switch($crypt) {
 			case 1: return sha1($string); break;
@@ -509,7 +536,7 @@ class core{
 
 		require_once(MCR_CONF_PATH.'modules/'.$mode.'.php');
 
-		require(MCR_LANG_PATH.$this->config->main['s_lang'].'/'.$mode.'.php');
+		require(MCR_LANG_PATH.$this->cfg->main['s_lang'].'/'.$mode.'.php');
 
 		if(!$cfg['MOD_ENABLE']){ return $this->sp(MCR_THEME_PATH."default_sp/mod_disable.html"); }
 
@@ -519,8 +546,6 @@ class core{
 
 		$module = new module($this);
 
-		$module->cfg = $cfg;
-
 		return $module->content();
 	}
 
@@ -529,38 +554,61 @@ class core{
 	 * @return Buffer string or false
 	 */
 	public function load_def_blocks(){
-		$list = scandir(MCR_SIDE_PATH);
 
-		if(empty($list)){ return false; }
+		$format = array('ENABLE', 'POSITION', 'TITLE', 'DESC', 'AUTHOR', 'SITE', 'EMAIL', 'VERSION', 'UPDATES', 'UPDATER');
+
+		$configs = scandir(MCR_CONF_PATH.'blocks');
+
+		if(empty($configs)){ return false; }
 
 		$content = '';
+		$blocks = array();
 
-		foreach($list as $key => $file){
+		foreach($configs as $key => $file){
+			$this->cfg_b = $cfg = false;
+			$this->lng_b = $lng = array();
+
 			if($file=='.' || $file=='..' || substr($file, -4)!='.php'){ continue; }
 
-			$expl = explode('_', $file);
+			include(MCR_CONF_PATH.'blocks/'.$file);
 
-			if(file_exists(MCR_LANG_DIR.'blocks/'.$expl[1])){
-				require_once(MCR_LANG_DIR.'blocks/'.$expl[1]);
-				$this->lng_b = $lng;
-			}else{
-				$this->lng_b = array();
+			if($cfg===false){ continue; }
+
+			$cfg_keys = array_keys($cfg);
+
+			$diff = array_diff($format, $cfg_keys);
+
+			if(!empty($diff) || !$cfg['ENABLE']){ continue; }
+
+			if(!file_exists(MCR_SIDE_PATH.$file)){ continue; }
+
+			include(MCR_SIDE_PATH.$file);
+
+			if(file_exists(MCR_LANG_DIR.'blocks/'.$file)){
+				include(MCR_LANG_DIR.'blocks/'.$file);
 			}
 			
-			include_once(MCR_SIDE_PATH.$file);
+			$this->lng_b = $lng;
 
-			$classname = 'block_'.substr($expl[1], 0, -4);
+			$this->cfg_b = $cfg;
+
+			$classname = 'block_'.substr($file, 0, -4);
 
 			if(!class_exists($classname)){ continue; }
 
 			$obj = new $classname($this);
 
-			if(!method_exists($obj, 'content')){ continue; }
+			if(!method_exists($obj, 'content')){ unset($obj); continue; }
 
-			$content .= $obj->content();
+			$blocks[$cfg['POSITION']] = $obj->content();
 
 			unset($obj);
+		}
 
+		ksort($blocks);
+
+		foreach($blocks as $key => $val){
+			$content .= $val;
 		}
 
 		return $content;
@@ -586,7 +634,7 @@ class core{
 	 */
 	public function advice(){
 
-		if(!$this->config->func['advice']){ return ''; }
+		if(!$this->cfg->func['advice']){ return ''; }
 
 		$data = file(MCR_THEME_PATH."default_sp/advice.txt");
 		$size = count($data);
@@ -689,29 +737,29 @@ class core{
 
 		//$mail->SMTPDebug = 3;
 
-		if($this->config->mail['smtp']){
+		if($this->cfg->mail['smtp']){
 			$mail->isSMTP();
-			$mail->Host = $this->config->mail['smtp_host'];			// Specify main and backup SMTP servers
+			$mail->Host = $this->cfg->mail['smtp_host'];			// Specify main and backup SMTP servers
 			$mail->SMTPAuth = true;									// Enable SMTP authentication
-			$mail->Username = $this->config->mail['smtp_user'];		// SMTP username
-			$mail->Password = $this->config->mail['smtp_pass'];		// SMTP password
+			$mail->Username = $this->cfg->mail['smtp_user'];		// SMTP username
+			$mail->Password = $this->cfg->mail['smtp_pass'];		// SMTP password
 			$mail->SMTPSecure = 'tls';								// Enable TLS encryption, `ssl` also accepted
 			$mail->Port = 587;										// TCP port to connect to
 		}
 
 		$mail->CharSet = 'UTF-8';
 		$mail->setLanguage('ru', MCR_LANG_DIR.'smpt/');
-		$mail->From = ($this->config->mail['smtp']) ? $this->config->mail['smtp_user'] : $this->config->mail['from'];
-		$mail->FromName = $this->config->mail['from_name'];
+		$mail->From = ($this->cfg->mail['smtp']) ? $this->cfg->mail['smtp_user'] : $this->cfg->mail['from'];
+		$mail->FromName = $this->cfg->mail['from_name'];
 		if(is_array($to)){
 			foreach($to as $key => $value){ $mail->addAddress($value); }
 		}else{
 			$mail->addAddress($to);
 		}
 		
-		$mail->addReplyTo($this->config->mail['reply'], $this->config->mail['reply_name']);
-		if($this->config->mail['cc']){ $mail->addCC($this->config->mail['from']); }
-		//$mail->addBCC($this->config->mail['bcc']);
+		$mail->addReplyTo($this->cfg->mail['reply'], $this->cfg->mail['reply_name']);
+		if($this->cfg->mail['cc']){ $mail->addCC($this->cfg->mail['from']); }
+		//$mail->addBCC($this->cfg->mail['bcc']);
 
 		$mail->isHTML(true);										// Set email format to HTML
 
@@ -724,12 +772,12 @@ class core{
 
 	public function captcha_check(){
 
-		if(!isset($this->captcha[$this->config->main['captcha']])){ return true; }
+		if(!isset($this->captcha[$this->cfg->main['captcha']])){ return true; }
 
-		switch($this->config->main['captcha']){
+		switch($this->cfg->main['captcha']){
 			case 1:
 				$response = @$_POST['g-recaptcha-response'];
-				$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$this->config->main['rc_private']."&response=".$response."&remoteip=".$this->user->ip);
+				$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$this->cfg->main['rc_private']."&response=".$response."&remoteip=".$this->user->ip);
 				$request = json_decode($request);
 
 				if(!$request->success){ return false; }
@@ -753,7 +801,7 @@ class core{
 	}
 
 	public function captcha(){
-		switch($this->config->main['captcha']){
+		switch($this->cfg->main['captcha']){
 			case 1: $content = $this->sp(MCR_THEME_PATH."captcha/recaptcha.html"); break;
 
 			case 2: require(MCR_TOOL_PATH.'libs/keycaptcha.php'); $kc = new KeyCAPTCHA_CLASS('', $this);
@@ -795,11 +843,11 @@ class core{
 	}
 
 	private function search_array($active = 'news'){
-		if(empty($this->config->search)){ return; }
+		if(empty($this->cfg->search)){ return; }
 
 		ob_start();
 
-		foreach($this->config->search as $key => $value){
+		foreach($this->cfg->search as $key => $value){
 			if(!$this->is_access($value['permissions'])){ continue; }
 
 			$data = array(

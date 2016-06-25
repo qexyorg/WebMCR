@@ -3,13 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $user, $config, $lng;
+	private $core, $db, $user, $cfg, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_manager')){ $this->core->js_notify($this->core->lng['e_403']); }
@@ -21,10 +21,13 @@ class submodule{
 		if($page<=0){ $this->core->js_notify($this->lng['fm_file_not_found']); }
 		$page = $page*$limit-$limit;
 
-		$query = $this->db->query("SELECT `f`.id, `f`.`uniq`, `f`.`name`, `f`.`oldname`, `f`.`data`, `f`.uid, `u`.login
+		$ctables	= $this->cfg->db['tables'];
+		$logs_f		= $ctables['logs']['fields'];
+
+		$query = $this->db->query("SELECT `f`.id, `f`.`uniq`, `f`.`name`, `f`.`oldname`, `f`.`data`, `f`.uid, `u`.`{$logs_f['uid']}`
 								FROM `mcr_files` AS `f`
-								LEFT JOIN `mcr_users` AS `u`
-									ON `u`.id=`f`.uid
+								LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
+									ON `u`.`{$logs_f['id']}`=`f`.uid
 								ORDER BY `f`.id DESC
 								LIMIT $page, $limit");
 
@@ -47,7 +50,7 @@ class submodule{
 			$list[] = array(
 				'link'		=> BASE_URL.'?mode=file&uniq='.$uniq,
 				'uid'		=> intval($ar['uid']),
-				'login'		=> $this->db->HSC($ar['login']),
+				'login'		=> $this->db->HSC($ar[$logs_f['login']]),
 				'oldname'	=> $this->db->HSC($oldname),
 				'date'		=> date('d.m.Y в H:i', $data['date_upload']),
 				'size'		=> floatval($data['size']),

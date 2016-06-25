@@ -3,13 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $lng, $lng_m, $user;
+	private $core, $db, $cfg, $lng, $lng_m, $user;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng;
 		$this->lng_m	= $core->lng_m;
 
@@ -28,7 +28,7 @@ class module{
 		if(isset($_SESSION['step_2'])){ $this->core->notify('', '', 4, 'install/?mode=step_3'); }
 
 		if(!isset($_SESSION['f_host'])){
-			$_SESSION['f_host'] = 'localhost';
+			$_SESSION['f_host'] = '127.0.0.1';
 			$_SESSION['f_port'] = 3306;
 			$_SESSION['f_base'] = '';
 			$_SESSION['f_backend'] = '';
@@ -37,30 +37,28 @@ class module{
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
-			$this->config->db['host'] = @$_POST['host'];
+			$this->cfg->db['host'] = @$_POST['host'];
 			$_SESSION['f_host'] = $this->db->HSC(@$_POST['host']);
 
-			$this->config->db['port'] = intval(@$_POST['port']);
+			$this->cfg->db['port'] = intval(@$_POST['port']);
 			$_SESSION['f_port'] = intval(@$_POST['port']);
 
-			$this->config->db['base'] = @$_POST['base'];
+			$this->cfg->db['base'] = @$_POST['base'];
 			$_SESSION['f_base'] = $this->db->HSC(@$_POST['base']);
 
-			$this->config->db['user'] = @$_POST['user'];
+			$this->cfg->db['user'] = @$_POST['user'];
 			$_SESSION['f_user'] = $this->db->HSC(@$_POST['user']);
 
-			$this->config->db['pass'] = @$_POST['pass'];
+			$this->cfg->db['pass'] = @$_POST['pass'];
 
-			$this->config->db['backend'] = (@$_POST['type']=='mysqli') ? 'mysqli' : 'mysql';
+			$this->cfg->db['backend'] = (@$_POST['type']=='mysqli') ? 'mysqli' : 'mysql';
 			$_SESSION['f_backend'] = (@$_POST['type']=='mysql') ? 'selected' : '';
 
-			$connect = @mysql_connect($this->config->db['host'].':'.$this->config->db['port'], $this->config->db['user'], $this->config->db['pass']);
+			$this->db->__construct($this->cfg);
 
-			if(!@mysql_select_db($this->config->db['base'], $connect)){
-				$this->core->notify($this->lng['e_msg'], $this->lng_m['e_set_base'], 2, 'install/?mode=step_2');
-			}
+			if($this->db->obj->connect_errno){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_set_base'], 2, 'install/?mode=step_2'); }
 
-			if(!$this->config->savecfg($this->config->db, 'db.php', 'db')){
+			if(!$this->cfg->savecfg($this->cfg->db, 'db.php', 'db')){
 				$this->core->notify($this->lng['e_msg'], $this->lng_m['e_settings'], 2, 'install/?mode=step_2');
 			}
 

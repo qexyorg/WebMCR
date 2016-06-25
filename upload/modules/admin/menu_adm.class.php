@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_menu_adm')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['manucp'] => ADMIN_URL."&do=menu_adm"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,8 @@ class submodule{
 
 	private function menu_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_menu_adm'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_menu_adm']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_menu_adm'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_menu_adm']; // Set end pagination
 
 		$where		= "";
 		$sort		= "`m`.`id`";
@@ -97,7 +97,7 @@ class submodule{
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_menu_adm'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_menu_adm'], $page.'&pid=', $ar[0]),
 			"MENU" => $this->menu_array()
 		);
 
@@ -201,9 +201,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_menu_adm_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=menu_adm'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm",
-			$this->lng['mcp_add'] => BASE_URL."?mode=admin&do=menu_adm&op=add",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['manucp'] => ADMIN_URL."&do=menu_adm",
+			$this->lng['mcp_add'] => ADMIN_URL."&do=menu_adm&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -272,9 +272,9 @@ class submodule{
 		$ar = $this->db->fetch_assoc($query);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['manucp'] => BASE_URL."?mode=admin&do=menu_adm",
-			$this->lng['mcp_edit'] => BASE_URL."?mode=admin&do=menu_adm&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['manucp'] => ADMIN_URL."&do=menu_adm",
+			$this->lng['mcp_edit'] => ADMIN_URL."&do=menu_adm&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

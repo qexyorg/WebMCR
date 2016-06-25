@@ -3,13 +3,12 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $user, $lng;
-	public $cfg = array();
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
@@ -22,14 +21,14 @@ class module{
 
 	public function content(){
 
-		if(!$this->config->func['close']){ $this->core->notify(); }
+		if(!$this->cfg->func['close']){ $this->core->notify(); }
 
 		$time = time();
 
-		if($this->config->func['close_time']<=0){
+		if($this->cfg->func['close_time']<=0){
 			$for_time = $this->lng['time_for1'];
 		}else{
-			$for_time = $this->lng['time_for2'].' '.date('H:i:s - d.m.Y', $this->config->func['close_time']);
+			$for_time = $this->lng['time_for2'].' '.date('H:i:s - d.m.Y', $this->cfg->func['close_time']);
 		}
 
 		$data = array(

@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_users')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['users'] => BASE_URL."?mode=admin&do=users"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['users'] => ADMIN_URL."&do=users"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,17 +24,22 @@ class submodule{
 
 	private function user_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_users'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_users']; // Set end pagination
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f		= $ctables['ugroups']['fields'];
+		$us_f		= $ctables['users']['fields'];
+
+		$start		= $this->core->pagination($this->cfg->pagin['adm_users'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_users']; // Set end pagination
 
 		$where		= "";
-		$sort		= "`u`.id";
+		$sort		= "`u`.`{$us_f['id']}`";
 		$sortby		= "DESC";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			if(preg_match("/[а-яА-ЯёЁ]+/iu", $search)){ $search = ""; }
-			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? 'ip_last' : 'login';
+			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? $us_f['ip_last'] : $us_f['login'];
 			$where = "WHERE `u`.`$table` LIKE '%$search%'";
 		}
 
@@ -44,18 +49,19 @@ class submodule{
 			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
 
 			switch(@$expl[1]){
-				case 'user': $sort = "`u`.login"; break;
-				case 'group': $sort = "`g`.title"; break;
-				case 'email': $sort = "`u`.email"; break;
-				case 'ip': $sort = "`u`.ip_last"; break;
+				case 'user': $sort = "`u`.`{$us_f['login']}`"; break;
+				case 'group': $sort = "`g`.`{$ug_f['title']}`"; break;
+				case 'email': $sort = "`u`.`{$us_f['email']}`"; break;
+				case 'ip': $sort = "`u`.`{$us_f['ip_last']}`"; break;
 			}
 		}
 
-		$query = $this->db->query("SELECT `u`.id, `u`.gid, `u`.login, `u`.email, `u`.`color`, `u`.ip_create, `u`.ip_last,
-										`g`.title AS `group`, `g`.`color` AS `gcolor`
-									FROM `mcr_users` AS `u`
-									LEFT JOIN `mcr_groups` AS `g`
-										ON `g`.id=`u`.gid
+		$query = $this->db->query("SELECT `u`.`{$us_f['id']}`, `u`.`{$us_f['group']}`, `u`.`{$us_f['login']}`, `u`.`{$us_f['email']}`,
+										`u`.`{$us_f['color']}`, `u`.`{$us_f['ip_create']}`, `u`.`{$us_f['ip_last']}`,
+										`g`.`{$ug_f['title']}` AS `group`, `g`.`{$ug_f['color']}` AS `gcolor`
+									FROM `{$this->cfg->tabname('users')}` AS `u`
+									LEFT JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
+										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
 									$where
 									ORDER BY $sort $sortby
 									LIMIT $start, $end");
@@ -66,17 +72,17 @@ class submodule{
 
 		while($ar = $this->db->fetch_assoc($query)){
 
-			$ucolor = (!empty($ar['color'])) ? $this->db->HSC($ar['color']) : $this->db->HSC($ar['gcolor']);
+			$ucolor = (!empty($ar[$us_f['color']])) ? $this->db->HSC($ar[$us_f['color']]) : $this->db->HSC($ar['gcolor']);
 			$gcolor = $this->db->HSC($ar['gcolor']);
 
 			$page_data = array(
-				"ID" => intval($ar['id']),
-				"GID" => intval($ar['gid']),
-				"LOGIN" => $this->core->colorize($this->db->HSC($ar['login']), $ucolor),
-				"EMAIL" => $this->db->HSC($ar['email']),
+				"ID" => intval($ar[$us_f['id']]),
+				"GID" => intval($ar[$us_f['group']]),
+				"LOGIN" => $this->core->colorize($this->db->HSC($ar[$us_f['login']]), $ucolor),
+				"EMAIL" => $this->db->HSC($ar[$us_f['email']]),
 				"GROUP" => $this->core->colorize($this->db->HSC($ar['group']), $gcolor),
-				"IP_LAST" => $this->db->HSC($ar['ip_last']),
-				"IP_CREATE" => $this->db->HSC($ar['ip_create']),
+				"IP_LAST" => $this->db->HSC($ar[$us_f['ip_last']]),
+				"IP_CREATE" => $this->db->HSC($ar[$us_f['ip_create']]),
 			);
 		
 			echo $this->core->sp(MCR_THEME_MOD."admin/users/user-id.html", $page_data);
@@ -87,14 +93,17 @@ class submodule{
 
 	private function user_list(){
 
-		$sql = "SELECT COUNT(*) FROM `mcr_users`";
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$sql = "SELECT COUNT(*) FROM `{$this->cfg->tabname('users')}`";
 		$page = "?mode=admin&do=users";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
 			if(preg_match("/[а-яА-ЯёЁ]+/iu", $search)){ $search = ""; }
-			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? "ip_last" : "login";
-			$sql = "SELECT COUNT(*) FROM `mcr_users` WHERE `$table` LIKE '%$search%'";
+			$table = (preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $search)) ? $us_f['ip_last'] : $us_f['login'];
+			$sql = "SELECT COUNT(*) FROM `{$this->cfg->tabname('users')}` WHERE `$table` LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
 			$page = "?mode=admin&do=users&search=$search";
 		}
@@ -108,7 +117,7 @@ class submodule{
 		$ar = @$this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_users'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_users'], $page.'&pid=', $ar[0]),
 			"USERS" => $this->user_array()
 		);
 
@@ -118,7 +127,10 @@ class submodule{
 	private function ban($list, $ban=1){
 		if(!$this->core->is_access('sys_adm_users_ban')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
 
-		$update = $this->db->query("UPDATE `mcr_users` SET ban_server='$ban' WHERE id IN ($list)");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['ban_server']}`='$ban' WHERE `{$us_f['id']}` IN ($list)");
 
 		if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
@@ -134,13 +146,16 @@ class submodule{
 	}
 
 	private function get_logins($list){
-		$query = $this->db->query("SELECT `login` FROM `mcr_users` WHERE id IN ($list)");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `{$us_f['login']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}` IN ($list)");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return false; }
 
 		$logins = array();
 
-		while($ar = $this->db->fetch_assoc($query)){ $logins[] = $ar['login']; }
+		while($ar = $this->db->fetch_assoc($query)){ $logins[] = $ar[$us_f['login']]; }
 
 		return $logins;
 	}
@@ -172,7 +187,10 @@ class submodule{
 
 		if(!isset($_POST['delete'])){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_hack'], 2, '?mode=admin&do=users'); }
 
-		if(!$this->db->remove_fast("mcr_users", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		if(!$this->db->remove_fast($this->cfg->tabname('users'), "`{$us_f['id']}` IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$count = $this->db->affected_rows();
 
@@ -194,8 +212,12 @@ class submodule{
 	}
 
 	private function exist_group($id){
+
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+
 		$id = intval($id);
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_groups` WHERE id='$id'");
+		$query = $this->db->query("SELECT COUNT(*) FROM `{$this->cfg->tabname('ugroups')}` WHERE `{$ug_f['id']}`='$id'");
 		if(!$query){ return false; }
 		$ar = $this->db->fetch_array($query);
 
@@ -208,9 +230,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_users_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=users'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['users'] => BASE_URL."?mode=admin&do=users",
-			$this->lng['user_add'] => BASE_URL."?mode=admin&do=users&op=add",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['users'] => ADMIN_URL."&do=users",
+			$this->lng['user_add'] => ADMIN_URL."&do=users&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -261,8 +283,12 @@ class submodule{
 
 			$new_data = $this->db->safesql(json_encode($new_data));
 
-			$insert = $this->db->query("INSERT INTO `mcr_users`
-											(gid, login, email, password, `color`, `uuid`, `salt`, ip_create, ip_last, `data`)
+			$ctables	= $this->cfg->db['tables'];
+			$us_f		= $ctables['users']['fields'];
+			$ic_f		= $ctables['iconomy']['fields'];
+
+			$insert = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
+											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['color']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['data']}`)
 										VALUES
 											('$gid', '$login', '$email', '$password', '$color', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
 
@@ -270,8 +296,8 @@ class submodule{
 
 			$id = $this->db->insert_id();
 			
-			$insert1 = $this->db->query("INSERT INTO `mcr_iconomy`
-											(login, `money`, `realmoney`)
+			$insert1 = $this->db->query("INSERT INTO `{$this->cfg->tabname('iconomy')}`
+											(`{$ic_f['login']}`, `{$ic_f['money']}`, `{$ic_f['rm']}`)
 										VALUES
 											('$login', '$money', '$realmoney')");
 
@@ -309,12 +335,16 @@ class submodule{
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT `u`.login, `u`.gid, `u`.email, `u`.`data`, `u`.`color`,
-											`i`.`money`, `i`.realmoney
-									FROM `mcr_users` AS `u`
-									LEFT JOIN `mcr_iconomy` AS `i`
-										ON `i`.login=`u`.login
-									WHERE `u`.id='$id'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+		$ic_f		= $ctables['iconomy']['fields'];
+
+		$query = $this->db->query("SELECT `u`.`{$us_f['login']}`, `u`.`{$us_f['group']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['data']}`, `u`.`{$us_f['color']}`,
+											`i`.`{$ic_f['money']}`, `i`.`{$ic_f['rm']}`
+									FROM `{$this->cfg->tabname('users')}` AS `u`
+									LEFT JOIN `{$this->cfg->tabname('iconomy')}` AS `i`
+										ON `i`.`{$ic_f['login']}`=`u`.`{$us_f['login']}`
+									WHERE `u`.`{$us_f['id']}`='$id'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
@@ -323,9 +353,9 @@ class submodule{
 		$data = json_decode($ar['data']);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['users'] => BASE_URL."?mode=admin&do=users",
-			$this->lng['user_edit'] => BASE_URL."?mode=admin&do=users&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['users'] => ADMIN_URL."&do=users",
+			$this->lng['user_edit'] => ADMIN_URL."&do=users&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -383,14 +413,14 @@ class submodule{
 
 			$new_data = $this->db->safesql(json_encode($new_data));
 
-			$update = $this->db->query("UPDATE `mcr_users`
-										SET gid='$gid', login='$login', `color`='$color', gid='$gid', email='$email',
-											password=$password, `uuid`='$uuid', `salt`=$salt, `data`='$new_data'
-										WHERE id='$id'");
+			$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
+										SET `{$us_f['group']}`='$gid', `{$us_f['login']}`='$login', `{$us_f['color']}`='$color', `{$us_f['email']}`='$email',
+											`{$us_f['pass']}`=$password, `{$us_f['uuid']}`='$uuid', `{$us_f['salt']}`=$salt, `{$us_f['data']}`='$new_data'
+										WHERE `{$us_f['id']}`='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 			
-			$old_login = $this->db->safesql($ar['login']);
+			$old_login = $this->db->safesql($ar[$us_f['login']]);
 
 			if(file_exists(MCR_SKIN_PATH.$old_login.'.png')){
 				if(!rename(MCR_SKIN_PATH.$old_login.'.png', MCR_SKIN_PATH.$login.'.png')){
@@ -404,9 +434,9 @@ class submodule{
 				}
 			}
 
-			$update2 = $this->db->query("UPDATE `mcr_iconomy`
-										SET login='$login', `money`='$money', `realmoney`='$realmoney'
-										WHERE login='$old_login'");
+			$update2 = $this->db->query("UPDATE `{$this->cfg->tabname('iconomy')}`
+										SET `{$ic_f['login']}`='$login', `{$ic_f['money']}`='$money', `{$ic_f['rm']}`='$realmoney'
+										WHERE `{$ic_f['login']}`='$old_login'");
 
 			if(!$update2){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
 
@@ -424,16 +454,16 @@ class submodule{
 
 		$data = array(
 			"PAGE" => $this->lng['user_edit_page_name'],
-			"LOGIN" => $this->db->HSC($ar['login']),
-			"EMAIL" => $this->db->HSC($ar['email']),
-			'COLOR' => $this->db->HSC($ar['color']),
+			"LOGIN" => $this->db->HSC($ar[$us_f['login']]),
+			"EMAIL" => $this->db->HSC($ar[$us_f['email']]),
+			'COLOR' => $this->db->HSC($ar[$us_f['color']]),
 			"FIRSTNAME" => $this->db->HSC($data->firstname),
 			"LASTNAME" => $this->db->HSC($data->lastname),
 			"BIRTHDAY" => $birthday,
 			"GENDER" => $gender,
-			"GROUPS" => $this->groups($ar['gid']),
-			"MONEY" => floatval($ar['money']),
-			"REALMONEY" => floatval($ar['realmoney']),
+			"GROUPS" => $this->groups($ar[$us_f['group']]),
+			"MONEY" => floatval($ar[$ic_f['money']]),
+			"REALMONEY" => floatval($ar[$ic_f['rm']]),
 			"BUTTON" => $this->lng['user_edit_btn']
 		);
 
@@ -442,21 +472,24 @@ class submodule{
 
 	private function groups($select=1){
 
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+
 		$select = intval($select);
 
-		$query = $this->db->query("SELECT id, title
-									FROM `mcr_groups`
-									ORDER BY title ASC");
+		$query = $this->db->query("SELECT `{$ug_f['id']}`, `{$ug_f['title']}`
+									FROM `{$this->cfg->tabname('ugroups')}`
+									ORDER BY `{$ug_f['title']}` ASC");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return; }
 
 		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
-			$id = intval($ar['id']);
+			$id = intval($ar[$ug_f['id']]);
 			$selected = ($id == $select) ? "selected" : "";
 
-			$title = $this->db->HSC($ar['title']);
+			$title = $this->db->HSC($ar[$ug_f['title']]);
 
 			echo "<option value=\"$id\" $selected>$title</option>";
 		}

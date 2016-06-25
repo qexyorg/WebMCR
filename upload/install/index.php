@@ -12,7 +12,7 @@ $core->def_header = $core->sp(MCR_ROOT."install/theme/header.html");
 
 $mode = (isset($_GET['mode'])) ? $_GET['mode'] : 'step_1';
 
-if(!$core->config->main['install'] && $mode!='finish'){ $core->notify('','', 3, 'install/?mode=finish'); }
+if(!$core->cfg->main['install'] && $mode!='finish'){ $core->notify('','', 3, 'install/?mode=finish'); }
 
 switch($mode){
 	case 'step_1':
@@ -50,35 +50,25 @@ function load_left_block($core, $mode){
 	);
 
 	ob_start();
-
 	foreach($array as $key => $value) {
-
 		if($mode==$key){
 			echo '<li class="active"><a href="javascript://">'.$value.'</a></li>';
 		}else{
 			echo '<li class="muted">'.$value.'</li>';
 		}
 	}
-
 	$data['ITEMS'] = ob_get_clean();
 
-	include(MCR_SIDE_PATH."1_notify.php");
-
-	require_once(MCR_LANG_DIR.'blocks/notify.php');
-	$core->lng_b = $lng;
-
-	$notify = new block_notify($core);
-
-	return $notify->content().$core->sp(MCR_ROOT."install/theme/left-block.html", $data);
+	return $core->sp(MCR_ROOT."install/theme/left-block.html", $data);
 }
 
 $data_global = array(
 	"CONTENT"		=> $content,
 	"TITLE"			=> $core->title,
-	"L_BLOCKS"		=> load_left_block($core, $mode),
+	"L_BLOCKS"		=> load_left_block($core, $mode).$core->load_def_blocks(),
 	"HEADER"		=> $core->header,
 	"DEF_HEADER"	=> $core->def_header,
-	"CFG"			=> $core->config->main,
+	"CFG"			=> $core->cfg->main,
 	"ADVICE"		=> '',//$core->advice(),
 	"MENU"			=> '',//$core->menu->_list(),
 	"BREADCRUMBS"	=> $core->bc,

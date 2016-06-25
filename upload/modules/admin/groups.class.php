@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_groups')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['groups'] => ADMIN_URL."&do=groups"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,12 @@ class submodule{
 
 	private function group_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_groups'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_groups']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_groups'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_groups']; // Set end pagination
+
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f	= $ctables['ugroups']['fields'];
 
 		$where		= "";
 		$sort		= "id";
@@ -33,7 +37,7 @@ class submodule{
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
-			$where = "WHERE title LIKE '%$search%'";
+			$where = "WHERE `{$ug_f['title']}` LIKE '%$search%'";
 		}
 
 		if(isset($_GET['sort']) && !empty($_GET['sort'])){
@@ -42,13 +46,13 @@ class submodule{
 			$sortby = ($expl[0]=='asc') ? "ASC" : "DESC";
 
 			switch(@$expl[1]){
-				case 'title': $sort = "title"; break;
-				case 'desc': $sort = "description"; break;
+				case 'title': $sort = "`{$ug_f['title']}`"; break;
+				case 'desc': $sort = "`{$ug_f['text']}`"; break;
 			}
 		}
 
-		$query = $this->db->query("SELECT id, title, `color`, description
-									FROM `mcr_groups`
+		$query = $this->db->query("SELECT `{$ug_f['id']}`, `{$ug_f['title']}`, `{$ug_f['color']}`, `{$ug_f['text']}`
+									FROM `{$this->cfg->tabname('ugroups')}`
 									$where
 									ORDER BY $sort $sortby
 									LIMIT $start, $end");
@@ -59,12 +63,12 @@ class submodule{
 
 		while($ar = $this->db->fetch_assoc($query)){
 
-			$color = $this->db->HSC($ar['color']);
+			$color = $this->db->HSC($ar[$ug_f['color']]);
 
 			$page_data = array(
-				"ID" => intval($ar['id']),
-				"TITLE" => $this->core->colorize($this->db->HSC($ar['title']), $color),
-				"TEXT" => $this->db->HSC($ar['description']),
+				"ID" => intval($ar[$ug_f['id']]),
+				"TITLE" => $this->core->colorize($this->db->HSC($ar[$ug_f['title']]), $color),
+				"TEXT" => $this->db->HSC($ar[$ug_f['text']]),
 			);
 		
 			echo $this->core->sp(MCR_THEME_MOD."admin/groups/group-id.html", $page_data);
@@ -75,12 +79,15 @@ class submodule{
 
 	private function group_list(){
 
-		$sql = "SELECT COUNT(*) FROM `mcr_groups`";
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+
+		$sql = "SELECT COUNT(*) FROM `{$this->cfg->tabname('ugroups')}`";
 		$page = "?mode=admin&do=groups";
 
 		if(isset($_GET['search']) && !empty($_GET['search'])){
 			$search = $this->db->safesql(urldecode($_GET['search']));
-			$sql = "SELECT COUNT(*) FROM `mcr_groups` WHERE title LIKE '%$search%'";
+			$sql = "SELECT COUNT(*) FROM `{$this->cfg->tabname('ugroups')}` WHERE `{$ug_f['title']}` LIKE '%$search%'";
 			$search = $this->db->HSC(urldecode($_GET['search']));
 			$page = "?mode=admin&do=groups&search=$search";
 		}
@@ -96,7 +103,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_groups'], $page.'&pid=', $ar[0]),
 			"GROUPS" => $this->group_array()
 		);
 
@@ -118,7 +125,10 @@ class submodule{
 
 		$list = $this->db->safesql(implode(", ", $list));
 
-		if(!$this->db->remove_fast("mcr_groups", "id IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+
+		if(!$this->db->remove_fast($this->cfg->tabname('ugroups'), "`{$ug_f['id']}` IN ($list)")){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
 
 		$count = $this->db->affected_rows();
 
@@ -171,7 +181,9 @@ class submodule{
 			$data["TITLE"] = $this->db->HSC($ar['title']);
 			$data["VALUE"] = $this->db->HSC($ar['value']);
 
-			$data['DEFAULT'] = @$this->get_default_value($ar['value'], $json[$ar['value']], $ar['type']);
+			$value = (!isset($json[$ar['value']])) ? $ar['default'] : $json[$ar['value']];
+
+			$data['DEFAULT'] = @$this->get_default_value($ar['value'], $value, $ar['type']);
 
 			echo $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id.html", $data);
 		}
@@ -197,12 +209,15 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_groups_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=groups'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups",
-			$this->lng['grp_add'] => BASE_URL."?mode=admin&do=groups&op=add",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['groups'] => ADMIN_URL."&do=groups",
+			$this->lng['grp_add'] => ADMIN_URL."&do=groups&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title			= $this->db->safesql(@$_POST['title']);
@@ -218,8 +233,8 @@ class submodule{
 
 			$new_permissions = $this->db->safesql($this->gen_permissions($perm_data));
 
-			$insert = $this->db->query("INSERT INTO `mcr_groups`
-											(title, description, `color`, `permissions`)
+			$insert = $this->db->query("INSERT INTO `{$this->cfg->tabname('ugroups')}`
+											(`{$ug_f['title']}`, `{$ug_f['text']}`, `{$ug_f['color']}`, `{$ug_f['perm']}`)
 										VALUES
 											('$title', '$text', '$color', '$new_permissions')");
 
@@ -253,18 +268,21 @@ class submodule{
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT title, `description`, `color`, `permissions`
-									FROM `mcr_groups`
-									WHERE id='$id'");
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+
+		$query = $this->db->query("SELECT `{$ug_f['title']}`, `{$ug_f['text']}`, `{$ug_f['color']}`, `{$ug_f['perm']}`
+									FROM `{$this->cfg->tabname('ugroups')}`
+									WHERE `{$ug_f['id']}`='$id'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups'); }
 
 		$ar = $this->db->fetch_assoc($query);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['groups'] => BASE_URL."?mode=admin&do=groups",
-			$this->lng['grp_edit'] => BASE_URL."?mode=admin&do=groups&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['groups'] => ADMIN_URL."&do=groups",
+			$this->lng['grp_edit'] => ADMIN_URL."&do=groups&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -283,9 +301,9 @@ class submodule{
 
 			$new_permissions = $this->db->safesql($this->gen_permissions($perm_data));
 
-			$update = $this->db->query("UPDATE `mcr_groups`
-										SET title='$title', `color`='$color', description='$text', `permissions`='$new_permissions'
-										WHERE id='$id'");
+			$update = $this->db->query("UPDATE `{$this->cfg->tabname('ugroups')}`
+										SET `{$ug_f['title']}`='$title', `{$ug_f['color']}`='$color', `{$ug_f['text']}`='$text', `{$ug_f['perm']}`='$new_permissions'
+										WHERE `{$ug_f['id']}`='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=groups&op=edit&id='.$id); }
 
@@ -300,10 +318,10 @@ class submodule{
 
 		$data = array(
 			"PAGE"			=> $this->lng['grp_edit_page_name'],
-			"TITLE"			=> $this->db->HSC($ar['title']),
-			"COLOR"			=> $this->db->HSC($ar['color']),
-			"TEXT"			=> $this->db->HSC($ar['description']),
-			"PERMISSIONS"	=> $this->perm_list($ar['permissions']),
+			"TITLE"			=> $this->db->HSC($ar[$ug_f['title']]),
+			"COLOR"			=> $this->db->HSC($ar[$ug_f['color']]),
+			"TEXT"			=> $this->db->HSC($ar[$ug_f['text']]),
+			"PERMISSIONS"	=> $this->perm_list($ar[$ug_f['perm']]),
 			"BUTTON"		=> $this->lng['grp_edit_btn']
 		);
 

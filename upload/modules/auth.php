@@ -3,14 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $user, $config, $lng;
-	public $cfg = array();
+	private $core, $db, $user, $cfg, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng_m;
 	}
 
@@ -22,27 +21,31 @@ class module{
 		$login = $this->db->safesql($_POST['login']);
 		$remember = (isset($_POST['remember']) && intval($_POST['remember'])==1) ? true : false;
 
-		$query = $this->db->query("SELECT `u`.id, `u`.password, `u`.`salt`, `u`.`data`,
-											`g`.`permissions`
-									FROM `mcr_users` AS `u`
-									INNER JOIN `mcr_groups` AS `g`
-										ON `g`.id=`u`.gid
-									WHERE `u`.login='$login'
+		$ctables	= $this->cfg->db['tables'];
+		$ug_f		= $ctables['ugroups']['fields'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `u`.`{$us_f['id']}`, `u`.`{$us_f['pass']}`, `u`.`{$us_f['salt']}`, `u`.`{$us_f['data']}`,
+											`g`.`{$ug_f['perm']}`
+									FROM `{$this->cfg->tabname('users')}` AS `u`
+									INNER JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
+										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
+									WHERE `u`.`{$us_f['login']}`='$login' OR `u`.`{$us_f['email']}`='$login'
 									LIMIT 1");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		$uid = intval($ar['id']);
+		$uid = intval($ar[$us_f['id']]);
 
-		$password = $this->core->gen_password($_POST['password'], $ar['salt']);
+		$password = $this->core->gen_password($_POST['password'], $ar[$us_f['salt']]);
 
-		if($ar['password']!==$password){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
+		if($ar[$us_f['pass']]!==$password){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
 
-		$permissions = json_decode($ar['permissions'], true);
+		$permissions = json_decode($ar[$ug_f['perm']], true);
 
-		$data = json_decode($ar['data']);
+		$data = json_decode($ar[$us_f['data']]);
 
 		$new_data = array(
 			"time_create" => intval($data->time_create),
@@ -57,16 +60,16 @@ class module{
 		$new_data = $this->db->safesql(json_encode($new_data));
 		$new_ip = $this->user->ip;
 
-		$update = $this->db->query("UPDATE `mcr_users`
-									SET `tmp`='$new_tmp', ip_last='$new_ip', `data`='$new_data'
-									WHERE login='$login' AND password='$password'
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
+									SET `{$us_f['tmp']}`='$new_tmp', `{$us_f['ip_last']}`='$new_ip', `{$us_f['data']}`='$new_data'
+									WHERE `{$us_f['id']}`='$uid' AND `{$us_f['pass']}`='$password'
 									LIMIT 1");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 
 		if(!@$permissions['sys_auth']){ $this->core->notify($this->core->lng['403'], $this->lng['e_access'], 2, '?mode=403'); }
 
-		$new_hash = $uid.$new_tmp.$new_ip.md5($this->config->main['mcr_secury']);
+		$new_hash = $uid.$new_tmp.$new_ip.md5($this->cfg->main['mcr_secury']);
 
 		$new_hash = $uid.'_'.md5($new_hash);
 

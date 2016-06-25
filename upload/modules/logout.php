@@ -3,13 +3,13 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $user, $lng;
-	public $cfg = array();
+	private $core, $db, $user, $lng, $cfg;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
 		$this->user		= $core->user;
+		$this->cfg		= $core->cfg;
 		$this->lng		= $core->lng_m;
 	}
 
@@ -36,7 +36,10 @@ class module{
 		$new_data = $this->db->safesql(json_encode($new_data));
 		$new_tmp = $this->db->safesql($this->core->random(16));
 
-		$update = $this->db->query("UPDATE `mcr_users` SET `tmp`='$new_tmp', `data`='$new_data' WHERE id='{$this->user->id}' LIMIT 1");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}` SET `{$us_f['tmp']}`='$new_tmp', `{$us_f['data']}`='$new_data' WHERE `{$us_f['id']}`='{$this->user->id}' LIMIT 1");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }
 

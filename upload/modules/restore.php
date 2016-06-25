@@ -3,12 +3,12 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $lng, $user;
+	private $core, $db, $cfg, $lng, $user;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
@@ -20,10 +20,12 @@ class module{
 	}
 
 	private function check_exist($value='', $email=false){
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
 
-		$selector = (!$email) ? "login='$value'" : "email='$value'";
+		$selector = (!$email) ? "`{$us_f['login']}`='$value'" : "`{$us_f['email']}`='$value'";
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_users` WHERE $selector");
+		$query = $this->db->query("SELECT COUNT(*) FROM `{$this->cfg->tabname('users')}` WHERE $selector");
 
 		if(!$query){ return true; }
 
@@ -46,19 +48,22 @@ class module{
 
 			if(empty($email)){ $this->core->notify($this->core->lng['e_msg'], $this->lng['invalid_email'], 1, "?mode=restore"); }
 
-			$query = $this->db->query("SELECT `id`, `tmp` FROM `mcr_users` WHERE email='$email'");
+			$ctables	= $this->cfg->db['tables'];
+			$us_f		= $ctables['users']['fields'];
+
+			$query = $this->db->query("SELECT `{$us_f['id']}`, `{$us_f['tmp']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['email']}`='$email'");
 
 			if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_msg'], $this->lng['email_not_found'], 1, "?mode=restore"); }
 
 			$ar = $this->db->fetch_assoc($query);
 
-			$id = intval($ar['id']);
-			$tmp = md5($ar['tmp']);
+			$id = intval($ar[$us_f['id']]);
+			$tmp = md5($ar[$us_f['tmp']]);
 
 			$data = array(
-				"LINK" => $this->config->main['s_root_full'].BASE_URL.'?mode=restore&op=accept&key='.$id.'_'.$tmp,
-				"SITENAME" => $this->config->main['s_name'],
-				"SITEURL" => $this->config->main['s_root_full'].BASE_URL
+				"LINK" => $this->cfg->main['s_root_full'].BASE_URL.'?mode=restore&op=accept&key='.$id.'_'.$tmp,
+				"SITENAME" => $this->cfg->main['s_name'],
+				"SITEURL" => $this->cfg->main['s_root_full'].BASE_URL
 			);
 
 			$message = $this->core->sp(MCR_THEME_PATH."modules/restore/body.mail.html", $data);
@@ -87,13 +92,16 @@ class module{
 
 		$key = $array[1];
 
-		$query = $this->db->query("SELECT `tmp`, `data` FROM `mcr_users` WHERE id='$uid'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `{$us_f['tmp']}`, `{$us_f['data']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }
 
 		$ar = $this->db->fetch_assoc($query);
 
-		if($key!==md5($ar['tmp'])){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
+		if($key!==md5($ar[$us_f['tmp']])){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$newpass = @$_POST['newpass'];
@@ -106,7 +114,7 @@ class module{
 
 			$password = $this->core->gen_password($newpass, $salt);
 
-			$data = json_decode($ar['data']);
+			$data = json_decode($ar[$us_f['data']]);
 
 			$newdata = array(
 				"time_create" => $data->time_create,
@@ -119,9 +127,9 @@ class module{
 
 			$newdata = $this->db->safesql(json_encode($newdata));
 
-			$update = $this->db->query("UPDATE `mcr_users`
-										SET password='$password', `salt`='$salt', `tmp`='$tmp', ip_last='{$this->user->ip}', `data`='$newdata'
-										WHERE id='$uid'");
+			$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
+										SET `{$us_f['pass']}`='$password', `{$us_f['salt']}`='$salt', `{$us_f['tmp']}`='$tmp', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+										WHERE `{$us_f['id']}`='$uid'");
 
 			if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }
 

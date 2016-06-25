@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_info')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['info'] => BASE_URL."?mode=admin&do=statics"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['info'] => ADMIN_URL."&do=statics"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -31,18 +31,23 @@ class submodule{
 	}
 
 	private function users_stats(){
-		$query = $this->db->query("SELECT `g`.id, `g`.title, COUNT(`u`.`id`) AS `count`
-									FROM `mcr_groups` AS `g`
-									LEFT JOIN `mcr_users` AS `u`
-										ON `u`.`gid`=`g`.`id`
-									GROUP BY `g`.`id`");
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f		= $ctables['ugroups']['fields'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT `g`.`{$ug_f['id']}`, `g`.`{$ug_f['title']}`, COUNT(`u`.`{$us_f['id']}`) AS `count`
+									FROM `{$this->cfg->tabname('ugroups')}` AS `g`
+									LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
+										ON `u`.`{$us_f['group']}`=`g`.`{$ug_f['id']}`
+									GROUP BY `g`.`{$ug_f['id']}`");
 		if(!$query || $this->db->num_rows($query)<=0){ return; }
 
 		ob_start();
 
 		while($ar = $this->db->fetch_assoc($query)){
 
-			switch(intval($ar['id'])){
+			switch(intval($ar[$ug_f['id']])){
 				case 0: $class='error'; break;
 				case 1: $class='warning'; break;
 				case 2: $class='success'; break;
@@ -53,7 +58,7 @@ class submodule{
 
 			$data = array(
 				"CLASS" => $class,
-				"TITLE" => $this->db->HSC($ar['title']),
+				"TITLE" => $this->db->HSC($ar[$ug_f['title']]),
 				"COUNT" => intval($ar['count'])
 			);
 
@@ -70,11 +75,11 @@ class submodule{
 										(SELECT COUNT(*) FROM `mcr_news_cats`) AS `categories`,
 										(SELECT COUNT(*) FROM `mcr_comments`) AS `comments`,
 										(SELECT COUNT(*) FROM `mcr_statics`) AS `statics`,
-										(SELECT COUNT(*) FROM `mcr_groups`) AS `groups`,
+										(SELECT COUNT(*) FROM `{$this->cfg->tabname('ugroups')}`) AS `groups`,
 										(SELECT COUNT(*) FROM `mcr_news_views`) AS `views`,
 										(SELECT COUNT(*) FROM `mcr_news_votes`) AS `votes`,
 										(SELECT COUNT(*) FROM `mcr_permissions`) AS `permissions`
-									FROM `mcr_users`");
+									FROM `{$this->cfg->tabname('users')}`");
 
 		if(!$query || $this->db->num_rows($query)<=0){ return; }
 

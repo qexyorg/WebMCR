@@ -3,20 +3,20 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		if(!$this->core->is_access('sys_adm_permissions')){ $this->core->notify($this->core->lng['403'], $this->core->lng['e_403']); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions"
+			$this->lng['mod_name'] => ADMIN_URL,
+			$this->lng['permissions'] => ADMIN_URL."&do=permissions"
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -24,8 +24,8 @@ class submodule{
 
 	private function permissions_array(){
 
-		$start		= $this->core->pagination($this->config->pagin['adm_groups'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['adm_groups']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['adm_groups'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['adm_groups']; // Set end pagination
 
 		$where		= "";
 		$sort		= "id";
@@ -52,8 +52,6 @@ class submodule{
 									$where
 									ORDER BY $sort $sortby
 									LIMIT $start, $end");
-
-		
 
 		if(!$query || $this->db->num_rows($query)<=0){ return $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-none.html"); }
 
@@ -101,7 +99,7 @@ class submodule{
 		$ar = $this->db->fetch_array($query);
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['adm_groups'], $page.'&pid=', $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['adm_groups'], $page.'&pid=', $ar[0]),
 			"PERMISSIONS" => $this->permissions_array()
 		);
 
@@ -168,9 +166,13 @@ class submodule{
 
 	private function update_groups(){
 
+		$ctables	= $this->cfg->db['tables'];
+
+		$ug_f		= $ctables['ugroups']['fields'];
+
 		$def_perm = $this->get_permissions();
 
-		$query = $this->db->query("SELECT id, `permissions` FROM `mcr_groups`");
+		$query = $this->db->query("SELECT `{$ug_f['id']}`, `{$ug_f['perm']}` FROM `{$this->cfg->tabname('ugroups')}`");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"]); }
 
@@ -180,9 +182,9 @@ class submodule{
 
 		while($ar = $this->db->fetch_assoc($query)){
 
-			$group_perm = @json_decode($ar['permissions'], true);
+			$group_perm = @json_decode($ar[$ug_f['perm']], true);
 
-			$id = intval($ar['id']);
+			$id = intval($ar[$ug_f['id']]);
 
 			$new_perm = array();
 
@@ -192,9 +194,9 @@ class submodule{
 
 			$new_perm = $this->db->safesql(json_encode($new_perm));
 
-			$update = $this->db->obj->query("UPDATE `mcr_groups`
-										SET `permissions`='$new_perm'
-										WHERE id='$id'");
+			$update = $this->db->obj->query("UPDATE `{$this->cfg->tabname('ugroups')}`
+										SET `{$ug_f['perm']}`='$new_perm'
+										WHERE `{$ug_f['id']}`='$id'");
 			if(!$update){ $return = false; }
 		}
 
@@ -229,9 +231,9 @@ class submodule{
 		if(!$this->core->is_access('sys_adm_permissions_add')){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng['e_403'], 2, '?mode=admin&do=permissions'); }
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions",
-			$this->lng['perm_add'] => BASE_URL."?mode=admin&do=permissions&op=add",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['permissions'] => ADMIN_URL."&do=permissions",
+			$this->lng['perm_add'] => ADMIN_URL."&do=permissions&op=add",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -301,9 +303,9 @@ class submodule{
 		$ar = $this->db->fetch_assoc($query);
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin",
-			$this->lng['permissions'] => BASE_URL."?mode=admin&do=permissions",
-			$this->lng['perm_edit'] => BASE_URL."?mode=admin&do=permissions&op=edit&id=$id",
+			$this->lng['mod_name'] => ADMIN_URL."",
+			$this->lng['permissions'] => ADMIN_URL."&do=permissions",
+			$this->lng['perm_edit'] => ADMIN_URL."&do=permissions&op=edit&id=$id",
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);

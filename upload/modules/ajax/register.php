@@ -3,14 +3,14 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->load_language('register');
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->load_language('register');
 	}
 
 	public function content(){
@@ -31,7 +31,11 @@ class submodule{
 
 		if($login=='default'){ $this->core->js_notify($this->lng['e_exist']); }
 
-		$query = $this->db->query("SELECT COUNT(*) FROM `mcr_users` WHERE login='$login' OR email='$email'");
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+		$ic_f		= $ctables['iconomy']['fields'];
+
+		$query = $this->db->query("SELECT COUNT(*) FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['login']}`='$login' OR `{$us_f['email']}`='$email'");
 
 		if(!$query){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 
@@ -67,12 +71,13 @@ class submodule{
 
 		$newdata = $this->db->safesql(json_encode($newdata));
 
-		$gid = ($this->config->main['reg_accept']) ? 1 : 2;
+		$gid = ($this->cfg->main['reg_accept']) ? 1 : 2;
 
 		$notify_message = $this->core->lng['e_success'];
 
-		$insert = $this->db->query("INSERT INTO `mcr_users`
-										(gid, login, email, password, `uuid`, `salt`, `tmp`, ip_create, ip_last, `data`)
+		$insert = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
+										(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['uuid']}`,
+										`{$us_f['salt']}`, `{$us_f['tmp']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['data']}`)
 									VALUES
 										('$gid', '$login', '$email', '$password', '$uuid', '$salt', '$tmp', '$ip', '$ip', '$newdata')");
 
@@ -80,8 +85,8 @@ class submodule{
 			
 		$id = $this->db->insert_id();
 
-		$insert1 = $this->db->query("INSERT INTO `mcr_iconomy`
-										(login)
+		$insert1 = $this->db->query("INSERT INTO `{$this->cfg->tabname('iconomy')}`
+										(`{$ic_f['login']}`)
 									VALUES
 										('$login')");
 		if(!$insert1){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
@@ -89,11 +94,11 @@ class submodule{
 		// Лог действия
 		$this->db->actlog($this->lng['log_reg'], $id);
 
-		if($this->config->main['reg_accept']){
+		if($this->cfg->main['reg_accept']){
 			$data_mail = array(
-				"LINK" => $this->config->main['s_root_full'].BASE_URL.'?mode=register&op=accept&key='.$id.'_'.md5($salt),
-				"SITENAME" => $this->config->main['s_name'],
-				"SITEURL" => $this->config->main['s_root_full'].BASE_URL,
+				"LINK" => $this->cfg->main['s_root_full'].BASE_URL.'?mode=register&op=accept&key='.$id.'_'.md5($salt),
+				"SITENAME" => $this->cfg->main['s_name'],
+				"SITEURL" => $this->cfg->main['s_root_full'].BASE_URL,
 				"LNG" => $this->lng,
 			);
 

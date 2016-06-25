@@ -27,6 +27,7 @@ $lng = array(
 	"e_advice_found" => "Советов нет",
 
 	"target_blank" => "Ссылка откроется в новой вкладке",
+	"loading" => "Загрузка...",
 
 	// debug
 	'deb_name' => 'Отладка',
@@ -44,8 +45,8 @@ $lng = array(
 	'deb_sec' => 'сек.',
 
 	// engine/skin.class.php
-	"skin_e_folder_perm" => "Отсутствуют права на запись папки uploads/skins",
-	"skin_e_intf_perm" => "Отсутствуют права на запись папки uploads/interface",
+	"skin_e_folder_perm" => "Отсутствуют права на запись папки скинов",
+	"skin_e_intf_perm" => "Отсутствуют права на запись папки скинов-интерфейсов",
 	"skin_e_size" => "Привышен максимально допустимый размер файла",
 	"skin_e" => "Ошибка загрузки скина!",
 	"skin_e_undefined" => "Неизвестная ошибка",
@@ -57,8 +58,8 @@ $lng = array(
 	"skin_e_save" => "Ошибка сохранения скина",
 
 	// engine/cloak.class.php
-	"cloak_e_folder_perm" => "Отсутствуют права на запись папки uploads/cloaks",
-	"cloak_e_intf_perm" => "Отсутствуют права на запись папки uploads/interface",
+	"cloak_e_folder_perm" => "Отсутствуют права на запись папки плащей",
+	"cloak_e_intf_perm" => "Отсутствуют права на запись папки плащей-интерфейсов",
 	"cloak_e_size" => "Привышен максимально допустимый размер файла",
 	"cloak_e" => "Ошибка загрузки скина!",
 	"cloak_e_undefined" => "Неизвестная ошибка",

@@ -3,12 +3,12 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class submodule{
-	private $core, $db, $config, $user, $lng;
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
 		$this->core		= $core;
 		$this->db		= $core->db;
-		$this->config	= $core->config;
+		$this->cfg		= $core->cfg;
 		$this->user		= $core->user;
 		$this->lng		= $core->lng_m;
 
@@ -22,8 +22,8 @@ class submodule{
 
 	private function results_array($value){
 
-		$start		= $this->core->pagination($this->config->pagin['search_news'], 0, 0); // Set start pagination
-		$end		= $this->config->pagin['search_news']; // Set end pagination
+		$start		= $this->core->pagination($this->cfg->pagin['search_news'], 0, 0); // Set start pagination
+		$end		= $this->cfg->pagin['search_news']; // Set end pagination
 		
 		//, `n`.cid, `c`.title AS `category`
 
@@ -92,7 +92,7 @@ class submodule{
 		$page = "?mode=search&type=news&value=$html_value&pid=";
 
 		$data = array(
-			"PAGINATION" => $this->core->pagination($this->config->pagin['search_news'], $page, $ar[0]),
+			"PAGINATION" => $this->core->pagination($this->cfg->pagin['search_news'], $page, $ar[0]),
 			"RESULT" => $this->results_array($safe_value),
 			"QUERY" => $html_value,
 			"QUERY_COUNT" => intval($ar[0])

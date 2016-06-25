@@ -3,18 +3,17 @@
 if(!defined("MCR")){ exit("Hacking Attempt!"); }
 
 class module{
-	private $core, $db, $config, $user, $lng;
-	public $cfg = array();
+	private $core, $db, $cfg, $user, $lng;
 
 	public function __construct($core){
-		$this->core = $core;
-		$this->db	= $core->db;
-		$this->config = $core->config;
-		$this->user	= $core->user;
-		$this->lng	= $core->lng_m;
+		$this->core		= $core;
+		$this->db		= $core->db;
+		$this->cfg		= $core->cfg;
+		$this->user		= $core->user;
+		$this->lng		= $core->lng_m;
 
 		$bc = array(
-			$this->lng['mod_name'] => BASE_URL."?mode=admin"
+			$this->lng['mod_name'] => ADMIN_URL
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
@@ -39,6 +38,8 @@ class module{
 		if(!class_exists('submodule')){
 			$this->core->notify($this->core->lng['404'], $this->core->lng['e_404']);
 		}
+
+		$this->core->lng_m = $this->core->load_language('admin/'.$do);
 		
 		$submodule = new submodule($this->core);
 
