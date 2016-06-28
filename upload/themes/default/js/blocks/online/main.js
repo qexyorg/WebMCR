@@ -28,9 +28,7 @@ function load_online(){
 			if(!data._type){ return mcr.notify(data._title, data._message); }
 
 			if(data._data.list.length>0 && typeof data._data.list == 'object'){
-				$.each(data._data.list, function(key, val){
-					$('.block-online #onl_list').append(val);
-				});
+				$('.block-online #onl_list').append(data._data.list.join(', '));
 			}else{
 				$('.block-online #onl_list').append(data._data.list);
 			}

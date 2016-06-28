@@ -120,7 +120,7 @@ class submodule{
 			if(!$this->is_theme_exist($s_theme)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_theme_incorrect'], 2, '?mode=admin&do=settings'); }
 			$cfg['s_theme'] = $s_theme;
 
-			$cfg['log']			= (intval(@$_POST['log']) === 1) ? true : false;
+			$this->cfg->db['log']			= (intval(@$_POST['log']) === 1) ? true : false;
 
 			$cfg['debug']		= (intval(@$_POST['debug']) === 1) ? true : false;
 
@@ -140,6 +140,8 @@ class submodule{
 			$cfg['kc_private']	= $this->core->safestr(@$_POST['kc_private']);
 
 			if(!$this->cfg->savecfg($cfg)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings'); }
+			
+			if(!$this->cfg->savecfg($this->cfg->db, 'db.php', 'db')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings'); }
 
 			// Последнее обновление пользователя
 			$this->db->update_user($this->user);
@@ -153,7 +155,7 @@ class submodule{
 		$data = array(
 			"THEMES"		=> $this->themes($cfg['s_theme']),
 			"CFG"			=> $cfg,
-			"LOG"			=> ($cfg['log']) ? 'selected' : '',
+			"LOG"			=> ($this->cfg->db['log']) ? 'selected' : '',
 			"DEBUG"			=> ($cfg['debug']) ? 'selected' : '',
 			"REG_ACCEPT"	=> ($cfg['reg_accept']) ? 'selected' : '',
 			"CAPTHA"		=> $this->captcha($cfg['captcha']),
