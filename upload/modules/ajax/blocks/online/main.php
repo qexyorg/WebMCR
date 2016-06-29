@@ -41,7 +41,8 @@ class submodule{
 										ON `u`.`{$us_f['ip_last']}`=`o`.ip
 									LEFT JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
 										ON `g`.`{$ug_f['id']}`=`u`.`{$us_f['group']}`
-									WHERE `o`.`date_update`>='$expire'");
+									WHERE `o`.`date_update`>='$expire'
+									GROUP BY `o`.id");
 
 		if(!$query){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 
