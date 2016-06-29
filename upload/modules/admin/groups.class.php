@@ -143,28 +143,32 @@ class submodule{
 	}
 
 	private function get_default_value($name='false', $value, $type='boolean'){
+		$data = array(
+			'NAME' => $name,
+			'VALUE' => ''
+		);
+
 		switch($type){
 			case 'integer':
-				$value = intval($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
+				$data['VALUE'] = intval($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id-integer.html", $data);
 			break;
 
 			case 'float':
-				$value = floatval($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
+				$data['VALUE'] = floatval($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id-float.html", $data);
 			break;
 
 			case 'string':
-				$value = $this->db->HSC($value);
-				$input = '<input type="text" class="span8" name="'.$name.'" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['grp_def_val'].'">';
+				$data['VALUE'] = $this->db->HSC($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id-string.html", $data);
 			break;
 
 			default:
-				$select = ($value=='true') ? 'selected' : '';
-				$input = '<select name="'.$name.'" class="span8"><option value="false">FALSE</option><option value="true" '.$select.'>TRUE</option></select>';
+				$data['VALUE'] = ($value=='true') ? 'selected' : '';
+				$input = $this->core->sp(MCR_THEME_MOD."admin/groups/perm-id-boolean.html", $data);
 			break;
 		}
-
 
 		return $input;
 	}
