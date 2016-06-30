@@ -391,23 +391,23 @@ class submodule{
 	private function get_default_value($value='false', $type='boolean'){
 		switch($type){
 			case 'integer':
-				$value = intval($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
+				$data['VALUE'] = intval($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-id-integer.html", $data);
 			break;
 
 			case 'float':
-				$value = floatval($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
+				$data['VALUE'] = floatval($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-id-float.html", $data);
 			break;
 
 			case 'string':
-				$value = $this->db->HSC($value);
-				$input = '<input type="text" class="span8" name="default" value="'.$value.'" id="inputDefault" placeholder="'.$this->lng['perm_def_value'].'">';
+				$data['VALUE'] = $this->db->HSC($value);
+				$input = $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-id-string.html", $data);
 			break;
 
 			default:
-				$select = ($value=='true') ? 'selected' : '';
-				$input = '<select name="default" class="span8"><option value="false">FALSE</option><option value="true" '.$select.'>TRUE</option></select>';
+				$data['VALUE'] = ($value=='true') ? 'selected' : '';
+				$input = $this->core->sp(MCR_THEME_MOD."admin/permissions/perm-id-boolean.html", $data);
 			break;
 		}
 
