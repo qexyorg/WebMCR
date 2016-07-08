@@ -678,13 +678,13 @@ class core{
 	  * @param formats (array)
 	  *
 	  */
-	public function get_array_formats(){
+	public function get_array_formats($hd=false){
 
 		$w = 64;
 		$h = 32;
 
-		$c_w = 22;
-		$c_h = 17;
+		$c_w = ($hd) ? 64 : 22;
+		$c_h = ($hd) ? 32 : 17;
 
 		$i = 1;
 

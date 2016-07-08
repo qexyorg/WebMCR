@@ -20,12 +20,11 @@ class submodule{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/info/header.html");
 	}
 
 	private function main(){
-
-		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-main.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/info-main.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/main.html");
 	}
@@ -102,8 +101,6 @@ class submodule{
 	}
 
 	private function extensions(){
-		$this->core->header .= '<script src="'.LANG_URL.'js/modules/info-extensions.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/info-extensions.js"></script>';
 
 		return $this->core->sp(MCR_THEME_MOD."admin/info/extensions.html");
 	}

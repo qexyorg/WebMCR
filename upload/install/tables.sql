@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `~logs~` (
 #line
 CREATE TABLE IF NOT EXISTS `mcr_menu` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `title` varchar(32) NOT NULL DEFAULT '',
+  `title` text NOT NULL,
   `parent` int(10) NOT NULL DEFAULT '1',
   `url` varchar(255) NOT NULL DEFAULT '',
   `target` varchar(10) CHARACTER SET latin1 NOT NULL DEFAULT '_self',

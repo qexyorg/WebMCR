@@ -20,6 +20,8 @@ class submodule{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/news_views/header.html");
 	}
 
 	private function views_array(){

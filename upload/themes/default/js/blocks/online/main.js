@@ -15,7 +15,7 @@ function load_online(){
 		contentType: false,
 		processData: false,
 		data: formdata,
-		timeout: 5000,
+		timeout: 2000,
 		error: function(data){
 			mcr.logger(data);
 			mcr.notify(lng.error, 'error');

@@ -696,18 +696,6 @@ input[type="submit"]:focus { outline: none !important; }
 	}
 }
 
-.admin-menu-groups .navbar { margin-bottom: 10px; }
-.spl-body { display: block; margin-bottom: 10px; }
-.spl-body.closed { display: none; }
-
-.admin-menu-groups .navbar .spl-btn:before,
-.admin-menu-groups .navbar .spl-btn.closed:before { content: ""; display: inline-block; width: 12px; height: 8px; background: url("../img/spl-arrows.png") no-repeat; vertical-align: middle; margin-right: 5px; }
-.admin-menu-groups .navbar .spl-btn.closed:before { background-position: 0px -8px; }
-.admin-menu-groups ul li { text-align: center; display: inline-block; width: 100px; word-wrap: break-word; vertical-align: top; margin-bottom: 5px; }
-.admin-menu-groups ul li a { text-decoration: none; }
-.admin-menu-groups ul li .i-icon { display: block; width: 64px; height: 64px; margin: auto; opacity: 0.8; }
-.admin-menu-groups ul li .i-icon:hover { opacity: 1; }
-
 .form-block.actions{
 	padding: 10px;
 	height: 30px;
@@ -766,23 +754,6 @@ table.table td.action input[type="checkbox"] { margin-top: 0px; margin-left: 10p
 	position: relative;
 }
 
-
-.adm-info-modules .thumbnails > .span4 {
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-.adm-info-modules .thumbnails .read-more {
-	margin-bottom: 5px;
-}
-
-.adm-info-modules .thumbnails .thumbnail > img {
-	max-height: 130px;
-}
-
-.adm-info-modules .thumbnails .title {
-	margin: 8px 0px;
-}
 
 .qxbb-code {
 	display: block;

@@ -25,7 +25,7 @@ class menu{
 			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
 
 			$data = array(
-				"TITLE"		=> $this->db->HSC($ar['title']),
+				"TITLE"		=> $ar['title'],
 				"URL"		=> $this->db->HSC($url),
 				"TARGET"	=> $this->db->HSC($ar['target']),
 				"ACTIVE"	=> $active,
@@ -80,7 +80,7 @@ class menu{
 			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
 
 			$data = array(
-				"TITLE"		=> $this->db->HSC($ar['title']),
+				"TITLE"		=> $ar['title'],
 				"URL"		=> $this->db->HSC($url),
 				"TARGET"	=> $this->db->HSC($ar['target']),
 				"ACTIVE"	=> $active,
@@ -135,8 +135,6 @@ class menu{
 
 		$array = array();
 
-		ob_start();
-
 		while($ar = $this->db->fetch_assoc($query)){
 
 			if(!$this->core->is_access($ar['permissions'])){ continue; }
@@ -151,11 +149,7 @@ class menu{
 			);
 		}
 
-		$tree = $this->generate_menu($array);
-
-		echo $tree;
-
-		return ob_get_clean();
+		return $this->generate_menu($array);
 	}
 
 	public function _list(){

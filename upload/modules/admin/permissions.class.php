@@ -20,6 +20,8 @@ class submodule{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/permissions/header.html");
 	}
 
 	private function permissions_array(){

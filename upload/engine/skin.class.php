@@ -50,7 +50,7 @@ class skin{
 
 		if(!$this->is_skin_valid($get_size)){ $this->core->notify($this->lng['e_msg'], $this->lng['skin_e_format'], 2, '?mode=profile'); }
 
-		$multiple = $get_size[0] / $this->mp;
+		$multiple = $width / $this->mp;
 
 		// Create and save head of skin +
 		$new_head = $this->create_head($tmp, $multiple);
@@ -68,7 +68,6 @@ class skin{
 		imagepng($new_preview, MCR_SKIN_PATH.'interface/'.$this->user->login.'.png');
 		// Create and save preview of skin -
 
-		// Save new skin +
 		if(!file_exists(MCR_SKIN_PATH.$this->user->login.'.png')){
 			if(!copy($tmp, MCR_SKIN_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['skin_e_save'], 2, '?mode=profile'); }
 		}
@@ -91,7 +90,7 @@ class skin{
 		return $new;
 	}
 
-	public function create_preview($path, $multiple, $size=224){
+	public function create_preview($path, $multiple=1, $size=224){
 
 		$image = @imagecreatefrompng($path);
 

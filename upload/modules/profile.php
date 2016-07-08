@@ -22,9 +22,17 @@ class module{
 	private function delete_skin(){
 		if(!$this->user->is_skin){ $this->core->notify("", $this->lng['skin_not_set'], 1, '?mode=profile'); }
 
+		if(file_exists(MCR_SKIN_PATH.$this->user->skin.'.png')){
 			unlink(MCR_SKIN_PATH.$this->user->skin.'.png');
+		}
+
+		if(file_exists(MCR_SKIN_PATH.'interface/'.$this->user->skin.'.png')){
 			unlink(MCR_SKIN_PATH.'interface/'.$this->user->skin.'.png');
+		}
+
+		if(file_exists(MCR_SKIN_PATH.'interface/'.$this->user->skin.'_mini.png')){
 			unlink(MCR_SKIN_PATH.'interface/'.$this->user->skin.'_mini.png');
+		}
 
 		if($this->user->is_cloak){
 			$cloak = array(
@@ -54,7 +62,9 @@ class module{
 
 		if(!$this->user->is_cloak){ $this->core->notify("", $this->lng['cloak_not_set'], 1, '?mode=profile'); }
 
-		unlink(MCR_CLOAK_PATH.$this->user->login.'.png');
+		if(file_exists(MCR_CLOAK_PATH.$this->user->login.'.png')){
+			unlink(MCR_CLOAK_PATH.$this->user->login.'.png');
+		}
 
 		if(!$this->user->is_skin){
 			unlink(MCR_SKIN_PATH.'interface/'.$this->user->login.'.png');
@@ -92,7 +102,7 @@ class module{
 		if($this->user->is_cloak){
 			$cloak = array(
 				"tmp_name" => MCR_CLOAK_PATH.$this->user->login.'.png',
-				"size" => filesize(MCR_CLOAK_PATH.$this->user->login.'.png'),
+				"size" => (!file_exists(MCR_CLOAK_PATH.$this->user->login.'.png')) ? 0 : filesize(MCR_CLOAK_PATH.$this->user->login.'.png'),
 				"error" => 0,
 				"name" => $this->user->login.'.png'
 			);

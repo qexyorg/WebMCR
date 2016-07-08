@@ -20,6 +20,8 @@ class submodule{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/settings/header.html");
 	}
 
 	private function themes($select=''){
@@ -309,8 +311,6 @@ class submodule{
 	}
 
 	private function functions(){
-
-		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/settings/header.html");
 
 		$cfg = $this->cfg->func;
 

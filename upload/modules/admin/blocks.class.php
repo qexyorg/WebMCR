@@ -21,8 +21,7 @@ class submodule{
 
 		$this->core->bc = $this->core->gen_bc($bc);
 
-		$this->core->header .= '<script src="'.LANG_URL.'js/modules/blocks.js"></script>';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/blocks.js"></script>';
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/blocks/header.html");
 	}
 
 	private function block_array(){

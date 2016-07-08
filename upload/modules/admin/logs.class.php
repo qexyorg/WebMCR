@@ -20,6 +20,8 @@ class submodule{
 		);
 
 		$this->core->bc = $this->core->gen_bc($bc);
+
+		$this->core->header .= $this->core->sp(MCR_THEME_MOD."admin/logs/header.html");
 	}
 
 	private function logs_array(){
