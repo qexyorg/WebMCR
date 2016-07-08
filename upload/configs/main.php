@@ -22,6 +22,6 @@ $main = array (
   'kc_private' => 'nBJjeiTqRAuXZlqwklPHSgtlCj',
   'skin_path' => 'uploads/skins/',
   'cloak_path' => 'uploads/cloaks/',
-  'hd_cloaks' => true,
+  'hd_cloaks' => false,
 );
 ?>
