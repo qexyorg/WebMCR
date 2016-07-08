@@ -121,7 +121,9 @@ class cloak{
 		imagecopy($preview, $skin, $mp_x_h + 8 * $multiple, 20 * $multiple, 12 * $multiple, 20 * $multiple, 4 * $multiple, 12 * $multiple);
 		imagecopy($preview, $skin, $mp_x_h + 4 * $multiple, 0 * $multiple, 56 * $multiple, 8 * $multiple, 8 * $multiple, 8 * $multiple);
 		
-		$multiple_c = $cloak_size[0] / 64;
+		$mp_x = ($this->cfg->main['hd_cloaks']) ? 64 : 22;
+
+		$multiple_c = $cloak_size[0] / $mp_x;
 
 		$mp_x_h = ($multiple_c > $multiple) ? ($size_x * $multiple_c) / 2 : ($size_x * $multiple) / 2;
 		$mp_result = ($multiple_c > $multiple) ? $multiple_c : $multiple;
