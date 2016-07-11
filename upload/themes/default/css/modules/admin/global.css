@@ -20,7 +20,7 @@
 
 .admin-menu-groups .navbar { margin-bottom: 10px; }
 .admin-menu-groups .navbar .spl-btn:before,
-.admin-menu-groups .navbar .spl-btn.closed:before { content: ""; display: inline-block; width: 12px; height: 8px; background: url("../img/spl-arrows.png") no-repeat; vertical-align: middle; margin-right: 5px; }
+.admin-menu-groups .navbar .spl-btn.closed:before { content: ""; display: inline-block; width: 12px; height: 8px; background: url("../../../img/spl-arrows.png") no-repeat; vertical-align: middle; margin-right: 5px; }
 .admin-menu-groups .navbar .spl-btn.closed:before { background-position: 0px -8px; }
 .admin-menu-groups ul li { text-align: center; display: inline-block; width: 100px; word-wrap: break-word; vertical-align: top; margin-bottom: 5px; }
 .admin-menu-groups ul li a { text-decoration: none; }
