@@ -47,6 +47,9 @@ body > .navbar .brand:hover {
 	text-shadow: 0 1px 0 rgba(255,255,255,.1), 0 0 30px rgba(255,255,255,.4);
 }
 
+.spl-body { display: block; margin-bottom: 10px; }
+.spl-body.closed { display: none; }
+
 .jumbotron {
 	position: relative;
 	padding: 4px 0;

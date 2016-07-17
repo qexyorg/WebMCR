@@ -15,9 +15,6 @@
 	background-position: -288px -120px;
 }
 
-.spl-body { display: block; margin-bottom: 10px; }
-.spl-body.closed { display: none; }
-
 .admin-menu-groups .navbar { margin-bottom: 10px; }
 .admin-menu-groups .navbar .spl-btn:before,
 .admin-menu-groups .navbar .spl-btn.closed:before { content: ""; display: inline-block; width: 12px; height: 8px; background: url("../../../img/spl-arrows.png") no-repeat; vertical-align: middle; margin-right: 5px; }
