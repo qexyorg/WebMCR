@@ -84,6 +84,16 @@
 					</div>
 
 					<div class="control-group">
+						<label class="control-label" for="input_smtp_tls"><?php echo $this->lng_m['set_mail_smtp_tls']; ?></label>
+						<div class="controls">
+							<select name="smtp_tls" id="input_smtp_tls" class="span10">
+								<option value="0"><?php echo $this->lng['no']; ?></option>
+								<option value="1" <?php echo $data['SMTP_TLS']; ?>><?php echo $this->lng['yes']; ?></option>
+							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
 						<div class="controls">
 							<button type="submit" name="submit" class="btn"><?php echo $this->lng['save']; ?></button>
 						</div>

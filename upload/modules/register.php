@@ -45,7 +45,7 @@ class module{
 		$ctables	= $this->cfg->db['tables'];
 		$us_f		= $ctables['users']['fields'];
 
-		$query = $this->db->query("SELECT `{$us_f['salt']}`, `{$us_f['data']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid' AND `{$us_f['group']}`='1'");
+		$query = $this->db->query("SELECT `{$us_f['salt']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid' AND `{$us_f['group']}`='1'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=register"); }
 
@@ -55,19 +55,8 @@ class module{
 
 		$data = json_decode($ar['data']);
 
-		$newdata = array(
-			"time_create" => $data->time_create,
-			"time_last" => time(),
-			"firstname" => $data->firstname,
-			"lastname" => $data->lastname,
-			"gender" => $data->gender,
-			"birthday" => $data->birthday
-		);
-
-		$newdata = $this->db->safesql(json_encode($newdata));
-
 		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
-									SET `{$us_f['group']}`='2', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+									SET `{$us_f['group']}`='2', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['date_last']}`='$time'
 									WHERE `{$us_f['id']}`='$uid' AND `{$us_f['group']}`='1'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=register"); }

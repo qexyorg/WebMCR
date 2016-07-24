@@ -18,8 +18,7 @@ class module{
 
 		$this->core->bc = $this->core->gen_bc($bc);
 
-		$this->core->header .= '<link href="'.STYLE_URL.'css/modules/admin/global.css" rel="stylesheet">';
-		$this->core->header .= '<script src="'.STYLE_URL.'js/modules/admin/global.js"></script>';
+		$this->core->header .= $this->core->sp(MCR_THEME_PATH."modules/admin/header.html");
 	}
 
 	public function content(){

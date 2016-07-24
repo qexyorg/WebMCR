@@ -1,0 +1,29 @@
+<div class="form-block">
+
+	<div class="block-header">
+		<div class="block-name"><?php echo $this->lng_m['patches']; ?></div>
+	</div>
+
+	<div class="block-line"></div>
+
+	<div class="adm-patch">
+		<div class="alert">
+			<strong><?php echo $this->lng['e_attention']; ?></strong> <?php echo $this->lng_m['warning']; ?>
+		</div>
+
+		<form method="post" class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputName"><?php echo $this->lng_m['name']; ?></label>
+				<div class="controls">
+					<select name="name" class="span12" id="inputName">
+						<?php echo $data['PATCHES']; ?>
+					</select>
+				</div>
+			</div>
+
+			<div class="text-center"><button class="btn btn-success" type="submit"><?php echo $this->lng_m['install']; ?></button></div>
+		</form>
+		
+	</div>
+		
+</div>

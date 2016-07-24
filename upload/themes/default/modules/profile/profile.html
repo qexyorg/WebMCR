@@ -27,13 +27,13 @@
 						<div class="info-line"><b><?php echo $this->lng['login']; ?>:</b> <span><?php echo $this->user->login; ?></span></div>
 						<div class="info-line"><b><?php echo $this->lng['email']; ?>:</b> <span><?php echo $this->user->email; ?></span></div>
 						<div class="info-line"><b><?php echo $this->lng['group']; ?>:</b> <span><?php echo $this->user->group; ?></span></div>
-						<div class="info-line"><b><?php echo $this->lng['date_reg']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_create); ?></span></div>
-						<div class="info-line"><b><?php echo $this->lng['last_activity']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->data->time_last); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['date_reg']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->time_create); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng['last_activity']; ?>:</b> <span><?php echo date("d.m.Y в H:i", $this->user->time_last); ?></span></div>
 
-						<div class="info-line"><b><?php echo $this->lng_m['f_name']; ?>:</b> <span><?php echo $this->user->data->firstname; ?></span></div>
-						<div class="info-line"><b><?php echo $this->lng_m['f_lname']; ?>:</b> <span><?php echo $this->user->data->lastname; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_name']; ?>:</b> <span><?php echo $this->user->firstname; ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_lname']; ?>:</b> <span><?php echo $this->user->lastname; ?></span></div>
 						<div class="info-line"><b><?php echo $this->lng_m['f_gender']; ?>:</b> <span><?php echo $this->user->gender; ?></span></div>
-						<div class="info-line"><b><?php echo $this->lng_m['f_bday']; ?>:</b> <span><?php echo date("d.m.Y", $this->user->data->birthday); ?></span></div>
+						<div class="info-line"><b><?php echo $this->lng_m['f_bday']; ?>:</b> <span><?php echo date("d.m.Y", $this->user->birthday); ?></span></div>
 						<div class="info-line"><b><?php echo $this->lng_m['f_gmoney']; ?>:</b> <span><?php echo $this->user->money; ?> майн.</span></div>
 						<div class="info-line"><b><?php echo $this->lng_m['f_rmoney']; ?>:</b> <span><?php echo $this->user->realmoney; ?> руб.</span></div>
 					</div>
@@ -65,14 +65,14 @@
 						<div class="control-group">
 							<label class="control-label" for="inputFName"><?php echo $this->lng_m['f_name']; ?></label>
 							<div class="controls">
-								<input type="text" name="firstname" id="inputFName" value="<?php echo $this->user->data->firstname; ?>" maxlength="24" placeholder="<?php echo $this->lng_m['f_name']; ?>" pattern="^[а-яА-ЯёЁa-zA-Z]+$">
+								<input type="text" name="firstname" id="inputFName" value="<?php echo $this->user->firstname; ?>" maxlength="24" placeholder="<?php echo $this->lng_m['f_name']; ?>" pattern="^[а-яА-ЯёЁa-zA-Z]+$">
 							</div>
 						</div>
 
 						<div class="control-group">
 							<label class="control-label" for="inputLName"><?php echo $this->lng_m['f_lname']; ?></label>
 							<div class="controls">
-								<input type="text" name="lastname" id="inputLName" value="<?php echo $this->user->data->lastname; ?>" maxlength="24" pattern="^[а-яА-ЯёЁa-zA-Z]+$" placeholder="<?php echo $this->lng_m['f_lname']; ?>">
+								<input type="text" name="lastname" id="inputLName" value="<?php echo $this->user->lastname; ?>" maxlength="24" pattern="^[а-яА-ЯёЁa-zA-Z]+$" placeholder="<?php echo $this->lng_m['f_lname']; ?>">
 							</div>
 						</div>
 
@@ -121,7 +121,7 @@
 	$('#inputBirthday').datetimepicker({
 		lang:'ru',
 		timepicker:false,
-		value:'<?php echo date("d-m-Y", $this->user->data->birthday); ?>',
+		value:'<?php echo date("d-m-Y", $this->user->birthday); ?>',
 		format:'d-m-Y'
 	});
 </script>

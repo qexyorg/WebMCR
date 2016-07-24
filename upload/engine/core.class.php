@@ -739,12 +739,12 @@ class core{
 
 		if($this->cfg->mail['smtp']){
 			$mail->isSMTP();
-			$mail->Host = $this->cfg->mail['smtp_host'];			// Specify main and backup SMTP servers
-			$mail->SMTPAuth = true;									// Enable SMTP authentication
-			$mail->Username = $this->cfg->mail['smtp_user'];		// SMTP username
-			$mail->Password = $this->cfg->mail['smtp_pass'];		// SMTP password
-			$mail->SMTPSecure = 'tls';								// Enable TLS encryption, `ssl` also accepted
-			$mail->Port = 587;										// TCP port to connect to
+			$mail->Host = $this->cfg->mail['smtp_host'];							// Specify main and backup SMTP servers
+			$mail->SMTPAuth = true;													// Enable SMTP authentication
+			$mail->Username = $this->cfg->mail['smtp_user'];						// SMTP username
+			$mail->Password = $this->cfg->mail['smtp_pass'];						// SMTP password
+			$mail->SMTPSecure = ($this->cfg->mail['smtp_tls']) ? 'tls' : 'ssl';		// Enable TLS encryption, `ssl` also accepted
+			$mail->Port = 587;														// TCP port to connect to
 		}
 
 		$mail->CharSet = 'UTF-8';

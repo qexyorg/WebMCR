@@ -101,22 +101,13 @@ class db{
 	public function update_user($user){
 		if(!$user->is_auth){ return false; }
 
-		$data = array(
-			'time_create' => $user->data->time_create,
-			'time_last' => time(),
-			'firstname' => $user->data->firstname,
-			'lastname' => $user->data->lastname,
-			'gender' => $user->data->gender,
-			'birthday' => $user->data->birthday,
-		);
-
-		$data = $this->safesql(json_encode($data));
+		$time = time();
 
 		$ctables	= $this->cfg->db['tables'];
 		$us_f		= $ctables['users']['fields'];
 
 		$update = $this->query("UPDATE `{$this->cfg->tabname('users')}`
-								SET `{$us_f['ip_last']}`='{$user->ip}', `{$us_f['data']}`='$data'
+								SET `{$us_f['ip_last']}`='{$user->ip}', `{$us_f['date_last']}`='$time'
 								WHERE `{$us_f['id']}`='{$user->id}'");
 
 		if(!$update){ return false; }

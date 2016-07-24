@@ -40,6 +40,7 @@ $lng = array(
 	'smtp_host' => 'Адрес SMTP сервера',
 	'smtp_user' => 'SMTP пользователь',
 	'smtp_pass' => 'SMTP пароль',
+	'smtp_tls' => 'Использовать TLS',
 	'type' => 'Тип',
 	'recommended' => 'Рекомендуется',
 	'db_host' => 'Адрес хоста',

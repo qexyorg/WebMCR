@@ -146,8 +146,8 @@ class module{
 		if(!empty($_POST['lastname']) && !preg_match("/^[a-zа-яА-ЯёЁ]+$/iu", $_POST['lastname'])){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_lname'], 2, '?mode=profile'); }
 		if(!empty($_POST['birthday']) && !preg_match("/^(\d{2}-\d{2}-\d{4})?$/", $_POST['birthday'])){ $this->core->notify($this->core->lng['e_msg'], $this->lng['e_valid_bday'], 2, '?mode=profile'); }
 
-		$firstname = @$_POST['firstname'];
-		$lastname = @$_POST['lastname'];
+		$firstname = $this->db->safesql(@$_POST['firstname']);
+		$lastname = $this->db->safesql(@$_POST['lastname']);
 		$birthday = @$_POST['birthday'];
 		
 		$birthday = intval(strtotime($birthday));
@@ -166,22 +166,15 @@ class module{
 			$newpass = $this->db->safesql($this->core->gen_password($_POST['newpass'], $newsalt));
 		}
 
-		$newdata = array(
-			"time_create" => $this->user->data->time_create,
-			"time_last" => time(),
-			"firstname" => $this->db->safesql($firstname),
-			"lastname" => $this->db->safesql($lastname),
-			"gender" => $this->user->data->gender,
-			"birthday" => $birthday
-		);
-
-		$newdata = $this->db->safesql(json_encode($newdata));
+		$time = time();
 
 		$ctables	= $this->cfg->db['tables'];
 		$us_f		= $ctables['users']['fields'];
 
 		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
-									SET `{$us_f['pass']}`='$newpass', `{$us_f['salt']}`='$newsalt', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+									SET `{$us_f['pass']}`='$newpass', `{$us_f['salt']}`='$newsalt', `{$us_f['ip_last']}`='{$this->user->ip}',
+										`{$us_f['date_last']}`='$time', `{$us_f['fname']}`='$firstname', `{$us_f['lname']}`='$lastname',
+										`{$us_f['bday']}`='$birthday'
 									WHERE `{$us_f['id']}`='{$this->user->id}'");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 2, '?mode=profile'); }

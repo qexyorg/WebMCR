@@ -238,6 +238,8 @@ class submodule{
 
 			$cfg['smtp_pass']		= $this->core->safestr(@$_POST['smtp_pass']);
 
+			$cfg['smtp_tls']		= (intval(@$_POST['smtp_tls']) === 1) ? true : false;
+
 			if(!$this->cfg->savecfg($cfg, 'mail.php', 'mail')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=mail'); }
 
 			// Последнее обновление пользователя
@@ -251,6 +253,7 @@ class submodule{
 
 		$data = array(
 			"SMTP"			=> ($cfg['smtp']) ? 'selected' : '',
+			"SMTP_TLS"		=> ($cfg['smtp_tls']) ? 'selected' : '',
 			"CFG"			=> $cfg,
 		);
 

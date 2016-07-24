@@ -95,7 +95,7 @@ class module{
 		$ctables	= $this->cfg->db['tables'];
 		$us_f		= $ctables['users']['fields'];
 
-		$query = $this->db->query("SELECT `{$us_f['tmp']}`, `{$us_f['data']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid'");
+		$query = $this->db->query("SELECT `{$us_f['tmp']}` FROM `{$this->cfg->tabname('users')}` WHERE `{$us_f['id']}`='$uid'");
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }
 
@@ -114,21 +114,10 @@ class module{
 
 			$password = $this->core->gen_password($newpass, $salt);
 
-			$data = json_decode($ar[$us_f['data']]);
-
-			$newdata = array(
-				"time_create" => $data->time_create,
-				"time_last" => time(),
-				"firstname" => $data->firstname,
-				"lastname" => $data->lastname,
-				"gender" => $data->gender,
-				"birthday" => $data->birthday
-			);
-
-			$newdata = $this->db->safesql(json_encode($newdata));
+			$time = time();
 
 			$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
-										SET `{$us_f['pass']}`='$password', `{$us_f['salt']}`='$salt', `{$us_f['tmp']}`='$tmp', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['data']}`='$newdata'
+										SET `{$us_f['pass']}`='$password', `{$us_f['salt']}`='$salt', `{$us_f['tmp']}`='$tmp', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['date_last']}`='$time'
 										WHERE `{$us_f['id']}`='$uid'");
 
 			if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical'], 1, "?mode=restore"); }

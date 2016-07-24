@@ -25,7 +25,7 @@ class module{
 		$ug_f		= $ctables['ugroups']['fields'];
 		$us_f		= $ctables['users']['fields'];
 
-		$query = $this->db->query("SELECT `u`.`{$us_f['id']}`, `u`.`{$us_f['pass']}`, `u`.`{$us_f['salt']}`, `u`.`{$us_f['data']}`,
+		$query = $this->db->query("SELECT `u`.`{$us_f['id']}`, `u`.`{$us_f['pass']}`, `u`.`{$us_f['salt']}`,
 											`g`.`{$ug_f['perm']}`
 									FROM `{$this->cfg->tabname('users')}` AS `u`
 									INNER JOIN `{$this->cfg->tabname('ugroups')}` AS `g`
@@ -39,30 +39,22 @@ class module{
 
 		$uid = intval($ar[$us_f['id']]);
 
-		$password = $this->core->gen_password($_POST['password'], $ar[$us_f['salt']]);
-
-		if($ar[$us_f['pass']]!==$password){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
-
 		$permissions = json_decode($ar[$ug_f['perm']], true);
 
-		$data = json_decode($ar[$us_f['data']]);
+		$password = $this->user->auth->createHash(@$_POST['password'], $ar[$us_f['salt']]);
 
-		$new_data = array(
-			"time_create" => intval($data->time_create),
-			"time_last" => time(),
-			"firstname" => $this->db->safesql($data->firstname),
-			"lastname" => $this->db->safesql($data->lastname),
-			"gender" => $data->gender,
-			"birthday" => $data->birthday
-		);
+		if(!$this->user->auth->authentificate(@$_POST['password'], $ar[$us_f['pass']], $ar[$us_f['salt']])){ $this->core->notify($this->core->lng["e_msg"], $this->lng['e_wrong_pass']); }
 
-		$new_tmp = $this->db->safesql($this->core->random(16));
-		$new_data = $this->db->safesql(json_encode($new_data));
+		$time = time();
+
+		$new_tmp = $this->db->safesql($this->user->auth->createTmp());
+
 		$new_ip = $this->user->ip;
+		$password = $this->db->safesql($password);
 
 		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
-									SET `{$us_f['tmp']}`='$new_tmp', `{$us_f['ip_last']}`='$new_ip', `{$us_f['data']}`='$new_data'
-									WHERE `{$us_f['id']}`='$uid' AND `{$us_f['pass']}`='$password'
+									SET `{$us_f['tmp']}`='$new_tmp', `{$us_f['ip_last']}`='$new_ip', `{$us_f['date_last']}`='$time'
+									WHERE `{$us_f['id']}`='$uid'
 									LIMIT 1");
 
 		if(!$update){ $this->core->notify($this->core->lng['e_attention'], $this->core->lng['e_sql_critical']); }

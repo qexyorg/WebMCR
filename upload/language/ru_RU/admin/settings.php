@@ -48,6 +48,7 @@ $lng = array(
 	'set_mail_smtp_user_ph' => 'Имя пользователя SMTP сервера',
 	'set_mail_smtp_pass' => 'Пароль',
 	'set_mail_smtp_pass_ph' => 'Пароль пользователя SMTP сервера',
+	'set_mail_smtp_tls' => 'Использовать TLS',
 	'set_main_sitename' => 'Название сайта',
 	'set_main_sitedesc' => 'Описание сайта',
 	'set_main_sitekeys' => 'Ключевые слова',

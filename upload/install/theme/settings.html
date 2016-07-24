@@ -92,6 +92,16 @@
 				</div>
 			</div>
 
+			<div class="control-group">
+				<label class="control-label" for="inputSMTPTls"><?php echo $this->lng_m['smtp_tls']; ?></label>
+				<div class="controls">
+					<select id="inputSMTPTls" name="smtp_tls">
+						<option value="0"><?php echo $this->lng['no']; ?></option>
+						<option value="1" <?php echo $_SESSION['fs_smtp_tls']; ?>><?php echo $this->lng['yes']; ?></option>
+					</select>
+				</div>
+			</div>
+
 			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
 		</form>
 	</div>

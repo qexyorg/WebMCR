@@ -274,25 +274,14 @@ class submodule{
 			$realmoney = floatval(@$_POST['realmoney']);
 			$time = time();
 
-			$new_data = array(
-				"time_create" => $time,
-				"time_last" => $time,
-				"firstname" => $firstname,
-				"lastname" => $lastname,
-				"gender" => $gender,
-				"birthday" => $birthday,
-			);
-
-			$new_data = $this->db->safesql(json_encode($new_data));
-
 			$ctables	= $this->cfg->db['tables'];
 			$us_f		= $ctables['users']['fields'];
 			$ic_f		= $ctables['iconomy']['fields'];
 
 			$insert = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
-											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['color']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['data']}`)
+											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['color']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['date_reg']}`, `{$us_f['date_last']}`, `{$us_f['fname']}`, `{$us_f['lname']}`, `{$us_f['gender']}`, `{$us_f['bday']}`)
 										VALUES
-											('$gid', '$login', '$email', '$password', '$color', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$new_data')");
+											('$gid', '$login', '$email', '$password', '$color', '$uuid', '$salt', '{$this->user->ip}', '{$this->user->ip}', '$time', '$time', '$firstname', '$lastname', '$gender', '$birthday')");
 
 			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
@@ -341,7 +330,9 @@ class submodule{
 		$us_f		= $ctables['users']['fields'];
 		$ic_f		= $ctables['iconomy']['fields'];
 
-		$query = $this->db->query("SELECT `u`.`{$us_f['login']}`, `u`.`{$us_f['group']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['data']}`, `u`.`{$us_f['color']}`,
+		$query = $this->db->query("SELECT `u`.`{$us_f['login']}`, `u`.`{$us_f['group']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['date_reg']}`,
+											`u`.`{$us_f['date_last']}`, `u`.`{$us_f['fname']}`, `u`.`{$us_f['lname']}`, `u`.`{$us_f['gender']}`,
+											`u`.`{$us_f['bday']}`, `u`.`{$us_f['color']}`,
 											`i`.`{$ic_f['money']}`, `i`.`{$ic_f['rm']}`
 									FROM `{$this->cfg->tabname('users')}` AS `u`
 									LEFT JOIN `{$this->cfg->tabname('iconomy')}` AS `i`
@@ -351,8 +342,6 @@ class submodule{
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users'); }
 
 		$ar = $this->db->fetch_assoc($query);
-
-		$data = json_decode($ar['data']);
 
 		$bc = array(
 			$this->lng['mod_name'] => ADMIN_URL."",
@@ -404,20 +393,13 @@ class submodule{
 			$money = floatval(@$_POST['money']);
 			$realmoney = floatval(@$_POST['realmoney']);
 
-			$new_data = array(
-				"time_create" => $data->time_create,
-				"time_last" => $data->time_last,
-				"firstname" => $firstname,
-				"lastname" => $lastname,
-				"gender" => $gender,
-				"birthday" => $birthday
-			);
-
-			$new_data = $this->db->safesql(json_encode($new_data));
+			$time = time();
 
 			$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
 										SET `{$us_f['group']}`='$gid', `{$us_f['login']}`='$login', `{$us_f['color']}`='$color', `{$us_f['email']}`='$email',
-											`{$us_f['pass']}`=$password, `{$us_f['uuid']}`='$uuid', `{$us_f['salt']}`=$salt, `{$us_f['data']}`='$new_data'
+											`{$us_f['pass']}`=$password, `{$us_f['uuid']}`='$uuid', `{$us_f['salt']}`=$salt, `{$us_f['date_last']}`='$time',
+											`{$us_f['fname']}`='$firstname', `{$us_f['lname']}`='$lastname', `{$us_f['gender']}`='$gender',
+											`{$us_f['bday']}`='$birthday'
 										WHERE `{$us_f['id']}`='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=users&op=edit&id='.$id); }
@@ -450,18 +432,17 @@ class submodule{
 			
 			$this->core->notify($this->core->lng["e_success"], $this->lng['user_edit_success'], 3, '?mode=admin&do=users&op=edit&id='.$id);
 		}
-
-		$birthday = date("d-m-Y", $data->birthday);
-		$gender = (intval($data->gender)==1) ? "selected" : "";
+		
+		$gender = (intval($ar[$us_f['gender']])==1 || $ar[$us_f['gender']]=='female') ? "selected" : "";
 
 		$data = array(
 			"PAGE" => $this->lng['user_edit_page_name'],
 			"LOGIN" => $this->db->HSC($ar[$us_f['login']]),
 			"EMAIL" => $this->db->HSC($ar[$us_f['email']]),
 			'COLOR' => $this->db->HSC($ar[$us_f['color']]),
-			"FIRSTNAME" => $this->db->HSC($data->firstname),
-			"LASTNAME" => $this->db->HSC($data->lastname),
-			"BIRTHDAY" => $birthday,
+			"FIRSTNAME" => $this->db->HSC($ar[$us_f['fname']]),
+			"LASTNAME" => $this->db->HSC($ar[$us_f['lname']]),
+			"BIRTHDAY" => date("d-m-Y", $ar[$us_f['bday']]),
 			"GENDER" => $gender,
 			"GROUPS" => $this->groups($ar[$us_f['group']]),
 			"MONEY" => floatval($ar[$ic_f['money']]),

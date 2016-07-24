@@ -39,6 +39,7 @@ class module{
 			$_SESSION['fs_smtp_host']	= $this->cfg->mail['smtp_host'];
 			$_SESSION['fs_smtp_user']	= $this->cfg->mail['smtp_user'];
 			$_SESSION['fs_smtp_pass']	= $this->cfg->mail['smtp_pass'];
+			$_SESSION['fs_smtp_tls']	= '';
 		}
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
@@ -54,6 +55,7 @@ class module{
 			$_SESSION['fs_smtp_host']	= $this->db->HSC(@$_POST['smtp_host']);
 			$_SESSION['fs_smtp_user']	= $this->db->HSC(@$_POST['smtp_user']);
 			$_SESSION['fs_smtp_pass']	= $this->db->HSC(@$_POST['smtp_pass']);
+			$_SESSION['fs_smtp_tls']	= (intval(@$_POST['smtp_tls'])==1) ? 'selected' : '';
 
 			$this->cfg->main['s_name'] = $this->db->HSC($this->core->safestr(@$_POST['s_name']));
 
@@ -90,6 +92,8 @@ class module{
 			$this->cfg->mail['smtp_user'] = $this->db->HSC($this->core->safestr(@$_POST['smtp_user']));
 
 			$this->cfg->mail['smtp_pass'] = $this->db->HSC($this->core->safestr(@$_POST['smtp_pass']));
+
+			$this->cfg->mail['smtp_tls'] = (intval(@$_POST['smtp_tls'])===1) ? true : false;
 
 			if(!$this->cfg->savecfg($this->cfg->main, 'main.php', 'main')){
 				$this->core->notify($this->lng['e_msg'], $this->lng_m['e_settings'], 2, 'install/?mode=settings');

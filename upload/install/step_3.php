@@ -34,6 +34,8 @@ class module{
 			$_SESSION['f_repass']	= '';
 		}
 
+		$time = time();
+
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
 			$method = (intval(@$_POST['method'])<0 || intval(@$_POST['method'])>15) ? 0 : intval(@$_POST['method']);
@@ -68,17 +70,6 @@ class module{
 			$uuid		= $this->db->safesql($this->user->logintouuid(@$_POST['login']));
 			$ip			= $this->user->ip;
 
-			$data = array(
-				"time_create"	=> time(),
-				"time_last"		=> time(),
-				"firstname"		=> "",
-				"lastname"		=> "",
-				"gender"		=> 0,
-				"birthday"		=> 0
-			);
-
-			$data = $this->db->safesql(json_encode($data));
-
 			$tables = file(MCR_ROOT.'install/tables.sql');
 
 			$ctables	= $this->cfg->db['tables'];
@@ -101,7 +92,7 @@ class module{
 				'~logs_id~', '~logs_uid~', '~logs_msg~', '~logs_date~',
 
 				'~us~',
-				'~us_id~', '~us_gid~', '~us_login~', '~us_email~', '~us_pass~', '~us_uuid~', '~us_salt~', '~us_tmp~', '~us_is_skin~', '~us_is_cloak~', '~us_ip_create~', '~us_ip_last~', '~us_color~', '~us_data~', '~us_ban_server~',
+				'~us_id~', '~us_gid~', '~us_login~', '~us_email~', '~us_pass~', '~us_uuid~', '~us_salt~', '~us_tmp~', '~us_is_skin~', '~us_is_cloak~', '~us_ip_create~', '~us_ip_last~', '~us_color~', '~us_date_reg~', '~us_date_last~', '~us_fname~', '~us_lname~', '~us_gender~', '~us_bday~', '~us_ban_server~',
 			);
 
 			$replace = array(
@@ -115,7 +106,7 @@ class module{
 				$logs_f['id'], $logs_f['uid'], $logs_f['msg'], $logs_f['date'],
 
 				$this->cfg->tabname('users'),
-				$us_f['id'], $us_f['group'], $us_f['login'], $us_f['email'], $us_f['pass'], $us_f['uuid'], $us_f['salt'], $us_f['tmp'], $us_f['is_skin'], $us_f['is_cloak'], $us_f['ip_create'], $us_f['ip_last'], $us_f['color'], $us_f['data'], $us_f['ban_server'],
+				$us_f['id'], $us_f['group'], $us_f['login'], $us_f['email'], $us_f['pass'], $us_f['uuid'], $us_f['salt'], $us_f['tmp'], $us_f['is_skin'], $us_f['is_cloak'], $us_f['ip_create'], $us_f['ip_last'], $us_f['color'], $us_f['date_reg'], $us_f['date_last'], $us_f['fname'], $us_f['lname'], $us_f['gender'], $us_f['bday'], $us_f['ban_server'],
 			);
 
 			foreach($tables as $key => $value){
@@ -138,9 +129,9 @@ class module{
 			}
 
 			$sql1 = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
-											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['data']}`)
+											(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['uuid']}`, `{$us_f['salt']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['date_reg']}`, `{$us_f['date_last']}`, `{$us_f['fname']}`, `{$us_f['lname']}`)
 										VALUES
-											('3', '$login', '$email', '$password', '$uuid', '$salt', '$ip', '$ip', '$data')");
+											('3', '$login', '$email', '$password', '$uuid', '$salt', '$ip', '$ip', '$time', '$time', '', '')");
 
 			if(!$sql1){ $this->core->notify($this->lng['e_msg'], $this->lng_m['e_add_admin'], 2, 'install/?mode=step_3'); }
 

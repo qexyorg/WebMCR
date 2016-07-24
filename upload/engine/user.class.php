@@ -7,27 +7,24 @@ class user{
 	private $core, $db, $cfg, $lng;
 
 	// Set default user vars
-	public $email, $login, $login_v2, $group, $group_v2, $uuid, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2, $gender;
-
+	public $email, $login, $login_v2, $group, $group_v2, $uuid, $group_desc, $password, $salt, $tmp, $ip, $ip_create, $data, $permissions, $permissions_v2;
+	public $gender = 0;
+	public $time_create = 0;
+	public $time_last = 0;
+	public $firstname = '';
+	public $lastname = '';
+	public $birthday = 0;
 	public $id = 0;
-
 	public $is_auth = false;
-
 	public $is_skin = false;
-
 	public $is_cloak = false;
-
 	public $skin = 'default';
-
 	public $cloak = '';
-
 	public $money= 0;
-
 	public $realmoney = 0;
-
 	public $bank = 0;
-
 	public $gid = -1;
+	public $auth;
 
 	public function __construct($core){
 		$this->core			= $core;
@@ -41,7 +38,9 @@ class user{
 		$this->group_desc	= $this->lng['u_group_desc_def'];
 
 		// Set now ip
-		$this->ip	= $this->ip();
+		$this->ip			= $this->ip();
+
+		$this->auth			= $this->load_auth();
 
 		// Check cookies
 		if(!isset($_COOKIE['mcr_user'])){
@@ -64,8 +63,9 @@ class user{
 		$us_f	= $ctables['users']['fields'];
 		$ic_f	= $ctables['iconomy']['fields'];
 
-		$query = $this->db->query("SELECT `u`.`{$us_f['group']}`, `u`.`{$us_f['login']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['pass']}`,
-											`u`.`{$us_f['salt']}`, `u`.`{$us_f['tmp']}`, `u`.`{$us_f['ip_create']}`, `u`.`{$us_f['data']}`,
+		$query = $this->db->query("SELECT `u`.`{$us_f['group']}`, `u`.`{$us_f['login']}`, `u`.`{$us_f['email']}`, `u`.`{$us_f['pass']}`, `u`.`{$us_f['salt']}`,
+											`u`.`{$us_f['tmp']}`, `u`.`{$us_f['ip_create']}`, `u`.`{$us_f['date_reg']}`, `u`.`{$us_f['date_last']}`,
+											`u`.`{$us_f['fname']}`, `u`.`{$us_f['lname']}`, `u`.`{$us_f['gender']}`, `u`.`{$us_f['bday']}`,
 											`u`.`{$us_f['is_skin']}`, `u`.`{$us_f['is_cloak']}`, `u`.`{$us_f['color']}`, `u`.`{$us_f['uuid']}`,
 											`g`.`{$ug_f['title']}`, `g`.`{$ug_f['text']}`, `g`.`{$ug_f['perm']}`, `g`.`{$ug_f['color']}` AS `gcolor`,
 											`i`.`{$ic_f['money']}`, `i`.`{$ic_f['rm']}`, `i`.`{$ic_f['bank']}`
@@ -128,9 +128,6 @@ class user{
 		// Register ip
 		$this->ip_create	= $this->db->HSC($ar[$us_f['ip_create']]);
 
-		// Other information
-		$this->data			= json_decode($ar[$us_f['data']]);
-
 		// Group title
 		$this->group		= $group;
 
@@ -160,7 +157,17 @@ class user{
 		$this->cloak		= ($this->is_cloak) ? $this->login : '';
 
 		// Gender
-		$this->gender		= (intval($this->data->gender)==1) ? $this->lng['gender_w'] : $this->lng['gender_m'];
+		$this->gender		= (intval($ar[$us_f['gender']])==1 || $ar[$us_f['gender']]=='female') ? $this->lng['gender_w'] : $this->lng['gender_m'];
+
+		$this->time_create	= intval($ar[$us_f['date_reg']]);
+
+		$this->time_last	= intval($ar[$us_f['date_last']]);
+
+		$this->firstname	= $this->db->HSC($ar[$us_f['fname']]);
+
+		$this->lastname		= $this->db->HSC($ar[$us_f['lname']]);
+
+		$this->birthday		= intval($ar[$us_f['bday']]);
 
 		// Game money balance
 		$this->money		= floatval($ar[$ic_f['money']]);
@@ -171,6 +178,14 @@ class user{
 		// Bank money balance (for plugins)
 		$this->bank			= floatval($ar[$ic_f['bank']]);
 
+	}
+
+	private function load_auth(){
+		if(!file_exists(MCR_LIBS_PATH.'auth/'.$this->cfg->main['p_logic'].'.php')){ exit('Auth Type Error!'); }
+
+		require_once(MCR_LIBS_PATH.'auth/'.$this->cfg->main['p_logic'].'.php');
+
+		return new auth($this->core);
 	}
 
 	public function logintouuid($string){
