@@ -171,7 +171,7 @@ class submodule{
 			"TEXT" => $text,
 			"CATEGORY" => $this->db->HSC($category),
 			"CID" => intval($cid),
-			"LIKES" => ($vote!==1) ? '' : $this->core->sp(MCR_THEME_MOD."admin/news/new-preview-likes.html", $data),
+			"LIKES" => ($vote!==1) ? '' : $this->core->sp(MCR_THEME_MOD."admin/news/new-preview-likes.html"),
 		);
 
 		return $this->core->sp(MCR_THEME_MOD."admin/news/new-preview.html", $data);
