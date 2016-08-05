@@ -68,9 +68,9 @@ class submodule{
 
 		$insert = $this->db->query("INSERT INTO `{$this->cfg->tabname('users')}`
 										(`{$us_f['group']}`, `{$us_f['login']}`, `{$us_f['email']}`, `{$us_f['pass']}`, `{$us_f['uuid']}`,
-										`{$us_f['salt']}`, `{$us_f['tmp']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['date_reg']}`, `{$us_f['date_last']}`, `{$us_f['fname']}`, `{$us_f['lname']}`, `{$us_f['gender']}`, `{$us_f['bday']}`)
+										`{$us_f['salt']}`, `{$us_f['tmp']}`, `{$us_f['ip_create']}`, `{$us_f['ip_last']}`, `{$us_f['date_reg']}`, `{$us_f['date_last']}`, `{$us_f['fname']}`, `{$us_f['lname']}`, `{$us_f['gender']}`)
 									VALUES
-										('$gid', '$login', '$email', '$password', '$uuid', '$salt', '$tmp', '$ip', '$ip', '$newdata', '$time', '$time', '', '', '$gender')");
+										('$gid', '$login', '$email', '$password', '$uuid', '$salt', '$tmp', '$ip', '$ip', '$time', '$time', '', '', '$gender')");
 
 		if(!$insert){ $this->core->js_notify($this->core->lng['e_sql_critical']); }
 			

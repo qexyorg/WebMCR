@@ -53,7 +53,7 @@ class module{
 
 		if($key!==md5($ar['salt'])){ $this->core->notify($this->core->lng['e_msg'], $this->core->lng['e_403'], 2, '?mode=403'); }
 
-		$data = json_decode($ar['data']);
+		$time = time();
 
 		$update = $this->db->query("UPDATE `{$this->cfg->tabname('users')}`
 									SET `{$us_f['group']}`='2', `{$us_f['ip_last']}`='{$this->user->ip}', `{$us_f['date_last']}`='$time'
