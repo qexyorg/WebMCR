@@ -271,7 +271,7 @@ class module{
 
 		$time = time();
 
-		$uid = ($this->user->id<=0) ? -1 : $this->user->id;
+		$uid = ($this->user->id<=0) ? 1 : $this->user->id;
 
 		$insert = $this->db->query("INSERT INTO `mcr_news_views`
 									(nid, uid, ip, `time`)
@@ -294,7 +294,10 @@ class module{
 		$id = intval($_GET['id']);
 
 		$query = $this->db->query("SELECT `n`.id, `n`.cid, `n`.title, `n`.text_html, `n`.vote, `n`.discus, `n`.uid, `n`.`data`, `n`.`attach`,
-										`c`.title AS `category`, COUNT(DISTINCT `v`.id) AS `views`, COUNT(DISTINCT `l`.id) AS `likes`, COUNT(DISTINCT `d`.id) AS `dislikes`
+										`c`.title AS `category`,
+										COUNT(DISTINCT `v`.id) AS `views`,
+										COUNT(DISTINCT `l`.id) AS `likes`,
+										COUNT(DISTINCT `d`.id) AS `dislikes`
 									FROM `mcr_news` AS `n`
 									LEFT JOIN `mcr_news_cats` AS `c`
 										ON `c`.id=`n`.cid
@@ -304,14 +307,13 @@ class module{
 										ON `l`.nid=`n`.id AND `l`.`value`='1'
 									LEFT JOIN `mcr_news_votes` AS `d`
 										ON `d`.nid=`n`.id AND `d`.`value`='0'
-									WHERE `n`.id='$id'");
+									WHERE `n`.id='$id'
+									GROUP BY `n`.`id`");
 		
 
 		if(!$query || $this->db->num_rows($query)<=0){ $this->core->notify($this->core->lng['404'], $this->core->lng['t_404']); }
 
 		$ar = $this->db->fetch_assoc($query);
-
-		if(is_null($ar['id'])){ $this->core->notify($this->core->lng['404'], $this->core->lng['t_404']); }
 
 		if(!isset($_SESSION['views-new-'.$id])){
 			$this->update_views($id);

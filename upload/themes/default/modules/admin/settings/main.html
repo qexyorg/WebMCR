@@ -51,6 +51,13 @@
 					</div>
 
 					<div class="control-group">
+						<label class="control-label" for="input_s_client"><?php echo $this->lng_m['set_main_client']; ?></label>
+						<div class="controls">
+							<input type="text" class="span10" name="s_client" value="<?php echo $data['CFG']['s_client']; ?>" id="input_s_client" placeholder="<?php echo $this->lng_m['set_main_client']; ?>">
+						</div>
+					</div>
+
+					<div class="control-group">
 						<label class="control-label" for="input_s_theme"><?php echo $this->lng_m['set_main_theme']; ?></label>
 						<div class="controls">
 							<select name="s_theme" class="span10" id="input_s_theme">

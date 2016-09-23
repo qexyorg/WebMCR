@@ -23,5 +23,6 @@ $main = array (
   'skin_path' => 'uploads/skins/',
   'cloak_path' => 'uploads/cloaks/',
   'hd_cloaks' => false,
+  's_client' => 'index.php?mode=start',
 );
 ?>

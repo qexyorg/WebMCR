@@ -153,6 +153,7 @@ class submodule{
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title			= $this->db->safesql(@$_POST['title']);
 			$url			= $this->db->safesql(@$_POST['url']);
+			$style			= preg_replace("/[^\w\-]+/i", "", @$_POST['style']);
 			$parent			= intval(@$_POST['parent']);
 			$target			= (@$_POST['target']=="_blank") ? "_blank" : "_self";
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
@@ -160,9 +161,9 @@ class submodule{
 			if(!$this->core->validate_perm($permissions)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['menu_perm_not_exist'], 2, '?mode=admin&do=menu'); }
 
 			$insert = $this->db->query("INSERT INTO `mcr_menu`
-											(title, `parent`, `url`, `target`, `permissions`)
+											(title, `parent`, `url`, `style`, `target`, `permissions`)
 										VALUES
-											('$title', '$parent', '$url', '$target', '$permissions')");
+											('$title', '$parent', '$url', '$style', '$target', '$permissions')");
 
 			if(!$insert){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu'); }
 
@@ -181,6 +182,7 @@ class submodule{
 			"PAGE" => $this->lng['menu_add_page_name'],
 			"TITLE" => '',
 			"URL" => '',
+			"STYLE" => '',
 			"PERMISSIONS" => $this->core->perm_list(),
 			"PARENTS" => $this->parents(),
 			"TARGET" => '',
@@ -195,7 +197,7 @@ class submodule{
 
 		$id = intval($_GET['id']);
 
-		$query = $this->db->query("SELECT title, `parent`, `url`, `target`, permissions
+		$query = $this->db->query("SELECT title, `parent`, `url`, `style`, `target`, permissions
 									FROM `mcr_menu`
 									WHERE id='$id'");
 
@@ -214,6 +216,7 @@ class submodule{
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$title			= $this->db->safesql(@$_POST['title']);
 			$url			= $this->db->safesql(@$_POST['url']);
+			$style			= preg_replace("/[^\w\-]+/i", "", @$_POST['style']);
 			$parent			= intval(@$_POST['parent']);
 			$target			= (@$_POST['target']=="_blank") ? "_blank" : "_self";
 			$permissions	= $this->db->safesql(@$_POST['permissions']);
@@ -222,7 +225,7 @@ class submodule{
 
 
 			$update = $this->db->query("UPDATE `mcr_menu`
-										SET title='$title', `parent`='$parent', `url`='$url', `target`='$target', `permissions`='$permissions'
+										SET title='$title', `parent`='$parent', `url`='$url', `style`='$style', `target`='$target', `permissions`='$permissions'
 										WHERE id='$id'");
 
 			if(!$update){ $this->core->notify($this->core->lng["e_msg"], $this->core->lng["e_sql_critical"], 2, '?mode=admin&do=menu&op=edit&id='.$id); }
@@ -240,6 +243,7 @@ class submodule{
 			"PAGE" => $this->lng['menu_edit_page_name'],
 			"TITLE" => $this->db->HSC($ar['title']),
 			"URL" => $this->db->HSC($ar['url']),
+			"STYLE" => $this->db->HSC($ar['style']),
 			"PERMISSIONS" => $this->core->perm_list($ar['permissions']),
 			"PARENTS" => $this->parents($ar['parent'], $id),
 			"TARGET" => ($ar['target']=='_blank') ? 'selected' : '',

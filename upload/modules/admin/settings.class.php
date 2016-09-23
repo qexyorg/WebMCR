@@ -118,6 +118,8 @@ class submodule{
 
 			$cfg['s_dpage']		= $this->core->safestr(@$_POST['s_dpage']);
 
+			$cfg['s_client']		= $this->core->safestr(@$_POST['s_client']);
+
 			$s_theme = $this->core->safestr(@$_POST['s_theme']);
 			if(!$this->is_theme_exist($s_theme)){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_theme_incorrect'], 2, '?mode=admin&do=settings'); }
 			$cfg['s_theme'] = $s_theme;

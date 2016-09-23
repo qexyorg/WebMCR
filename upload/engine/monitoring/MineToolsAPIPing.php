@@ -40,7 +40,7 @@ class MineToolsAPIPing{
 
 		$this->slots = intval(@$array['players']['max']);
 
-		$this->motd = $array['description'];
+		$this->motd = @$array['description'];
 
 		return true;
 	}

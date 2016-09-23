@@ -17,18 +17,13 @@ class menu{
 		ob_start();
 
 		foreach ($tree as $key=>$ar){
-			$id = intval($ar['id']);
-			$parent = intval($ar['parent']);
-
-			$url = $ar['url'];
-
-			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
 
 			$data = array(
 				"TITLE"		=> $ar['title'],
-				"URL"		=> $this->db->HSC($url),
+				"URL"		=> $this->db->HSC($ar['url']),
+				"STYLE"		=> $this->db->HSC($ar['style']),
 				"TARGET"	=> $this->db->HSC($ar['target']),
-				"ACTIVE"	=> $active,
+				"ACTIVE"	=> ($this->is_active($ar['url'], $ar['sons'])) ? 'active' : '',
 				"SUB_MENU"	=> (!empty($ar['sons'])) ? $this->generate_sub_menu($ar['sons']) : "",
 			);
 
@@ -72,18 +67,12 @@ class menu{
 
 		foreach ($tree as $key=>$ar){
 
-			$id = intval($ar['id']);
-			$parent = intval($ar['parent']);
-
-			$url = $ar['url'];
-
-			$active = ($this->is_active($url, $ar['sons'])) ? 'active' : '';
-
 			$data = array(
 				"TITLE"		=> $ar['title'],
-				"URL"		=> $this->db->HSC($url),
+				"URL"		=> $this->db->HSC($ar['url']),
+				"STYLE"		=> $this->db->HSC($ar['style']),
 				"TARGET"	=> $this->db->HSC($ar['target']),
-				"ACTIVE"	=> $active,
+				"ACTIVE"	=> ($this->is_active($ar['url'], $ar['sons'])) ? 'active' : '',
 				"SUB_MENU"	=> (!empty($ar['sons'])) ? $this->generate_sub_menu($ar['sons']) : "",
 			);
 
@@ -127,7 +116,7 @@ class menu{
 	private function menu_array(){
 		
 
-		$query = $this->db->query("SELECT id, title, `parent`, `url`, `target`, `permissions`
+		$query = $this->db->query("SELECT id, title, `parent`, `url`, `style`, `target`, `permissions`
 									FROM `mcr_menu`
 									ORDER BY `parent` DESC");
 
@@ -144,6 +133,7 @@ class menu{
 				"title" => $ar['title'],
 				"parent" => $ar['parent'],
 				"url" => $ar['url'],
+				"style" => $ar['style'],
 				"target" => $ar['target'],
 				"permissions" => $ar['permissions']
 			);

@@ -195,8 +195,6 @@ class submodule{
 
 		if(!$update){ $this->core->js_notify($this->core->lng["e_sql_critical"]); }
 
-		//http://test16.ru/?mode=file&uniq=Y90HqwIeaYh0
-
 		$data = array(
 			'link' => BASE_URL.'?mode=file&uniq='.$this->db->HSC(@$_POST['val']),
 			'uniq' => $this->db->HSC(@$_POST['val']),

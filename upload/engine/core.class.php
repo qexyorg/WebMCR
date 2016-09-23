@@ -23,6 +23,9 @@ class core{
 
 	public function __construct(){
 
+		// Load filter function
+		require(MCR_TOOL_PATH.'filter.class.php');
+
 		// Load class cfg
 		require(MCR_TOOL_PATH.'config.class.php');
 
@@ -69,6 +72,7 @@ class core{
 		define('BASE_URL', $base_url);
 		define('ADMIN_MOD', 'mode=admin');
 		define('ADMIN_URL', BASE_URL.'?'.ADMIN_MOD);
+		define('MOD_URL', (isset($_GET['mode'])) ? BASE_URL.'?mode='.filter($_GET['mode'], 'chars') : BASE_URL.'?mode='.$this->cfg->main['s_dpage']);
 		define('STYLE_URL', BASE_URL.'themes/'.$this->cfg->main['s_theme'].'/');
 		define('UPLOAD_URL', BASE_URL.'uploads/');
 		define('SKIN_URL', BASE_URL.$this->cfg->main['skin_path']);
@@ -817,9 +821,8 @@ class core{
 	}
 
 	public function safestr($string=''){
-		$string = trim(strip_tags($string));
 
-		return $this->db->HSC($string);
+		return preg_replace("/[\<\>\"\'\`]+/i", "", $string);
 	}
 
 	public function filter_int_array($array){
@@ -868,6 +871,8 @@ class core{
 		$type = (isset($_GET['type'])) ? $_GET['type'] : 'news';
 
 		$data['SEARCH_ELEMENTS'] = $this->search_array($type);
+
+		if(empty($data['SEARCH_ELEMENTS'])){ return; }
 
 		return $this->sp(MCR_THEME_MOD."search/form.html", $data);
 	}

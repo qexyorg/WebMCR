@@ -8,16 +8,12 @@ var mcr = {
 	loading: function(status){
 
 		if(status!==false){
-			if(!$('#js-loader').hasClass('runclose') && !$('#js-loader').hasClass('runopen')){
-				$('#js-loader').addClass('runopen').fadeIn(300, function(){
-					$(this).removeClass('runopen');
-				});
-			}
+			if($('#js-loader').is(':hidden')){ $('#js-loader').fadeIn(500); }
 		}else{
-			$('#js-loader').addClass('runclose').fadeOut(300, function(){
-				$(this).removeClass('runclose');
-			});
+			if($('#js-loader').is(':visible')){ $('#js-loader').fadeOut(500); }
 		}
+
+		return (status===false) ? false : true;
 	},
 
 	/*
@@ -152,55 +148,6 @@ var mcr = {
 	// Получение информации о откртых и закрытых спойлерах
 	spl_items: Cookies.getJSON('spl_items'),
 
-	// Инстализация мониторинга
-	init_monitoring: function(){
-
-		if($('.monitor-id').length<=0){ return; }
-
-		var that = this;
-
-		that.loading();
-
-		var formdata = new FormData();
-		
-		formdata.append('mcr_secure', that.meta_data.secure);
-
-		$.ajax({
-			url: "index.php?mode=ajax&do=monitoring",
-			dataType: "json",
-			type: 'POST',
-			contentType: false,
-			processData: false,
-			data: formdata,
-			error: function(data){
-				that.logger(data);
-				that.notify(lng.error, lng.e_monitor);
-			},
-
-			success: function(data){
-
-				if(!data._type){ return that.notify(data._title, data._message); }
-
-				if(data._data.length<=0){ return that.loading(false); }
-
-				$.each(data._data, function(key, ar){
-					$('.monitor-id#'+ar.id+' .bar').css('width', ar.progress+'%');
-					$('.monitor-id#'+ar.id+' .progress').removeClass('progress-info').removeClass('progress-danger');
-
-					if(ar.status==1){
-						$('.monitor-id#'+ar.id+' .progress').addClass('progress-info');
-						$('.monitor-id#'+ar.id+' .stats').text(ar.online+' / '+ar.slots);
-					}else{
-						$('.monitor-id#'+ar.id+' .progress').addClass('progress-danger');
-						$('.monitor-id#'+ar.id+' .stats').text(lng.offline);
-					}
-				});
-				
-				that.loading(false);
-			}
-		});
-	},
-
 	init_filemanager: function(pge){
 		var that = this;
 
@@ -279,9 +226,6 @@ var mcr = {
 // Функции, вызываемые при загрузке
 $(function(){
 	$('input[type="file"].file-inputs').bootstrapFileInput();
-
-	// Загрузка мониторинга
-	mcr.init_monitoring();
 
 	// Загрузка файлового менеджера(если доступен)
 	if($('.file-manager').length > 0){ mcr.init_filemanager(); }
@@ -751,4 +695,55 @@ $(function(){
 	$('body').on('click', '.is_auth_user', function(){
 		if(!mcr.meta_data.is_auth){ mcr.notify(lng.error, lng.e_auth, false); return false; }
 	});
+
+	function fd_ac_users(query){
+		var formdata = new FormData();
+
+		formdata.append('mcr_secure', mcr.meta_data.secure);
+		formdata.append('query', query);
+
+		return formdata;
+	}
+
+	$('body').on('input', 'input[type="text"].ac_users', function(){
+
+		var that = $(this);
+
+		var formdata = new FormData();
+
+		formdata.append('mcr_secure', mcr.meta_data.secure);
+		formdata.append('query', that.val());
+
+		that.typeahead({
+			items: 10,
+			minLength: 2,
+			source: function(query, process){
+				return $.ajax({
+					url: "index.php?mode=ajax&do=ac_users",
+					dataType: 'json',
+					type: 'POST',
+					async: true,
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: fd_ac_users(query),
+					error: function(data){
+						mcr.logger(data);
+						mcr.notify(lng.error, 'warn');
+					},
+
+					success: function(data){
+						if(!data._type){ return; }
+
+						process(data._data);
+					}
+				});
+			},
+
+			matcher: function (param){
+				return true;
+			}
+		});
+	});
+	
 });

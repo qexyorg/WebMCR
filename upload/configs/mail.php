@@ -9,5 +9,6 @@ $mail = array (
   'smtp_host' => 'smtp.site.ru',
   'smtp_user' => 'admin@site.ru',
   'smtp_pass' => '',
+  'smtp_tls' => false,
 );
 ?>

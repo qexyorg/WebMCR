@@ -17,6 +17,7 @@ $lng = array(
 	'menu_edit_page_name' => 'Редактирование меню',
 	'menu_field_name' => 'Название',
 	'menu_field_link' => 'Ссылка',
+	'menu_field_style' => 'Стилевой класс',
 	'menu_field_pos' => 'Позиция',
 	'menu_field_parent' => 'Родитель',
 	'menu_field_action' => 'Действие',

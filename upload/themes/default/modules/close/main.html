@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title><?php echo $this->cfg->main['s_name']; ?> — Тех. работы</title>
+	<title><?php echo $this->cfg->main['s_name']; ?> — <?php echo $this->lng_m['mod_name']; ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<meta name="description" content="<?php echo $this->cfg->main['s_about']; ?>">
@@ -21,7 +21,7 @@
 			<div class="row-fluid">
 				<div class="span9">
 					<h1><?php echo $this->cfg->main['s_name']; ?></h1>
-					<p class="lead">На сайте ведутся технические работы. Вход только для администрации.</p>
+					<p class="lead"><?php echo $this->lng_m['desc']; ?></p>
 				</div>
 			</div>
 		</div>
@@ -75,7 +75,7 @@
 	</div>
 </div>
 
-<div id="js-loader" title="Загрузка..."><img src="<?php echo STYLE_URL; ?>img/loading.gif" alt="Loading..." /></div>
+<div id="js-loader" title="<?php echo $this->lng['loading']; ?>"><img src="<?php echo STYLE_URL; ?>img/loading.gif" alt="Loading..." /></div>
 
 <div class="navbar navbar-fixed-bottom">
 	<div class="navbar-inner">

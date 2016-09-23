@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `mcr_menu` (
   `url` varchar(255) NOT NULL DEFAULT '',
   `target` varchar(10) CHARACTER SET latin1 NOT NULL DEFAULT '_self',
   `permissions` varchar(255) NOT NULL DEFAULT '',
+  `style` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 #line
@@ -75,8 +76,8 @@ CREATE TABLE IF NOT EXISTS `mcr_online` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 #line
 INSERT INTO `mcr_menu` (`id`, `title`, `parent`, `url`, `target`, `permissions`) VALUES
-(1, 'Главная', 0, '/', '_self', 'sys_share'),
-(2, 'ПУ', 0, '/?mode=admin', '_self', 'sys_adm_main');
+(1, 'Главная', 0, '~base_url~', '_self', 'sys_share'),
+(2, 'ПУ', 0, '~base_url~?mode=admin', '_self', 'sys_adm_main');
 #line
 CREATE TABLE IF NOT EXISTS `mcr_menu_adm` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -93,25 +94,25 @@ CREATE TABLE IF NOT EXISTS `mcr_menu_adm` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
 #line
 INSERT INTO `mcr_menu_adm` (`id`, `gid`, `title`, `text`, `url`, `target`, `access`, `priority`, `icon`) VALUES
-(1, 1, 'Информация', 'Информация и статистика движка', '/?mode=admin&do=info', '_self', 'sys_adm_m_i_info', 1, 8),
-(2, 2, 'Новости', 'Управление списком новостей', '/?mode=admin&do=news', '_self', 'sys_adm_m_i_news', 1, 2),
-(3, 2, 'Категории', 'Управление категориями новостей', '/?mode=admin&do=news_cats', '_self', 'sys_adm_m_i_news_cats', 2, 10),
-(4, 2, 'Комментарии', 'Управление комментариями новостей', '/?mode=admin&do=comments', '_self', 'sys_adm_m_i_comments', 3, 13),
-(5, 2, 'Просмотры', 'Управление просмотрами новостей', '/?mode=admin&do=news_views', '_self', 'sys_adm_m_i_news_views', 4, 14),
-(6, 2, 'Голоса', 'Управление голосами новостей', '/?mode=admin&do=news_votes', '_self', 'sys_adm_m_i_news_votes', 5, 9),
-(7, 3, 'Пользователи', 'Изменение пользователей', '/?mode=admin&do=users', '_self', 'sys_adm_m_i_users', 1, 5),
-(8, 3, 'Группы', 'Управление группами пользователей и их привилегиями', '/?mode=admin&do=groups', '_self', 'sys_adm_m_i_groups', 2, 15),
-(9, 3, 'Привилегии', 'Управление доступными привилегиями', '/?mode=admin&do=permissions', '_self', 'sys_adm_m_i_permissions', 3, 17),
-(10, 4, 'Меню сайта', 'Управление пунктами основного меню', '/?mode=admin&do=menu', '_self', 'sys_adm_m_i_menu', 1, 7),
-(11, 4, 'Меню ПУ', 'Управление пунктами меню панели управления', '/?mode=admin&do=menu_adm', '_self', 'sys_adm_m_i_menu_adm', 2, 24),
-(12, 4, 'Группы меню ПУ', 'Управление группами меню панели управления', '/?mode=admin&do=menu_groups', '_self', 'sys_adm_m_i_menu_groups_adm', 3, 11),
-(13, 4, 'Иконки', 'Управление иконками пунктов меню панели управления', '/?mode=admin&do=menu_icons', '_self', 'sys_adm_m_i_icons', 4, 19),
-(14, 1, 'Статические страницы', 'Управление статическими страницами ', '/?mode=admin&do=statics', '_self', 'sys_adm_m_i_statics', 2, 20),
-(15, 5, 'Настройки сайта', 'Основные настройки сайта', '/?mode=admin&do=settings', '_self', 'sys_adm_m_i_settings', 1, 6),
-(16, 1, 'Мониторинг серверов', 'Управление серверами мониторинга', '/?mode=admin&do=monitoring', '_self', 'sys_adm_m_i_monitor', 3, 21),
-(17, 1, 'Модули', 'Управление модулями', '/?mode=admin&do=modules', '_self', 'sys_adm_m_i_modules', 4, 22),
-(18, 1, 'Лог действий', 'Журнал действий пользователей', '/?mode=admin&do=logs', '_self', 'sys_adm_m_i_logs', 5, 23),
-(19, 1, 'Блоки', 'Управление Блоками', '/?mode=admin&do=blocks', '_self', 'sys_adm_m_i_blocks', 6, 18);
+(1, 1, 'Информация', 'Информация и статистика движка', '~base_url~?mode=admin&do=info', '_self', 'sys_adm_m_i_info', 1, 8),
+(2, 2, 'Новости', 'Управление списком новостей', '~base_url~?mode=admin&do=news', '_self', 'sys_adm_m_i_news', 1, 2),
+(3, 2, 'Категории', 'Управление категориями новостей', '~base_url~?mode=admin&do=news_cats', '_self', 'sys_adm_m_i_news_cats', 2, 10),
+(4, 2, 'Комментарии', 'Управление комментариями новостей', '~base_url~?mode=admin&do=comments', '_self', 'sys_adm_m_i_comments', 3, 13),
+(5, 2, 'Просмотры', 'Управление просмотрами новостей', '~base_url~?mode=admin&do=news_views', '_self', 'sys_adm_m_i_news_views', 4, 14),
+(6, 2, 'Голоса', 'Управление голосами новостей', '~base_url~?mode=admin&do=news_votes', '_self', 'sys_adm_m_i_news_votes', 5, 9),
+(7, 3, 'Пользователи', 'Изменение пользователей', '~base_url~?mode=admin&do=users', '_self', 'sys_adm_m_i_users', 1, 5),
+(8, 3, 'Группы', 'Управление группами пользователей и их привилегиями', '~base_url~?mode=admin&do=groups', '_self', 'sys_adm_m_i_groups', 2, 15),
+(9, 3, 'Привилегии', 'Управление доступными привилегиями', '~base_url~?mode=admin&do=permissions', '_self', 'sys_adm_m_i_permissions', 3, 17),
+(10, 4, 'Меню сайта', 'Управление пунктами основного меню', '~base_url~?mode=admin&do=menu', '_self', 'sys_adm_m_i_menu', 1, 7),
+(11, 4, 'Меню ПУ', 'Управление пунктами меню панели управления', '~base_url~?mode=admin&do=menu_adm', '_self', 'sys_adm_m_i_menu_adm', 2, 24),
+(12, 4, 'Группы меню ПУ', 'Управление группами меню панели управления', '~base_url~?mode=admin&do=menu_groups', '_self', 'sys_adm_m_i_menu_groups_adm', 3, 11),
+(13, 4, 'Иконки', 'Управление иконками пунктов меню панели управления', '~base_url~?mode=admin&do=menu_icons', '_self', 'sys_adm_m_i_icons', 4, 19),
+(14, 1, 'Статические страницы', 'Управление статическими страницами ', '~base_url~?mode=admin&do=statics', '_self', 'sys_adm_m_i_statics', 2, 20),
+(15, 5, 'Настройки сайта', 'Основные настройки сайта', '~base_url~?mode=admin&do=settings', '_self', 'sys_adm_m_i_settings', 1, 6),
+(16, 1, 'Мониторинг серверов', 'Управление серверами мониторинга', '~base_url~?mode=admin&do=monitoring', '_self', 'sys_adm_m_i_monitor', 3, 21),
+(17, 1, 'Модули', 'Управление модулями', '~base_url~?mode=admin&do=modules', '_self', 'sys_adm_m_i_modules', 4, 22),
+(18, 1, 'Лог действий', 'Журнал действий пользователей', '~base_url~?mode=admin&do=logs', '_self', 'sys_adm_m_i_logs', 5, 23),
+(19, 1, 'Блоки', 'Управление Блоками', '~base_url~?mode=admin&do=blocks', '_self', 'sys_adm_m_i_blocks', 6, 18);
 #line
 CREATE TABLE IF NOT EXISTS `mcr_menu_adm_groups` (
   `id` int(10) NOT NULL AUTO_INCREMENT,

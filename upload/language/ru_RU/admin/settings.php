@@ -53,6 +53,7 @@ $lng = array(
 	'set_main_sitedesc' => 'Описание сайта',
 	'set_main_sitekeys' => 'Ключевые слова',
 	'set_main_start' => 'Начальная страница',
+	'set_main_client' => 'Ссылка на страницу с клиентом игры',
 	'set_main_theme' => 'Шаблон',
 	'set_main_log' => 'Лог ошибок',
 	'set_main_debug' => 'Отладка',

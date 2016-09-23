@@ -45,7 +45,9 @@ class XPawQuery{
 
 		$this->status = 1;
 
-		$this->motd = $array['HostName'];
+		$this->motd = @$array['HostName'];
+
+		$this->map = @$array['Map'];
 
 		$this->version = @$array['Version'];
 

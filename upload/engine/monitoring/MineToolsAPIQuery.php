@@ -45,7 +45,7 @@ class MineToolsAPIQuery{
 
 		$this->plugins = @implode(', ', @$array['Plugins']);
 
-		$this->map = $array['Map'];
+		$this->map = @$array['Map'];
 
 		return true;
 	}
