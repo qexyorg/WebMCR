@@ -752,7 +752,7 @@ class core{
 		}
 
 		$mail->CharSet = 'UTF-8';
-		$mail->setLanguage('ru', MCR_LANG_DIR.'smpt/');
+		$mail->setLanguage('ru', MCR_LANG_DIR.'smtp/');
 		$mail->From = ($this->cfg->mail['smtp']) ? $this->cfg->mail['smtp_user'] : $this->cfg->mail['from'];
 		$mail->FromName = $this->cfg->mail['from_name'];
 		if(is_array($to)){
