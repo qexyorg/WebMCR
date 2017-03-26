@@ -525,7 +525,6 @@ $(function(){
 		var formdata = new FormData();
 
 		$.each($(this)[0].files, function(key, value){
-			if(value.size > 51200000){ return; }
 			formdata.append('files'+key, value);
 		});
 		

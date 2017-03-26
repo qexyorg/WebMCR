@@ -12,15 +12,23 @@ class db{
 	public $count_queries = 0;
 	public $count_queries_real = 0;
 
-	public function __construct($cfg){
+	public function __construct($host='127.0.0.1', $user='root', $pass='', $base='base', $port=3306, $core=array()){
 
-		$this->cfg = $cfg;
+		$this->cfg = $core->cfg;
 
-		$this->obj = @new mysqli($cfg->db['host'], $cfg->db['user'], $cfg->db['pass'], $cfg->db['base'], $cfg->db['port']);
+		$connect = $this->connect($host, $user, $pass, $base, $port);
+		
+		if(!$connect){ return; }
+	}
 
-		if($this->obj->connect_errno){ return; }
+	public function connect($host='127.0.0.1', $user='root', $pass='', $base='base', $port=3306){
+		$this->obj = @new mysqli($host, $user, $pass, $base, $port);
 
-		if(!$this->obj->set_charset("utf8")){ return; }
+		if(mb_strlen($this->obj->connect_error, 'UTF-8')>0){ return false; }
+
+		if($this->obj->connect_errno){ return false; }
+
+		if(!$this->obj->set_charset("utf8")){ return false; }
 
 		$this->count_queries_real = 2;
 	}
@@ -67,7 +75,11 @@ class db{
 	}
 
 	public function error(){
-		return $this->obj->error;
+
+		if(!is_null(mysqli_connect_error())){ return mysqli_connect_error(); }
+		if(!empty($this->obj->error)){ return $this->obj->error; }
+
+		return;
 	}
 
 	public function remove_fast($from="", $where=""){

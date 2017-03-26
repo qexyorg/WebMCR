@@ -1,104 +1,42 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title><?php echo $data['CFG']['s_name']; ?> — <?php echo $data['TITLE']; ?></title>
+	<title><?php echo $this->cfg['main']['s_name']; ?> — <?php echo $this->title; ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
-	<meta name="description" content="<?php echo $data['CFG']['s_about'] ?>">
-	<meta name="keywords" content="<?php echo $data['CFG']['s_keywords'] ?>">
+	<meta name="description" content="<?php echo $this->cfg['main']['s_about'] ?>">
+	<meta name="keywords" content="<?php echo $this->cfg['main']['s_keywords'] ?>">
 	<meta name="author" content="NC22 &amp; Qexy.org">
-	<meta name='data' content='<?php echo META_JSON_DATA; ?>'>
-	<base href="<?php echo BASE_URL ?>">
-	<?php echo $data['DEF_HEADER']; ?>
-	<?php echo $data['HEADER']; ?>
+	<base href="<?php echo URL_ROOT; ?>">
+	<link rel="stylesheet" type="text/css" href="install/theme/css/global.css">
+	<link rel="stylesheet" type="text/css" href="install/theme/css/global-responsive.css">
+	<script type="text/javascript" src="install/theme/js/jquery.min.js"></script>
+	<script type="text/javascript" src="install/theme/js/global.js"></script>
+	<?php echo $this->header; ?>
 </head>
 
 <body>
-<!-- <?php echo $this->cfg->main['rc_public']; ?> -->
-<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner">
-		<div class="container">
 
-			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</a>
-
-			<a class="brand" href="<?php echo BASE_URL; ?>"><?php echo $data['CFG']['s_name']; ?></a>
-
-			<div class="nav-collapse collapse">
-
-				<ul class="nav">
-					<?php echo $data['MENU']; ?>
-				</ul>
-
-				<?php echo $data['SEARCH']; ?>
-
-			</div>
-		</div>
+<div class="header">
+	<div class="container">
+		<div class="title"><?php echo $this->cfg['main']['s_name']; ?></div>
+		<div class="text"><?php echo $this->cfg['main']['s_about']; ?></div>
+		<div class="cake"></div>
 	</div>
 </div>
-
-<header class="jumbotron subhead">
-	<div class="container">
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<div class="span9">
-					<h1><?php echo $data['CFG']['s_name']; ?></h1>
-					<p class="lead"><?php echo $data['CFG']['s_about'] ?></p>
-				</div>
-
-				<div class="span3" style="margin-top: 30px;">
-					<p class="lead" ><a href="index.php?mode=start"><?php echo $this->lng['load_client']; ?></a></p>
-				</div>
-			</div>
-		</div>
-	</div>
-</header>
-
-<?php echo $data['ADVICE']; ?>
 
 <div class="container">
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<!-- Левый контейнер -->
-			<div class="span4 main-content">
+	<?php echo $this->init_step(); ?>
+</div>
 
-				<!-- Ajax оповещения -->
-				<div id="js-notify" class="alert">
-					<a href="#" id="close">&times;</a>
-					<div id="title"></div>
-					<div id="message"></div>
-				</div>
-
-				<?php echo $data['L_BLOCKS']; ?>
-
-			</div>
-			<!-- /.Левый контейнер -->
-
-			<!-- Правый контейнер -->
-			<div class="span8">
-				<?php echo $data['BREADCRUMBS']; ?>
-
-				<?php echo $data['CONTENT']; ?>
-
-			</div>
-			<!-- /.Правый контейнер	-->
-		</div>
+<div class="footer">
+	<div class="container">
+		<div class="block-left"><?php echo $this->lng['copy_pre']; ?> <?php echo $this->cfg['main']['s_name']; ?> <?php echo $this->lng['copy_app']; ?></div>
+		<div class="block-right"><?php echo FEEDBACK; ?> | <?php echo VERSION; ?></div>
 	</div>
 </div>
 
-<div id="js-loader" title="Загрузка..."><img src="<?php echo STYLE_URL; ?>img/loading.gif" alt="Loading..." /></div>
-
-<div class="navbar navbar-fixed-bottom">
-	<div class="navbar-inner">
-		<div class="footer-block">
-			<div class="left-side"><?php echo $this->lng['copy_pre']; ?> <?php echo $data['CFG']['s_name']; ?> <?php echo $this->lng['copy_app']; ?></div>
-			<div class="right-side"><?php echo FEEDBACK; ?> | <?php echo VERSION; ?></div>
-		</div>
-	</div>
-</div>
+<?php echo $data['NOTIFY']; ?>
 
 </body>
 

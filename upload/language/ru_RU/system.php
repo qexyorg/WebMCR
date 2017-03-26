@@ -149,6 +149,7 @@ $lng = array(
 	'bb_c_img' => 'Изображение',
 	'bb_c_video' => 'Видео [youtube|vine|vk|vimeo|coub|twitch]',
 	'bb_c_smiles' => 'Смайлики',
+	'bb_c_indent' => 'Отступ',
 	'bb_insert_link' => 'Вставка ссылки',
 	'bb_insert_email' => 'Вставка E-Mail адреса',
 	'bb_insert_size' => 'Размер текста',

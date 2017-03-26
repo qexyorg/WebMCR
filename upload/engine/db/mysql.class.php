@@ -12,13 +12,24 @@ class db{
 	public $count_queries = 0;
 	public $count_queries_real = 0;
 
-	public function __construct($cfg){
+	public function __construct($host='127.0.0.1', $user='root', $pass='', $base='base', $port=3306, $core=array()){
 
-		$this->cfg = $cfg;
+		$this->cfg = $core->cfg;
 
-		$this->obj = @mysql_connect($cfg->db['host'].':'.$cfg->db['port'], $cfg->db['user'], $cfg->db['pass']);
+		$connect = $this->connect($host, $user, $pass, $base, $port);
+		
+		if(!$connect){ return; }
+	}
 
-		if(!@mysql_select_db($cfg->db['base'], $this->obj)){ return; }
+	public function connect($host='127.0.0.1', $user='root', $pass='', $base='base', $port=3306){
+
+		if(!function_exists('mysql_connect')){ return false; }
+
+		$this->obj = @mysql_connect($host.':'.$port, $user, $pass);
+
+		if(!$this->obj){ return false; }
+
+		if(!@mysql_select_db($base, $this->obj)){ return false; }
 
 		@mysql_set_charset("UTF8", $this->obj);
 
@@ -29,7 +40,9 @@ class db{
 		$this->count_queries += 1;
 		$this->count_queries_real +=1;
 
-		return @mysql_query($string, $this->obj);
+		$this->result = @mysql_query($string, $this->obj);
+
+		return $this->result;
 	}
 
 	public function affected_rows(){
@@ -65,7 +78,13 @@ class db{
 	}
 
 	public function error(){
-		return mysql_error();
+		if(!function_exists('mysql_error')){ return 'MySQL is deprecated. Use MySQLi'; }
+
+		$error = mysql_error();
+
+		if(!empty($error)){ return $error; }
+
+		return;
 	}
 
 	public function remove_fast($from="", $where=""){

@@ -46,7 +46,7 @@ class core{
 		require(MCR_TOOL_PATH.'db/'.$this->cfg->db['backend'].'.class.php');
 
 		// Create & set new object of database
-		$this->db = new db($this->cfg);
+		$this->db = new db($this->cfg->db['host'], $this->cfg->db['user'], $this->cfg->db['pass'], $this->cfg->db['base'], $this->cfg->db['port'], $this);
 
 		// Load user class
 		require_once(MCR_TOOL_PATH.'user.class.php');
@@ -167,7 +167,7 @@ class core{
 		$_SESSION['notify_title'] = $title;
 		$_SESSION['notify_msg'] = $text;
 
-		header("Location: ".$url);
+		header("Location: $url");
 
 		exit;
 	}

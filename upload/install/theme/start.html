@@ -1,0 +1,89 @@
+<form method="post" class="content">
+	<div class="title"><?php echo $this->lng['install_prepare']; ?></div>
+
+	<div class="desc"><?php echo $this->lng['isn_p_msg1']; ?></div>
+
+	<div class="desc"><?php echo $this->lng['isn_p_msg2']; ?></div>
+
+	<div class="table">
+		<div class="table-row">
+			<div class="table-cell">PHP >= 5.1</div>
+			<div class="table-cell"><?php echo $data["PHP"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell">Register Globals</div>
+			<div class="table-cell"><?php echo $data['REG_GLOB']; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell">allow_url_fopen</div>
+			<div class="table-cell"><?php echo $data['URL_FOPEN']; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['gd_exist']; ?></div>
+			<div class="table-cell"><?php echo $data['GD']; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['mysql_support']; ?></div>
+			<div class="table-cell"><?php echo $data['MYSQL']; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['buffer_write']; ?></div>
+			<div class="table-cell"><?php echo $data['BUFER']; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | configs/* <i title="<?php echo $this->lng['isn_p_msg3']; ?>" rel="tooltip" class="icon-question-sign"></i></div>
+			<div class="table-cell"><?php echo $data["FOLDER_CONFIGS"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | configs/modules/* <i title="<?php echo $this->lng['isn_p_msg3']; ?>" rel="tooltip" class="icon-question-sign"></i></div>
+			<div class="table-cell"><?php echo $data["FOLDER_MODULES"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | cache/</div>
+			<div class="table-cell"><?php echo $data["FOLDER_CACHE"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | uploads/</div>
+			<div class="table-cell"><?php echo $data["FOLDER_UPLOADS"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | <?php echo $this->cfg['main']['cloak_path']; ?></div>
+			<div class="table-cell"><?php echo $data["FOLDER_CLOAKS"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | uploads/panel-icons/</div>
+			<div class="table-cell"><?php echo $data["FOLDER_ICONS"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | <?php echo $this->cfg['main']['skin_path']; ?></div>
+			<div class="table-cell"><?php echo $data["FOLDER_SKINS"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | <?php echo $this->cfg['main']['skin_path']; ?>interface/</div>
+			<div class="table-cell"><?php echo $data["FOLDER_INTERF"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['read_write']; ?> | uploads/smiles/</div>
+			<div class="table-cell"><?php echo $data["FOLDER_SMILES"]; ?></div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><a href="<?php echo URL_INSTALL; ?>" class="btn"><?php echo $this->lng['update']; ?></a></div>
+			<div class="table-cell"><button type="submit" class="btn"><?php echo $this->lng['next']; ?></button></div>
+		</div>
+	</div>
+</form>

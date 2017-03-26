@@ -1,68 +1,98 @@
-<div class="form-block">
+<form method="post" class="content">
+	<div class="title"><?php echo $this->lng['install_progress']; ?> - <?php echo $this->lng['step_3']; ?></div>
 
-	<div class="block-header">
-		<div class="block-name"><?php echo $this->lng_m['mod_name']; ?></div>
+	<div class="desc"><?php echo $this->lng['s3_desc1']; ?></div>
+
+	<div class="table">
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['site_name']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="s_name" value="<?php echo @$_SESSION['fs_name']; ?>" placeholder="<?php echo $this->lng['site_name']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['site_desc']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="s_about" value="<?php echo @$_SESSION['fs_about']; ?>" placeholder="<?php echo $this->lng['site_desc']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['site_keys']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="s_keywords" value="<?php echo @$_SESSION['fs_keywords']; ?>" placeholder="<?php echo $this->lng['site_keys']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['mail_from']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="from" value="<?php echo @$_SESSION['fs_from']; ?>" placeholder="<?php echo $this->lng['mail_from']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['mail_from_name']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="from_name" value="<?php echo @$_SESSION['fs_from_name']; ?>" placeholder="<?php echo $this->lng['mail_from_name']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['mail_reply']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="reply" value="<?php echo @$_SESSION['fs_reply']; ?>" placeholder="<?php echo $this->lng['mail_reply']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['mail_reply_name']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="reply_name" value="<?php echo @$_SESSION['fs_reply_name']; ?>" placeholder="<?php echo $this->lng['mail_reply_name']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['smtp_use']; ?></div>
+			<div class="table-cell">
+				<select name="smtp">
+					<option value="0"><?php echo $this->lng['no']; ?></option>
+					<option value="1" <?php echo $_SESSION['fs_smtp']; ?>><?php echo $this->lng['yes']; ?></option>
+				</select>
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['smtp_host']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="smtp_user" value="<?php echo @$_SESSION['fs_smtp_user']; ?>" placeholder="<?php echo $this->lng['smtp_host']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['smtp_pass']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="smtp_pass" value="<?php echo @$_SESSION['fs_smtp_pass']; ?>" placeholder="<?php echo $this->lng['smtp_pass']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['smtp_tls']; ?></div>
+			<div class="table-cell">
+				<select name="smtp_tls">
+					<option value="0"><?php echo $this->lng['no']; ?></option>
+					<option value="1" <?php echo $_SESSION['fs_smtp_tls']; ?>><?php echo $this->lng['yes']; ?></option>
+				</select>
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><a href="<?php echo URL_INSTALL; ?>" class="btn"><?php echo $this->lng['update']; ?></a></div>
+			<div class="table-cell">
+				<a href="<?php echo URL_INSTALL; ?>?do=reinstall" class="btn"><?php echo $this->lng['reinstall']; ?></a>
+				<button type="submit" class="btn"><?php echo $this->lng['next']; ?></button>
+			</div>
+		</div>
 	</div>
-
-	<div class="block-line"></div>
-
-	<div>
-		<form class="form-horizontal" method="POST">
-
-			<div class="control-group">
-				<label class="control-label" for="inputLogin"><?php echo $this->lng_m['adm_login']; ?></label>
-				<div class="controls">
-					<input type="text" name="login" value="<?php echo $_SESSION['f_login']; ?>" id="inputLogin" placeholder="<?php echo $this->lng_m['adm_login']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputPassword"><?php echo $this->lng_m['adm_pass']; ?></label>
-				<div class="controls">
-					<input type="password" name="password" value="<?php echo $_SESSION['f_pass']; ?>" id="inputPassword" placeholder="<?php echo $this->lng_m['adm_pass']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputRePassword"><?php echo $this->lng_m['adm_repass']; ?></label>
-				<div class="controls">
-					<input type="password" name="repassword" value="<?php echo $_SESSION['f_repass']; ?>" id="inputRePassword" placeholder="<?php echo $this->lng_m['adm_repass']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputType"><?php echo $this->lng_m['encrypt_method']; ?></label>
-				<div class="controls">
-					<select name="method" id="inputType">
-						<option value="0">MD5</option>
-						<option value="1">SHA1</option>
-						<option value="2">SHA256</option>
-						<option value="3">SHA512</option>
-						<option value="4">Double MD5 [ md5(md5(PASS)) ]</option>
-						<option value="5">Salted MD5 [ md5(PASS+SALT) ]</option>
-						<option value="6">Salted MD5 [ md5(SALT+PASS) ]</option>
-						<option value="7">Salted Double MD5 [ md5(md5(SALT)+PASS) ]</option>
-						<option value="8">Salted Double MD5 [ md5(md5(PASS)+SALT) ]</option>
-						<option value="9">Salted Double MD5 [ md5(PASS+md5(SALT)) ]</option>
-						<option value="10">Salted Double MD5 [ md5(SALT+md5(PASS)) ]</option>
-						<option value="11">Salted SHA1 [ sha1(PASS+SALT) ]</option>
-						<option value="12">Salted SHA1 [ sha1(SALT+PASS) ]</option>
-						<option value="13">Triple salted MD5 [ md5(md5(SALT)+md5(PASS)) ]</option>
-						<option value="14">Salted SHA256 [ sha256(PASS+SALT) ]</option>
-						<option value="15">Salted SHA512 [ sha512(PASS+SALT) ]</option>
-					</select>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputEmail"><?php echo $this->lng_m['adm_mail']; ?></label>
-				<div class="controls">
-					<input type="text" name="email" value="<?php echo $_SESSION['f_email']; ?>" id="inputEmail" placeholder="<?php echo $this->lng_m['adm_mail']; ?>" required>
-				</div>
-			</div>
-
-			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
-		</form>
-	</div>
-
-</div>
+</form>

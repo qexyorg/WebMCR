@@ -932,6 +932,12 @@ table.table td.action input[type="checkbox"] { margin-top: 0px; margin-left: 10p
 	border-bottom: 1px solid #c1c1c1;
 }
 
+.qxbb-indent {
+	display: inline-block;
+	padding-left: 20px;
+	box-sizing: border-box;
+}
+
 .qxbb-spoiler > .qxbb-spoiler-body {
 	border: 1px solid #ddd;
 	border-radius: 4px;

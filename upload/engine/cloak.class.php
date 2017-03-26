@@ -67,9 +67,7 @@ class cloak{
 		// Create and save preview of cloak -
 
 		// Save new cloak +
-		if(!file_exists(MCR_CLOAK_PATH.$this->user->login.'.png')){
-			if(!copy($tmp, MCR_CLOAK_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['cloak_e_save'], 2, '?mode=profile'); }
-		}
+		if(!copy($tmp, MCR_CLOAK_PATH.$this->user->login.'.png')){ $this->core->notify("", $this->lng['cloak_e_save'], 2, '?mode=profile'); }
 		// Save new cloak -
 	}
 

@@ -1,62 +1,53 @@
-<div class="form-block">
+<div method="post" class="content">
+	<div class="title"><?php echo $this->lng['congrats']; ?></div>
 
-	<div class="block-header">
-		<div class="block-name"><?php echo $this->lng_m['finish']; ?></div>
-	</div>
+	<div class="desc"><?php echo $this->lng['fs_msg1']; ?></div>
 
-	<div class="block-line"></div>
+	<div class="desc"><?php echo $this->lng['fs_msg2']; ?></div>
 
-	<div>
-		<h3 class="text-center text-success"><?php echo $this->lng_m['congrats']; ?></h3>
+	<br>
 
-		<p><?php echo $this->lng_m['fs_msg1']; ?></p>
-		<p class="text-error"><?php echo $this->lng_m['fs_msg2']; ?> <b>install</b> <?php echo $this->lng_m['fs_msg3']; ?></p>
+	<h4><?php echo $this->lng['useful_links']; ?></h4>
 
-		<p class="text-center"><a href="<?php echo BASE_URL; ?>" class="btn btn-success"><?php echo $this->lng_m['go_home']; ?></a> <a href="<?php echo ADMIN_URL; ?>" class="btn btn-success"><?php echo $this->lng_m['go_cp']; ?></a></p>
+	<br>
 
-		<br>
-		<div class="accordion" id="accordion2">
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-						<?php echo $this->lng_m['useful_links']; ?>
-					</a>
-				</div>
-				<div id="collapseOne" class="accordion-body collapse">
-					<div class="accordion-inner">
-						<ul class="unstyled">
-							<li>- <a href="http://webmcr.com/" target="_blank"><?php echo $this->lng_m['official_site']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="http://wiki.webmcr.com" target="_blank"><?php echo $this->lng_m['documentation']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="http://webmcr.com/?do=extensions" target="_blank"><?php echo $this->lng_m['extensions']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="https://twitter.com/webmcr_official" target="_blank">Twitter</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="https://vk.com/webmcr" target="_blank"><?php echo $this->lng_m['vk_page']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="http://qexy.org" target="_blank">Toster (<?php echo $this->lng_m['dev_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="http://catface.ru" target="_blank">NC22 (<?php echo $this->lng_m['author_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-							<li>- <a href="http://www.rubukkit.org/members/killerprost.5532/" target="_blank">KillerProst (<?php echo $this->lng_m['theme_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-						<?php echo $this->lng_m['donate']; ?>
-					</a>
-				</div>
-				<div id="collapseTwo" class="accordion-body collapse">
-					<div class="accordion-inner">
-						<p>[RUB] WebMoney: R168295087439</p>
-						<p>[USD] WebMoney: Z382336720676</p>
-						<p>[UAH] WebMoney: U352343863491</p>
-						<p>[EUR] WebMoney: E208570680033</p>
-						<p><?php echo $this->lng_m['fs_msg4']; ?><br>
-						<?php echo $this->lng_m['fs_msg5']; ?><br>
-						<?php echo $this->lng_m['fs_msg6']; ?></p>
-					</div>
-				</div>
+	<ul class="unstyled">
+		<li>- <a href="http://webmcr.com/" target="_blank"><?php echo $this->lng['official_site']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="http://wiki.webmcr.com" target="_blank"><?php echo $this->lng['documentation']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="http://webmcr.com/?do=extensions" target="_blank"><?php echo $this->lng['extensions']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="https://twitter.com/webmcr_official" target="_blank">Twitter</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="https://vk.com/webmcr" target="_blank"><?php echo $this->lng['vk_page']; ?></a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="http://qexy.org" target="_blank">Toster (<?php echo $this->lng['dev_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="http://catface.ru" target="_blank">NC22 (<?php echo $this->lng['author_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+		<li>- <a href="http://www.rubukkit.org/members/killerprost.5532/" target="_blank">KillerProst (<?php echo $this->lng['theme_user']; ?>)</a> <i class="icon-share" rel="tooltip" title="<?php echo $this->lng['target_blank']; ?>"></i></li>
+	</ul>
+
+	<br>
+
+	<h4><?php echo $this->lng['donate']; ?></h4>
+
+	<br>
+	
+	<p><?php echo $this->lng['fs_msg3']; ?><p>
+	<p><?php echo $this->lng['fs_msg4']; ?><p>
+	<p><?php echo $this->lng['fs_msg5']; ?></p>
+
+	<br>
+
+	<ul class="unstyled">
+		<li>[RUB] WebMoney: R168295087439</li>
+		<li>[USD] WebMoney: Z382336720676</li>
+		<li>[UAH] WebMoney: U352343863491</li>
+		<li>[EUR] WebMoney: E208570680033</li>
+	</ul>
+	
+	<div class="table">
+		<div class="table-row">
+			<div class="table-cell"><a href="<?php echo URL_ROOT; ?>?mode=admin" class="btn"><?php echo $this->lng['go_cp']; ?></a></div>
+			<div class="table-cell">
+				<a href="<?php echo URL_INSTALL; ?>?do=reinstall" class="btn"><?php echo $this->lng['reinstall']; ?></a>
+				<a href="<?php echo URL_ROOT; ?>" class="btn"><?php echo $this->lng['go_home']; ?></a>
 			</div>
 		</div>
 	</div>
-
 </div>

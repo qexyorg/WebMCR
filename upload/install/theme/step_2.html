@@ -1,61 +1,52 @@
-<div class="form-block">
+<form method="post" class="content">
+	<div class="title"><?php echo $this->lng['install_progress']; ?> - <?php echo $this->lng['step_2']; ?></div>
 
-	<div class="block-header">
-		<div class="block-name"><?php echo $this->lng_m['db_settings']; ?></div>
+	<div class="desc"><?php echo $this->lng['s2_desc1']; ?></div>
+
+	<div class="table">
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['adm_login']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="login" value="<?php echo @$_SESSION['f_login']; ?>" placeholder="<?php echo $this->lng['adm_login']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['adm_pass']; ?></div>
+			<div class="table-cell">
+				<input type="password" name="password" value="<?php echo @$_SESSION['f_adm_pass']; ?>" placeholder="<?php echo $this->lng['adm_pass']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['adm_repass']; ?></div>
+			<div class="table-cell">
+				<input type="password" name="repassword" value="<?php echo @$_SESSION['f_repass']; ?>" placeholder="<?php echo $this->lng['adm_repass']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['encrypt_method']; ?></div>
+			<div class="table-cell">
+				<select name="method">
+					<?php echo $data['METHODS']; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['adm_mail']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="email" value="<?php echo @$_SESSION['f_email']; ?>" placeholder="<?php echo $this->lng['adm_mail']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><a href="<?php echo URL_INSTALL; ?>" class="btn"><?php echo $this->lng['update']; ?></a></div>
+			<div class="table-cell">
+				<a href="<?php echo URL_INSTALL; ?>?do=reinstall" class="btn"><?php echo $this->lng['reinstall']; ?></a>
+				<button type="submit" class="btn"><?php echo $this->lng['next']; ?></button>
+			</div>
+		</div>
 	</div>
-
-	<div class="block-line"></div>
-
-	<div>
-		<form class="form-horizontal" method="POST">
-
-			<div class="control-group">
-				<label class="control-label" for="inputType"><?php echo $this->lng_m['type']; ?></label>
-				<div class="controls">
-					<select name="type" id="inputType">
-						<option value="mysqli">MySQLi (<?php echo $this->lng_m['recommended']; ?>)</option>
-						<option value="mysql" <?php echo $_SESSION['f_backend']; ?>>MySQL</option>
-					</select>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputHost"><?php echo $this->lng_m['db_host']; ?></label>
-				<div class="controls">
-					<input type="text" name="host" id="inputHost" value="<?php echo $_SESSION['f_host']; ?>" placeholder="<?php echo $this->lng_m['db_host']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputPort"><?php echo $this->lng_m['db_port']; ?></label>
-				<div class="controls">
-					<input type="text" name="port" id="inputPort" value="<?php echo $_SESSION['f_port']; ?>" placeholder="<?php echo $this->lng_m['db_port']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputBase"><?php echo $this->lng_m['db_name']; ?></label>
-				<div class="controls">
-					<input type="text" name="base" id="inputBase" value="<?php echo $_SESSION['f_base']; ?>" placeholder="<?php echo $this->lng_m['db_name']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputUser"><?php echo $this->lng_m['db_user']; ?></label>
-				<div class="controls">
-					<input type="text" name="user" id="inputUser" value="<?php echo $_SESSION['f_user']; ?>" placeholder="<?php echo $this->lng_m['db_user']; ?>" required>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label" for="inputPassword"><?php echo $this->lng_m['db_pass']; ?></label>
-				<div class="controls">
-					<input type="password" name="pass" id="inputPassword" placeholder="<?php echo $this->lng_m['db_pass']; ?>">
-				</div>
-			</div>
-
-			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
-		</form>
-	</div>
-
-</div>
+</form>

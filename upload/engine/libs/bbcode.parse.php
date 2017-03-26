@@ -188,6 +188,11 @@ class bbcode{
 			'replace' => '<hr class="qxbb-line">',
 		),
 
+		'indent' => array(
+			'pattern' => '/\[indent\]/Usi',
+			'replace' => '<span class="qxbb-indent"></span>',
+		),
+
 		'url' => array(
 			'pattern' => '/\[url\](http(s)?\:\/\/[\w\.\/\?\=\&amp\;\%\+\~\*\-]+)\[\/url\]/Usi',
 			'replace' => '<a href="$1" class="qxbb-url">$1</a>',

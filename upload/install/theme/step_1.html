@@ -1,113 +1,64 @@
-<div class="form-block">
+<form method="post" class="content">
+	<div class="title"><?php echo $this->lng['install_progress']; ?> - <?php echo $this->lng['step_1']; ?></div>
 
-	<div class="block-header">
-		<div class="block-name"><?php echo $this->lng_m['install_prepare']; ?></div>
+	<div class="desc"><?php echo $this->lng['s1_desc1']; ?></div>
+
+	<div class="desc"><?php echo $this->lng['s1_desc2']; ?></div>
+
+	<div class="desc"><?php echo $this->lng['s1_desc3']; ?></div>
+
+	<div class="table">
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['type']; ?></div>
+			<div class="table-cell">
+				<select name="type" id="inputType">
+					<option value="mysqli">MySQLi (<?php echo $this->lng['recommended']; ?>)</option>
+					<option value="mysql" <?php echo @$_SESSION['f_backend']; ?>>MySQL</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['db_host']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="host" value="<?php echo @$_SESSION['f_host']; ?>" placeholder="<?php echo $this->lng['db_host']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['db_port']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="port" value="<?php echo @$_SESSION['f_port']; ?>" placeholder="<?php echo $this->lng['db_port']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['db_name']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="base" value="<?php echo @$_SESSION['f_base']; ?>" placeholder="<?php echo $this->lng['db_name']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['db_user']; ?></div>
+			<div class="table-cell">
+				<input type="text" name="user" value="<?php echo @$_SESSION['f_user']; ?>" placeholder="<?php echo $this->lng['db_user']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><?php echo $this->lng['db_pass']; ?></div>
+			<div class="table-cell">
+				<input type="password" value="<?php echo @$_SESSION['f_pass']; ?>" name="pass" placeholder="<?php echo $this->lng['db_pass']; ?>">
+			</div>
+		</div>
+
+		<div class="table-row">
+			<div class="table-cell"><a href="<?php echo URL_INSTALL; ?>" class="btn"><?php echo $this->lng['update']; ?></a></div>
+			<div class="table-cell">
+				<a href="<?php echo URL_INSTALL; ?>?do=reinstall" class="btn"><?php echo $this->lng['reinstall']; ?></a>
+				<button type="submit" class="btn"><?php echo $this->lng['next']; ?></button>
+			</div>
+		</div>
 	</div>
-
-	<div class="block-line"></div>
-
-	<div>
-		<p><?php echo $this->lng_m['isn_p_msg1']; ?></p>
-		<p><?php echo $this->lng_m['isn_p_msg2']; ?></p>
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th><?php echo $this->lng_m['system_req']; ?></th>
-					<th><?php echo $this->lng_m['result_test']; ?></th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
-					<td>PHP >= 5.1</td>
-					<td><?php echo $data["PHP"]; ?></td>
-				</tr>
-
-				<tr>
-					<td>Register Globals</td>
-					<td><?php echo $data['REG_GLOB']; ?></td>
-				</tr>
-
-				<tr>
-					<td>allow_url_fopen</td>
-					<td><?php echo $data['URL_FOPEN']; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['gd_exist']; ?></td>
-					<td><?php echo $data['GD']; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['mysql_support']; ?></td>
-					<td><?php echo $data['MYSQL']; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['buffer_write']; ?></td>
-					<td><?php echo $data['BUFER']; ?></td>
-				</tr>
-			</tbody>
-		</table>
-
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th><?php echo $this->lng_m['access_files']; ?></th>
-					<th><?php echo $this->lng_m['result_test']; ?></th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | configs/* <i title="Необходимы права на чтение и запись на саму папку и входящие в нее файлы и папки" rel="tooltip" class="icon-question-sign"></i></td>
-					<td><?php echo $data["FOLDER_CONFIGS"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | configs/modules/* <i title="Необходимы права на чтение и запись на саму папку и входящие в нее файлы и папки" rel="tooltip" class="icon-question-sign"></i></td>
-					<td><?php echo $data["FOLDER_MODULES"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | cache/</td>
-					<td><?php echo $data["FOLDER_CACHE"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | uploads/</td>
-					<td><?php echo $data["FOLDER_UPLOADS"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | <?php echo $this->cfg->main['cloak_path']; ?></td>
-					<td><?php echo $data["FOLDER_CLOAKS"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | uploads/panel-icons/</td>
-					<td><?php echo $data["FOLDER_ICONS"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | <?php echo $this->cfg->main['skin_path']; ?></td>
-					<td><?php echo $data["FOLDER_SKINS"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | <?php echo $this->cfg->main['skin_path']; ?>interface/</td>
-					<td><?php echo $data["FOLDER_INTERF"]; ?></td>
-				</tr>
-
-				<tr>
-					<td><?php echo $this->lng_m['read_write']; ?> | uploads/smiles/</td>
-					<td><?php echo $data["FOLDER_SMILES"]; ?></td>
-				</tr>
-			</tbody>
-		</table>
-		<form method="post">
-			<p class="text-right"><button type="submit" class="btn"><?php echo $this->lng_m['next']; ?></button></p>
-		</form>
-	</div>
-
-</div>
+</form>

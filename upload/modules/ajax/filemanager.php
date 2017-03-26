@@ -72,7 +72,6 @@ class submodule{
 		$result = $errors = array();
 
 		foreach($files as $key => $file){
-			if($file['size'] > 51200000){ continue; }
 
 			switch($file['error']){
 				case 0: break;
