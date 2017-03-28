@@ -41,7 +41,7 @@ class MineToolsAPIQuery{
 
 		$this->slots = intval(@$array['MaxPlayers']);
 
-		$this->players = implode(', ', @$array['Playerlist']);
+		$this->players = @implode(', ', @$array['Playerlist']);
 
 		$this->plugins = @implode(', ', @$array['Plugins']);
 
