@@ -63,6 +63,8 @@ class module{
 			$logs_f		= $ctables['logs']['fields'];
 			$us_f		= $ctables['users']['fields'];
 
+			@$db->query("SET GLOBAL sql_mode='NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
+
 			$string = "";
 
 			$search = array(
