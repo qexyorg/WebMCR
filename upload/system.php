@@ -49,7 +49,4 @@ $meta_json_data = array(
 );
 
 define('META_JSON_DATA', json_encode($meta_json_data));
-
-// Csrf security validation
-$core->csrf_check();
 ?>
