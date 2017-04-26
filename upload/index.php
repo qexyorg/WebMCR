@@ -53,9 +53,6 @@ $data_global = array(
 	"SEARCH"		=> $core->search()
 );
 
-// Csrf security validation
-$core->csrf_check();
-
 // Write global template
 echo $core->sp(MCR_THEME_PATH."global.html", $data_global);
 
