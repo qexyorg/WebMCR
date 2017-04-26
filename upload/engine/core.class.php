@@ -15,6 +15,8 @@ class core{
 
 	public $csrf_time	= 3600;
 
+	public $csrf_disable = false;
+
 	public $captcha		= array(
 		0 => "---",
 		1 => "ReCaptcha",
@@ -309,6 +311,7 @@ class core{
 	 * При ошибке возвращается на главную страницу с сообщение "Hacking Attempt!"
 	 */
 	public function csrf_check(){
+		if($this->csrf_disable){ return; }
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			if(!isset($_POST['mcr_secure'])){ $this->notify($this->lng['e_hack']); }
 
