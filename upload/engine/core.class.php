@@ -15,8 +15,6 @@ class core{
 
 	public $csrf_time	= 3600;
 
-	public $csrf_disable = false;
-
 	public $captcha		= array(
 		0 => "---",
 		1 => "ReCaptcha",
@@ -306,12 +304,26 @@ class core{
 		return new bbcode($this);
 	}
 
+	public function csrf_whitelist_add($ip='127.0.0.1'){
+		$whitelist = explode(',',$this->cfg->func['whitelist']);
+		if(in_array($ip, $whitelist)){ return false; }
+
+		$whitelist[] = $ip;
+
+		$this->cfg->func['whitelist'] = implode(',', $whitelist);
+
+		if(!$this->cfg->savecfg($this->cfg->func, 'functions.php', 'func')){ return false; }
+
+		return true;
+	}
+
 	/**
 	 * Валидатор защиты от CSRF атаки
 	 * При ошибке возвращается на главную страницу с сообщение "Hacking Attempt!"
 	 */
 	public function csrf_check(){
-		if($this->csrf_disable){ return; }
+		if(in_array($this->user->ip, explode(',', $this->cfg->func['whitelist']))){ return; }
+
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			if(!isset($_POST['mcr_secure'])){ $this->notify($this->lng['e_hack']); }
 

@@ -13,11 +13,31 @@ class submodule{
 		$this->lng		= $core->load_language('register');
 	}
 
+	private function count_ip(){
+		$ctables	= $this->cfg->db['tables'];
+		$us_f		= $ctables['users']['fields'];
+
+		$query = $this->db->query("SELECT COUNT(*)
+									FROM `{$this->cfg->tabname('users')}`
+									WHERE `{$us_f['ip_create']}`='{$this->user->ip}'
+										OR `{$us_f['ip_last']}`='{$this->user->ip}'");
+
+		if(!$query){ return 0; }
+
+		$ar = $this->db->fetch_array($query);
+
+		return $ar[0];
+	}
+
 	public function content(){
 
 		if($_SERVER['REQUEST_METHOD']!='POST'){ $this->core->js_notify($this->core->lng['e_hack']); }
 		
 		if($this->user->is_auth){ $this->core->js_notify($this->lng['e_already']); }
+
+		if(intval(@$this->cfg->func['ipreglimit'])>0 && $this->count_ip()>=intval(@$this->cfg->func['ipreglimit'])){
+			$this->core->js_notify($this->lng['e_reg_limit']);
+		}
 
 		$login = $this->db->safesql(@$_POST['login']);
 		$email = $this->db->safesql(@$_POST['email']);

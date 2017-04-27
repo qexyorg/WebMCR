@@ -16,9 +16,9 @@ class block_notify{
 		if(!isset($_SESSION['mcr_notify'])){ return ''; }
 
 		$new_data = array(
-			"TYPE" => $this->db->HSC($_SESSION['notify_type']),
-			"TITLE" => $this->db->HSC($_SESSION['notify_title']),
-			"MESSAGE" => $this->db->HSC($_SESSION['notify_msg'])
+			"TYPE" => $this->db->HSC(@$_SESSION['notify_type']),
+			"TITLE" => $this->db->HSC(@$_SESSION['notify_title']),
+			"MESSAGE" => $this->db->HSC(@$_SESSION['notify_msg'])
 		);
 
 		$result = $this->core->sp(MCR_THEME_PATH."blocks/notify/alert.html", $new_data);

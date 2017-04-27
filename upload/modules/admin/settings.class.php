@@ -329,6 +329,8 @@ class submodule{
 
 			$cfg['close_time'] = (@$_POST['close_time']=='') ? 0 : intval(strtotime(@$_POST['close_time']));
 
+			$cfg['ipreglimit'] = (intval(@$_POST['input_reglimit'])<=0) ? 0 : intval(@$_POST['input_reglimit']);
+
 			if(!$this->cfg->savecfg($cfg, 'functions.php', 'func')){ $this->core->notify($this->core->lng["e_msg"], $this->lng['set_e_cfg_save'], 2, '?mode=admin&do=settings&op=functions'); }
 
 			// Последнее обновление пользователя
@@ -344,6 +346,7 @@ class submodule{
 			"ADVICE" => ($cfg['advice']) ? 'selected' : '',
 			"BREADCRUMBS" => ($cfg['breadcrumbs']) ? 'selected' : '',
 			"CLOSE" => ($cfg['close']) ? 'selected' : '',
+			"REGLIMIT" => intval(@$cfg['ipreglimit']),
 			'CLOSE_TIME' => (intval($cfg['close_time'])<=0) ? '' : date("d.m.Y H:i:s", $cfg['close_time']),
 		);
 

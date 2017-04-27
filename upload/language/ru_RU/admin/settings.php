@@ -32,6 +32,7 @@ $lng = array(
 	'set_funt_bc' => 'Выводить хлебные крошки',
 	'set_funt_close' => 'Технические работы',
 	'set_funt_close_time' => 'Время до конца тех. работ',
+	'set_funt_reglimit' => 'Максимальное кол-во регистраций с одного IP',
 	'set_mail_from' => 'От кого',
 	'set_mail_from_ph' => 'От кого было отправлено сообщение',
 	'set_mail_from_name' => 'Имя отправителя',

@@ -4,5 +4,7 @@ $func = array (
   'breadcrumbs' => true,
   'close' => false,
   'close_time' => 0,
+  'ipreglimit' => 1,
+  'whitelist' => '',
 );
 ?>
