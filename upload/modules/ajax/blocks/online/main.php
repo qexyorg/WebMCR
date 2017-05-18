@@ -22,7 +22,7 @@ class submodule{
 			'guests' => 0,
 			'users' => 0,
 			'all' => 0,
-			'list' => '',
+			'list' => [],
 		);
 
 		if(!$this->core->is_access(@$this->core->cfg_b['PERMISSIONS'])){ $this->core->js_notify('', '', true, $result); }
