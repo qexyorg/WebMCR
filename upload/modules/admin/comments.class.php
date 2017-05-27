@@ -215,7 +215,7 @@ class submodule{
 
 			$text_bb				= $this->db->HSC($text_bb);
 
-			$text_html				= $bb->decode($text_bb);
+			$text_html				= $bb->parse($text_bb);
 
 			$safe_text_html			= $this->db->safesql($text_html);
 
@@ -301,7 +301,7 @@ class submodule{
 
 			$text_bb				= $this->db->HSC($text_bb);
 
-			$text_html				= $bb->decode($text_bb);
+			$text_html				= $bb->parse($text_bb);
 
 			$safe_text_html			= $this->db->safesql($text_html);
 
