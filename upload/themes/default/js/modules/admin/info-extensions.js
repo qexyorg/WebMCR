@@ -1,7 +1,7 @@
 function load_extensions(){
 
 	$.ajax({
-		url: "http://api.webmcr.com/?do=extensions&limit=12",
+		url: "https://api.webmcr.ru/v1.php?do=extensions&limit=12",
 		dataType: "json",
 		type: "GET",
 		async: true,
