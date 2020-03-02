@@ -1,7 +1,7 @@
 function load_last_version(){
 
 	$.ajax({
-		url: "http://api.webmcr.com/?do=versions&limit=1",
+		url: "http://api.webmcr.ru/v1.php?do=versions&limit=1",
 		dataType: "json",
 		type: "GET",
 		async: true,
@@ -23,7 +23,7 @@ function load_last_version(){
 function load_last_news(){
 
 	$.ajax({
-		url: "http://api.webmcr.com/?do=news&limit=1",
+		url: "http://api.webmcr.ru/v1.php?do=news&limit=1",
 		beforeSend: function(){ $("#api-engine-news").html(mcr.loader); },
 		dataType: "json",
 		type: "GET",
