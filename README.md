@@ -3,8 +3,8 @@ Reloaded version CMS WebMCR
 Установка:
 Залить все файлы на сайт и следовать инструкциям установщика
 
-Site - http://webmcr.com
+Site - https://webmcr.ru
 
-Wiki - http://wiki.webmcr.com/
+Wiki - https://wiki.webmcr.ru/
 
-Mind 42 - http://mind42.com/mindmap/a2e9fdc9-a645-42db-80e0-c338f8a27c2c
+Mind 42 - https://mind42.com/mindmap/a2e9fdc9-a645-42db-80e0-c338f8a27c2c
