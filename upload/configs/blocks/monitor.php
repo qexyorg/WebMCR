@@ -9,7 +9,7 @@ $cfg = array (
   'EMAIL' => 'admin@qexy.org',
   'VERSION' => '1.0',
   'UPDATES' => true,
-  'UPDATER' => 'http://update.webmcr.com/?do=blocks&op=monitor',
+  'UPDATER' => 'https://api.webmcr.ru/v1.php?do=blocks&op=monitor',
   'PERMISSIONS' => 'sys_monitoring',
 );
 ?>
