@@ -76,7 +76,7 @@ class module{
 
 			$_SESSION['step_3'] = true;
 
-			if(!($api = file_get_contents("http://api.webmcr.com/?do=install&domain=".$_SERVER['SERVER_NAME']))){ /* SUCCESS */ }
+			if(!($api = file_get_contents("https://api.webmcr.ru/v1.php?do=install&domain=".$_SERVER['SERVER_NAME']))){ /* SUCCESS */ }
 
 			$this->install->notify($this->lng_m['finish'], $this->lng_m['mod_name'], 'install/?mode=settings');
 
