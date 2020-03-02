@@ -14,7 +14,7 @@ class install{
 
 		define('PROGNAME', 'WebMCR Reloaded');
 		define('VERSION', 'WebMCR Beta 1.4.1');
-		define('FEEDBACK', '<a href="http://webmcr.com" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy');
+		define('FEEDBACK', '<a href="https://webmcr.ru" target="_blank">'.PROGNAME.'</a> &copy; 2013-'.date("Y").' Qexy');
 		define('URL_ROOT', str_replace('\\', '/', dirname(dirname($_SERVER['PHP_SELF']))));
 		define('URL_ROOT_FULL', $https.'://'.$_SERVER['SERVER_NAME'].'/');
 		define('URL_INSTALL', $https.'://'.$_SERVER['SERVER_NAME'].'/install/');
