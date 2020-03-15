@@ -16,7 +16,7 @@ $cfg = new config();
 
 require_once(MCR_TOOL_PATH.'db/'.$cfg->db['backend'].'.class.php');
 
-$db = new db($cfg);
+$db = new db($cfg->db['host'], $cfg->db['user'], $cfg->db['pass'], $cfg->db['base']);
 
 $expire = time()-(3600*24*DAYS);
 
