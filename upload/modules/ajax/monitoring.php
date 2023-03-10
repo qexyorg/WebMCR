@@ -59,12 +59,12 @@ class submodule{
 
 			$id = intval($ar['id']);
 
-			$version	= $this->db->safesql($mon->version);
-			$players	= $this->db->safesql($mon->players);
-			$motd		= $this->db->safesql($mon->motd);
-			$plugins	= $this->db->safesql($mon->plugins);
-			$map		= $this->db->safesql($mon->map);
-			$error		= $this->db->safesql($mon->error);
+			$version	= @$this->db->safesql($mon->version);
+			$players	= @$this->db->safesql($mon->players);
+			$motd		= @$this->db->safesql($mon->motd);
+			$plugins	= @$this->db->safesql($mon->plugins);
+			$map		= @$this->db->safesql($mon->map);
+			$error		= @$this->db->safesql($mon->error);
 			$online		= intval($mon->online);
 			$status		= intval($mon->status);
 			$slots		= intval($mon->slots);
