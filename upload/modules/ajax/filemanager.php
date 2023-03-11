@@ -22,9 +22,9 @@ class submodule{
 		$page = $page*$limit-$limit;
 
 		$ctables	= $this->cfg->db['tables'];
-		$logs_f		= $ctables['logs']['fields'];
+		$logs_f		= $ctables['users']['fields'];
 
-		$query = $this->db->query("SELECT `f`.id, `f`.`uniq`, `f`.`name`, `f`.`oldname`, `f`.`data`, `f`.uid, `u`.`{$logs_f['uid']}`
+		$query = $this->db->query("SELECT `f`.id, `f`.`uniq`, `f`.`name`, `f`.`oldname`, `f`.`data`, `f`.uid, `u`.`{$logs_f['login']}`
 								FROM `mcr_files` AS `f`
 								LEFT JOIN `{$this->cfg->tabname('users')}` AS `u`
 									ON `u`.`{$logs_f['id']}`=`f`.uid
