@@ -27,7 +27,7 @@ class module{
 
 		$_SESSION['f_pass'] = (isset($_POST['pass'])) ? $this->install->HSC($_POST['pass']) : $this->cfg['db']['pass'];
 
-		$_SESSION['f_backend'] = (@$_POST['type']=='mysql') ? 'selected' : ($this->cfg['db']['backend']=='mysql') ? 'selected' : '';
+		$_SESSION['f_backend'] = ((@$_POST['type']=='mysql') ? 'selected' : ($this->cfg['db']['backend']=='mysql')) ? 'selected' : '';
 
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 
