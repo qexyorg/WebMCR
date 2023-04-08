@@ -34,6 +34,8 @@ class db{
 		@mysql_set_charset("UTF8", $this->obj);
 
 		$this->count_queries_real = 2;
+		
+		@$this->query("SET sql_mode=''");
 	}
 
 	public function query($string){
