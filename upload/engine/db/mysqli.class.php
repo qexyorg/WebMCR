@@ -31,6 +31,8 @@ class db{
 		if(!$this->obj->set_charset("utf8")){ return false; }
 
 		$this->count_queries_real = 2;
+		
+		@$this->query("SET sql_mode=''");
 	}
 
 	public function query($string){
